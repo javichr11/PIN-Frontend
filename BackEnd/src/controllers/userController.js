@@ -1,6 +1,9 @@
 const supabase = require('../config/supabase');
 
 exports.registrarUsuario = async (req, res) => {
+
+  console.log("Recibido...")
+
   const { nombre, edad } = req.body;
 
   const { data, error } = await supabase
@@ -15,6 +18,9 @@ exports.registrarUsuario = async (req, res) => {
 };
 
 exports.obtenerUsuarios = async (req, res) => {
+
+     console.log("Recibido...")
+
     const { data, error } = await supabase
       .from('usuarios')
       .select('*');
