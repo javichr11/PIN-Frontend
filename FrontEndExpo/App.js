@@ -5,11 +5,11 @@ import { useState } from 'react';
 export default function App() {
   const [nombre, setName] = useState('');
   const [edad, setEdad] = useState('');
-
+  
   const handleSubmit = async () => {
     console.log('Enviando...');
     try {
-      const response = await fetch('http://172.20.10.3:5000/usuario', { // Cambia esta URL por la de tu backend
+      const response = await fetch('http://172.25.10.3:5000/usuario', { // Cambia esta URL por la de tu backend
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
