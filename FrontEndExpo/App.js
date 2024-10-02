@@ -9,7 +9,7 @@ export default function App() {
   const handleSubmit = async () => {
     console.log('Enviando...');
     try {
-      const response = await fetch('http://172.20.10.3:5000/usuario', { // Cambia esta URL por la de tu backend
+      const response = await fetch('http://192.168.0.15:5000/usuario', { // Cambia esta URL por la de tu backend
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
