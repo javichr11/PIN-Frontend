@@ -12,15 +12,15 @@ const CrearEvento = () => {
   const [aforo, setAforo] = useState('');
   const [localizacion, setLocalizacion] = useState('');
   const [image, setImage] = useState(null);
-  const [fecha, setFecha] = useState(new Date());  // Para la fecha
-  const [hora, setHora] = useState(new Date());    // Para la hora
+  const [fecha, setFecha] = useState(new Date());
+  const [hora, setHora] = useState(new Date());
   const [mostrarPicker, setMostrarPicker] = useState(false);
   const [pickerMode, setPickerMode] = useState('date');
   const [scrollEnabled, setScrollEnabled] = useState(true);
-  const [usuarioId, setUsuarioId] = useState('');
+  const [usuario_id, setUsuarioId] = useState('');
 
   useEffect(() => {
-    //es provisional, simplemente para probar si funciona
+    // Es provisional, simplemente para probar si funciona
     const idObtenido = 10;
     setUsuarioId(idObtenido);
   }, []);
@@ -30,35 +30,54 @@ const CrearEvento = () => {
     const nuevaFecha = new Date(fecha);
     nuevaFecha.setHours(hora.getHours());
     nuevaFecha.setMinutes(hora.getMinutes());
-    return nuevaFecha;
+    // Devuelve el timestamp (en milisegundos desde 1970)
+    return Math.floor(nuevaFecha.getTime() / 1000); // Convirtiendo a segundos
   };
 
   // Función para crear evento
   const handleCrearEvento = async () => {
-    const fechaCompleta = combinarFechaHora();  // Combina la fecha y la hora
-    const fechaISO = fechaCompleta.toISOString();  // Convierte la fecha a formato ISO
+    const fechaTimestamp = combinarFechaHora(); // Obtiene el timestamp
+
+    const formData = new FormData(); // Crear una instancia de FormData
+
+    // Agregar los campos al FormData
+    formData.append('usuario_id', usuario_id);
+    formData.append('nombre', titulo);
+    formData.append('descripcion', descripcion);
+    formData.append('tematica', tematica);
+    formData.append('ubicacion', localizacion);
+    formData.append('aforo', parseInt(aforo));
+    formData.append('fecha', fechaTimestamp.toString()); // Enviar como string
+    formData.append('duracion', '2 hours');
+
+    // Verificar si hay una imagen seleccionada
+    if (image) {
+      // Convertir la imagen a un formato que FormData pueda manejar
+      formData.append('foto', {
+        uri: image, // URI de la imagen
+        type: 'image/jpeg', // Tipo de archivo
+        name: 'evento.jpg', // Nombre del archivo
+      });
+    }
+
+    formData.append('creado_en', Math.floor(Date.now() / 1000).toString()); // Timestamp actual
 
     try {
-      const response = await fetch('https://croacky.onrender.com/evento/crear', { 
+      const response = await fetch('https://croacky.onrender.com/evento/crear', {
         method: 'POST',
+        body: formData,
         headers: {
-          'Content-Type': 'application/json'
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          usuarioId: usuarioId,
-          nombre: titulo,
-          descripcion: descripcion,
-          tematica: tematica,
-          ubicacion: localizacion,
-          aforo: parseInt(aforo),
-          fecha: fechaISO,  // Enviar la fecha completa en formato ISO
-          duracion: '2 hours',
-          foto: image,
-          creado_en: new Date().toISOString()
-        })
       });
 
-      const responseData = await response.json();
+      console.log(formData);
+      // Captura la respuesta como texto
+      const textResponse = await response.text();
+      console.log('Texto de respuesta:', textResponse); // Muestra el contenido de la respuesta
+
+      // Ahora intenta parsear como JSON
+      const responseData = JSON.parse(textResponse);
 
       if (response.ok) {
         Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente.');
@@ -76,6 +95,7 @@ const CrearEvento = () => {
         Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
       }
     } catch (error) {
+      console.log('Error al crear evento:', error);
       Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
     }
   };
@@ -83,45 +103,38 @@ const CrearEvento = () => {
   // Función para seleccionar imagen
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (permissionResult.granted === false) {
       alert('Se requiere permiso para acceder a la galería.');
       return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync();
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
 
-  // Función para mostrar el picker de fecha
   const mostrarFechaPicker = () => {
     setPickerMode('date');
     setMostrarPicker(true);
   };
 
-  // Función para mostrar el picker de hora
   const mostrarHoraPicker = () => {
     setPickerMode('time');
     setMostrarPicker(true);
   };
 
-  // Manejar cambios en el picker de fecha/hora
-  const manejarFechaHoraCambio = (event, selectedValue) => {
+  const manejarFechaHoraCambio = (event, selectedDate) => {
     setMostrarPicker(false);
     if (pickerMode === 'date') {
-      setFecha(selectedValue || fecha);
+      setFecha(selectedDate || fecha);
     } else {
-      setHora(selectedValue || hora);
+      setHora(selectedDate || hora);
     }
   };
 
-  // Función para mostrar el picker de temática
   const mostrarTematicaPickerHandler = () => {
     setMostrarTematicaPicker(!mostrarTematicaPicker);
-    setScrollEnabled(!mostrarTematicaPicker);
   };
 
   return (
@@ -241,39 +254,42 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    borderColor: '#4CAF50',
+    borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: 16,
     borderRadius: 5,
-    width: '100%',
+    marginBottom: 20,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
   },
   descripcionInput: {
     height: 100,
   },
   botonFecha: {
-    backgroundColor: '#B2EBF2',
-    padding: 10,
+    backgroundColor: '#BBDEFB',
+    padding: 12,
     borderRadius: 5,
     marginBottom: 20,
     alignItems: 'center',
   },
   botonTexto: {
+    color: '#00796B',
     fontSize: 16,
-    color: '#000',
+  },
+  fechaTexto: {
+    marginBottom: 20,
+    fontSize: 16,
   },
   pickerAndroid: {
     height: 50,
     width: '100%',
-    marginBottom: 20,
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
   pickerIOS: {
-    marginBottom: 20,
-  },
-  fechaTexto: {
-    fontSize: 16,
-    marginBottom: 20,
+    height: 200,
+    width: '100%',
   },
 });
 

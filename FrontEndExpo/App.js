@@ -17,14 +17,14 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="VerEvento">
+       <Stack.Navigator initialRouteName="VerEvento">
         {/* Pantalla VerEvento */}
         <Stack.Screen 
           name="VerEvento" 
           options={{ title: 'Mis eventos' }}
         >
           {props => <VerEvento {...props} evento={evento} />}
-        </Stack.Screen>
+        </Stack.Screen> 
         
         {/* Pantalla CrearEvento */}
         <Stack.Screen 
