@@ -25,18 +25,18 @@ const CrearEvento = () => {
     setUsuarioId(idObtenido);
   }, []);
 
-  // Función para combinar fecha y hora
+  // Función para combinar fecha y hora en formato ISO (YYYY-MM-DDTHH:MM:SS)
   const combinarFechaHora = () => {
     const nuevaFecha = new Date(fecha);
     nuevaFecha.setHours(hora.getHours());
     nuevaFecha.setMinutes(hora.getMinutes());
-    // Devuelve el timestamp (en milisegundos desde 1970)
-    return Math.floor(nuevaFecha.getTime() / 1000); // Convirtiendo a segundos
+    // Devuelve la fecha en formato ISO
+    return nuevaFecha.toISOString(); // Formato compatible con la mayoría de bases de datos y APIs
   };
 
   // Función para crear evento
   const handleCrearEvento = async () => {
-    const fechaTimestamp = combinarFechaHora(); // Obtiene el timestamp
+    const fechaISO = combinarFechaHora(); // Obtiene la fecha en formato ISO
 
     const formData = new FormData(); // Crear una instancia de FormData
 
@@ -47,12 +47,11 @@ const CrearEvento = () => {
     formData.append('tematica', tematica);
     formData.append('ubicacion', localizacion);
     formData.append('aforo', parseInt(aforo));
-    formData.append('fecha', fechaTimestamp.toString()); // Enviar como string
+    formData.append('fecha', fechaISO); // Enviar como ISO string
     formData.append('duracion', '2 hours');
 
     // Verificar si hay una imagen seleccionada
     if (image) {
-      // Convertir la imagen a un formato que FormData pueda manejar
       formData.append('foto', {
         uri: image, // URI de la imagen
         type: 'image/jpeg', // Tipo de archivo
@@ -60,7 +59,7 @@ const CrearEvento = () => {
       });
     }
 
-    formData.append('creado_en', Math.floor(Date.now() / 1000).toString()); // Timestamp actual
+    formData.append('creado_en', new Date().toISOString()); // Fecha actual en formato ISO
 
     try {
       const response = await fetch('https://croacky.onrender.com/evento/crear', {
@@ -71,12 +70,11 @@ const CrearEvento = () => {
         },
       });
 
-      console.log(formData);
       // Captura la respuesta como texto
       const textResponse = await response.text();
       console.log('Texto de respuesta:', textResponse); // Muestra el contenido de la respuesta
 
-      // Ahora intenta parsear como JSON
+      // Intenta parsear la respuesta como JSON
       const responseData = JSON.parse(textResponse);
 
       if (response.ok) {
