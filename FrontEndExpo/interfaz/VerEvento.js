@@ -1,38 +1,70 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React from 'react'; 
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
-const VerEvento = ({ evento, navigation }) => {
-  // Verifica si el evento existe
-  if (!evento) {
-    return <Text>Cargando evento...</Text>;
+// Función para formatear la fecha y la hora
+const formatearFechaHora = (fechaISO) => {
+  const fecha = new Date(fechaISO);
+  
+  // Obtener la hora en formato HH:mm
+  const hora = fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  
+  // Obtener la fecha en formato dd-MM-yyyy
+  const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+
+  return { hora, fechaFormateada };
+};
+
+const VerEvento = ({ eventos, navigation }) => {
+  if (!eventos || eventos.length === 0) {
+    return <Text>No hay eventos disponibles.</Text>;
   }
 
-  return (
-    <View style={styles.container}>
+  const renderItem = ({ item }) => {
+    // Formateamos la fecha y la hora
+    const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
+
+    return (
       <View style={styles.eventCard}>
-        {/* Verifica si la imagen existe; de lo contrario, usa una imagen predeterminada */}
         <Image
-          source={{ uri: evento.imagen }}
+          source={{ uri: item.foto || 'https://via.placeholder.com/150' }} 
           style={styles.eventImage}
         />
         <View style={styles.eventInfo}>
-          <Text style={styles.eventTitle}>{evento.titulo}</Text>
+          <Text style={styles.eventTitle}>{item.nombre}</Text>
+
+          {/* Mostrar la hora con el icono del reloj */}
           <View style={styles.infoRow}>
             <FontAwesome name="clock-o" size={20} color="gray" />
-            <Text style={styles.eventTime}>{evento.hora}</Text>
+            <Text style={styles.eventTime}>{hora}</Text>
           </View>
+
+          {/* Mostrar la fecha con el icono del calendario */}
+          <View style={styles.infoRow}>
+            <MaterialIcons name="date-range" size={20} color="gray" />
+            <Text style={styles.eventDate}>{fechaFormateada}</Text>
+          </View>
+
           <View style={styles.infoRow}>
             <MaterialIcons name="location-on" size={20} color="gray" />
-            <Text style={styles.eventLocation}>{evento.localizacion}</Text>
+            <Text style={styles.eventLocation}>{item.ubicacion}</Text>
           </View>
+
           <View style={styles.infoRow}>
             <FontAwesome name="users" size={20} color="gray" />
-            <Text style={styles.eventAforo}>{`${evento.aforo}/10`}</Text>
+            <Text style={styles.eventAforo}>{`${item.aforo}/25`}</Text>
           </View>
         </View>
+
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.actionButton}  onPress={() => navigation.navigate('CrearEvento', { evento })}>
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            onPress={() => navigation.navigate('CrearEvento', { evento: item })}
+          >
             <FontAwesome name="refresh" size={24} color="black" />
             <Text>Modificar</Text>
           </TouchableOpacity>
@@ -42,6 +74,17 @@ const VerEvento = ({ evento, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={eventos}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -52,16 +95,11 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#EAF2E6',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
   eventCard: {
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
+    marginBottom: 15,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -87,6 +125,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   eventTime: {
+    marginLeft: 5,
+    fontSize: 16,
+    color: '#555',
+  },
+  eventDate: {
     marginLeft: 5,
     fontSize: 16,
     color: '#555',
