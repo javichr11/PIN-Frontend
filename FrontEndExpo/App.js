@@ -1,78 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
-import { useState } from 'react';
+import React, { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import CrearEvento from "./interfaz/CrearEvento";
+import VerEvento from "./interfaz/VerEvento"; // Asegúrate de importar correctamente
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [nombre, setName] = useState('');
-  const [edad, setEdad] = useState('');
-  
-  const handleSubmit = async () => {
-    console.log('Enviando...');
-    try {
-      const response = await fetch('https://pin-backend-fe7p.onrender.com/usuario', { // Cambia esta URL por la de tu backend
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre,
-          edad,
-        }),
-      });
-
-      const responseData = response.status;
-
-      if (response.ok) {
-        Alert.alert('Bien!', `Te has registrado satisfactoriamente. ${responseData}`);
-        setName('');
-        setEdad('');
-      } else {
-        Alert.alert('Error',` No te has podido registrar satisfactoriamente. ${responseData}`);
-      }
-    } catch (error) {
-      Alert.alert('Error', `Ha ocurrido un error: ${error.message}`);
-    }
-  };
+  const [evento, setEvento] = useState({
+    imagen: 'https://images.adsttc.com/media/images/5ca7/72d5/284d/d153/3000/01f3/newsletter/UC8A1834.jpg?1554477741',
+    titulo: 'Un cafelito post trabajo',
+    hora: '21:00',
+    localizacion: 'Calle Mayor',
+    aforo: 5,
+  });
 
   return (
-    <View style={styles.container}>
-      <Text>Croacky</Text>
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={nombre}
-        onChangeText={setName}
-      />
-      
-      <TextInput
-        style={styles.input}
-        placeholder="Edad"
-        value={edad}
-        onChangeText={setEdad}
-      />
-
-      <Button title="Enviar" onPress={handleSubmit} />
-      
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+       <Stack.Navigator initialRouteName="VerEvento">
+        {/* Pantalla VerEvento */}
+        <Stack.Screen 
+          name="VerEvento" 
+          options={{ title: 'Mis eventos' }}
+        >
+          {props => <VerEvento {...props} evento={evento} />}
+        </Stack.Screen> 
+        
+        {/* Pantalla CrearEvento */}
+        <Stack.Screen 
+          name="CrearEvento" 
+          component={CrearEvento} 
+          options={{ title: 'Modificar evento' }} 
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    width: '100%',
-    paddingHorizontal: 8,
-  },
-});
