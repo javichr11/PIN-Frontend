@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   botonTexto: {
-    color: '#00796B',
+    color: '#FFF',
     fontSize: 16,
   },
   fechaTexto: {
