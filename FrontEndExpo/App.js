@@ -1,19 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
-import VerEvento from "./interfaz/VerEvento"; // Asegúrate de importar correctamente
+import VerEvento from "./interfaz/VerEvento";
 
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [evento, setEvento] = useState({
-    imagen: 'https://images.adsttc.com/media/images/5ca7/72d5/284d/d153/3000/01f3/newsletter/UC8A1834.jpg?1554477741',
-    titulo: 'Un cafelito post trabajo',
-    hora: '21:00',
-    localizacion: 'Calle Mayor',
-    aforo: 5,
-  });
+  const [eventos, setEventos] = useState([]);
+
+  // Función para obtener eventos desde la base de datos
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        const response = await fetch('https://croacky.onrender.com/evento/obtener');
+        const data = await response.json();
+        console.log(data);
+        // Extraemos los eventos desde 'data.data'
+        setEventos(data.data); 
+      } catch (error) {
+        console.error('Error al obtener eventos:', error);
+      }
+    };
+    fetchEventos();
+  }, []);
 
   return (
     <NavigationContainer>
@@ -23,7 +33,7 @@ export default function App() {
           name="VerEvento" 
           options={{ title: 'Mis eventos' }}
         >
-          {props => <VerEvento {...props} evento={evento} />}
+          {props => <VerEvento {...props} eventos={eventos} />}
         </Stack.Screen> 
         
         {/* Pantalla CrearEvento */}
