@@ -81,4 +81,4 @@
     width: '100%',
     paddingHorizontal: 8,
     },
-    }); **/
+    }); OS ASESINO A TODOS**/
