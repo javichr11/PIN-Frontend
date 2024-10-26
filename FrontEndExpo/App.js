@@ -28,6 +28,17 @@ export default function App() {
     fetchEventos();
   }, []);
 
+  const actualizarEventos = async () => {
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener');
+      const data = await response.json();
+      console.log(data);
+      setEventos(data.data || []);
+    } catch (error) {
+      console.error('Error al actualizar eventos:', error);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -43,7 +54,7 @@ export default function App() {
           name="VerEvento" 
           options={{ title: 'Mis eventos' }}
         >
-          {props => <VerEvento {...props} eventos={eventos} />}
+          {props => <VerEvento {...props} eventos={eventos} setEventos={setEventos} actualizarEventos={actualizarEventos} />}
         </Stack.Screen> 
         <Stack.Screen 
           name="CrearEvento" 

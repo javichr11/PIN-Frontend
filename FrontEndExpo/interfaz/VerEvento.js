@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
@@ -13,9 +13,10 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
-const VerEvento = ({ eventos, navigation }) => {
+const VerEvento = ({ eventos, navigation, setEventos, actualizarEventos }) => {
+  const [eventosLocal, setEventosLocal] = useState(eventos); // Usa useState para manejar el estado de los eventos
 
-  if (eventos.length === 0) {
+  if (eventosLocal.length === 0) {
     return <Text>No hay eventos disponibles.</Text>;
   }
 
@@ -37,15 +38,17 @@ const VerEvento = ({ eventos, navigation }) => {
 
   const eliminarEvento = async (id) => {
     try {
-      const response = await fetch(`https://tu-backend.com/evento/eliminar/${id}`, {
+      const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
         method: 'DELETE',
       });
 
       if (response.ok) {
         Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
-        // Aquí puedes añadir cualquier acción posterior, como recargar la lista de eventos
+        // Actualiza la lista de eventos llamando a la función desde App
+        actualizarEventos();
       } else {
-        Alert.alert('Error', 'No se pudo eliminar el evento');
+        const errorText = await response.text();
+        Alert.alert('Error', `No se pudo eliminar el evento: ${errorText}`);
       }
     } catch (error) {
       Alert.alert('Error', `Ocurrió un error: ${error.message}`);
@@ -107,7 +110,7 @@ const VerEvento = ({ eventos, navigation }) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={eventos}
+        data={eventosLocal}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
