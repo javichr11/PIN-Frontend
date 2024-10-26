@@ -18,22 +18,23 @@ const CrearEvento = () => {
   const [pickerMode, setPickerMode] = useState('date');
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [usuario_id, setUsuarioId] = useState('');
+  const [duracion, setDuracion] = useState('1');
+  const [mostrarDuracionPicker, setMostrarDuracionPicker] = useState(false);
 
   useEffect(() => {
-    const idObtenido = 10; // Simulando obtención del usuario
+    const idObtenido = 10; // Simulación de usuario
     setUsuarioId(idObtenido);
   }, []);
 
-  // Función para combinar fecha y hora en formato ISO (YYYY-MM-DDTHH:MM:SS)
   const combinarFechaHora = () => {
     const nuevaFecha = new Date(fecha);
     nuevaFecha.setHours(hora.getHours());
     nuevaFecha.setMinutes(hora.getMinutes());
-    return nuevaFecha.toISOString(); // Devuelve la fecha en formato ISO
+    return nuevaFecha.toISOString();
   };
 
   const handleCrearEvento = async () => {
-    const fechaISO = combinarFechaHora(); // Obtiene la fecha en formato ISO
+    const fechaISO = combinarFechaHora();
     const formData = new FormData();
     formData.append('usuario_id', usuario_id);
     formData.append('nombre', titulo);
@@ -42,7 +43,7 @@ const CrearEvento = () => {
     formData.append('ubicacion', localizacion);
     formData.append('aforo', parseInt(aforo));
     formData.append('fecha', fechaISO);
-    formData.append('duracion', '2 hours');
+    formData.append('duracion', `${duracion} hours`);
 
     if (image) {
       formData.append('foto', {
@@ -66,7 +67,6 @@ const CrearEvento = () => {
 
       if (response.ok) {
         Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente.');
-        // Resetea el formulario
         setUsuarioId('');
         setTitulo('');
         setDescripcion('');
@@ -84,7 +84,6 @@ const CrearEvento = () => {
     }
   };
 
-  // Función para seleccionar imagen
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
@@ -112,9 +111,8 @@ const CrearEvento = () => {
     setMostrarPicker(false);
     if (pickerMode === 'date') {
       setFecha(selectedDate || fecha);
-      // Resetear la hora si cambia la fecha
       if (selectedDate && selectedDate.toDateString() !== new Date().toDateString()) {
-        setHora(new Date(0, 0, 0, 0, 0)); // Reinicia la hora
+        setHora(new Date(0, 0, 0, 0, 0));
       }
     } else {
       setHora(selectedDate || hora);
@@ -148,6 +146,25 @@ const CrearEvento = () => {
             placeholder="Título"
           />
 
+          <TouchableOpacity onPress={() => setMostrarDuracionPicker(true)} style={styles.botonDuracion}>
+            <Text style={styles.botonTexto}>Duración del evento: {duracion} horas</Text>
+          </TouchableOpacity>
+
+          {mostrarDuracionPicker && (
+            <View>
+              <Picker
+                selectedValue={duracion}
+                onValueChange={(itemValue) => setDuracion(itemValue)}
+                style={styles.picker}
+              >
+                {Array.from({ length: 24 }, (_, i) => i + 1).map((hour) => (
+                  <Picker.Item key={hour} label={`${hour} horas`} value={hour} />
+                ))}
+              </Picker>
+              <Button title="OK" onPress={() => setMostrarDuracionPicker(false)} color="#4CAF50" />
+            </View>
+          )}
+
           <TextInput
             style={[styles.input, styles.descripcionInput]}
             value={descripcion}
@@ -166,14 +183,13 @@ const CrearEvento = () => {
 
           {mostrarPicker && (
             <DateTimePicker
-            value={pickerMode === 'date' ? fecha : hora}
-            mode={pickerMode}
-            is24Hour={true}
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            minimumDate={pickerMode === 'date' ? new Date() : (fecha.toDateString() === new Date().toDateString() ? new Date() : null)}  // Corrigiendo el atributo duplicado
-            onChange={manejarFechaHoraCambio}
-          />
-          
+              value={pickerMode === 'date' ? fecha : hora}
+              mode={pickerMode}
+              is24Hour={true}
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              minimumDate={pickerMode === 'date' ? new Date() : (fecha.toDateString() === new Date().toDateString() ? new Date() : null)}
+              onChange={manejarFechaHoraCambio}
+            />
           )}
 
           <Text style={styles.fechaTexto}>Fecha seleccionada: {fecha.toLocaleDateString()}</Text>
@@ -212,7 +228,7 @@ const CrearEvento = () => {
             placeholder="Localización"
           />
 
-          <Button title="OK" onPress={handleCrearEvento} color="#4CAF50" />
+          <Button title="Crear Evento" onPress={handleCrearEvento} color="#4CAF50" />
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -281,6 +297,13 @@ const styles = StyleSheet.create({
     height: 200,
     width: '100%',
   },
+  botonDuracion: {
+    backgroundColor: '#BBDEFB',
+    padding: 12,
+    borderRadius: 5,
+    marginBottom: 20,
+    alignItems: 'center',
+  },  
 });
 
 export default CrearEvento;
