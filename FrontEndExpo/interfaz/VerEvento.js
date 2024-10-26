@@ -1,5 +1,5 @@
-import React from 'react'; 
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
 const formatearFechaHora = (fechaISO) => {
@@ -15,9 +15,42 @@ const formatearFechaHora = (fechaISO) => {
 
 const VerEvento = ({ eventos, navigation }) => {
 
-  if(eventos.length === 0){
+  if (eventos.length === 0) {
     return <Text>No hay eventos disponibles.</Text>;
   }
+
+  const confirmarEliminar = (id) => {
+    Alert.alert(
+      '¿Estás seguro?',
+      'Estás seguro que deseas eliminar el evento?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar evento',
+          onPress: () => eliminarEvento(id),
+          style: 'destructive'
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const eliminarEvento = async (id) => {
+    try {
+      const response = await fetch(`https://tu-backend.com/evento/eliminar/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
+        // Aquí puedes añadir cualquier acción posterior, como recargar la lista de eventos
+      } else {
+        Alert.alert('Error', 'No se pudo eliminar el evento');
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error: ${error.message}`);
+    }
+  };
 
   const renderItem = ({ item }) => {
     const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
@@ -25,7 +58,7 @@ const VerEvento = ({ eventos, navigation }) => {
     return (
       <View style={styles.eventCard}>
         <Image
-          source={{ uri: item.foto || 'https://via.placeholder.com/150' }} 
+          source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
           style={styles.eventImage}
         />
         <View style={styles.eventInfo}>
@@ -52,14 +85,17 @@ const VerEvento = ({ eventos, navigation }) => {
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity 
-            style={styles.actionButton} 
+          <TouchableOpacity
+            style={styles.actionButton}
             onPress={() => navigation.navigate('CrearEvento', { evento: item })}
           >
             <FontAwesome name="refresh" size={24} color="black" />
             <Text>Modificar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => confirmarEliminar(item.id)}
+          >
             <MaterialIcons name="delete" size={24} color="black" />
             <Text>Eliminar</Text>
           </TouchableOpacity>
@@ -73,7 +109,7 @@ const VerEvento = ({ eventos, navigation }) => {
       <FlatList
         data={eventos}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
       />
     </View>
