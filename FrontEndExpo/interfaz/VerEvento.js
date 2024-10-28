@@ -20,7 +20,9 @@ const formatearFechaHora = (fechaISO) => {
 };
 
 const VerEvento = ({ eventos, navigation }) => {
-  if (!eventos || eventos.length === 0) {
+
+  if(eventos.length === 0){
+    console.log('eventos.lenght === 0');
     return <Text>No hay eventos disponibles.</Text>;
   }
 
@@ -56,7 +58,7 @@ const VerEvento = ({ eventos, navigation }) => {
 
           <View style={styles.infoRow}>
             <FontAwesome name="users" size={20} color="gray" />
-            <Text style={styles.eventAforo}>{`${item.aforo}/25`}</Text>
+            <Text style={styles.eventAforo}>{`0/${item.aforo}`}</Text>
           </View>
         </View>
 
