@@ -81,7 +81,6 @@ const VerEvento = ({ eventos, navigation }) => {
               <Text>Eliminar</Text>
             </TouchableOpacity>
           </View>
-        </View>
       </TouchableOpacity>
     );
   };
