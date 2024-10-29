@@ -59,6 +59,7 @@ const VerEvento = ({ eventos, navigation, setEventos, actualizarEventos }) => {
     const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
 
     return (
+<<<<<<< HEAD
       <View style={styles.eventCard}>
         <Image
           source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
@@ -81,12 +82,46 @@ const VerEvento = ({ eventos, navigation, setEventos, actualizarEventos }) => {
             <Text style={styles.eventLocation}>{item.ubicacion}</Text>
           </View>
 
+=======
+      <TouchableOpacity onPress={() => navigation.navigate ('DetalleEvento', { evento: item})}>
+        <View style={styles.eventCard}>
+          <Image
+            source={{ uri: item.foto || 'https://via.placeholder.com/150' }} 
+            style={styles.eventImage}
+          />
+          <View style={styles.eventInfo}>
+            <Text style={styles.eventTitle}>{item.nombre}</Text>
+
+            {/* Mostrar la hora con el icono del reloj */}
+            <View style={styles.infoRow}>
+              <FontAwesome name="clock-o" size={20} color="gray" />
+              <Text style={styles.eventTime}>{hora}</Text>
+            </View>
+
+            {/* Mostrar la fecha con el icono del calendario */}
+            <View style={styles.infoRow}>
+              <MaterialIcons name="date-range" size={20} color="gray" />
+              <Text style={styles.eventDate}>{fechaFormateada}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <MaterialIcons name="location-on" size={20} color="gray" />
+              <Text style={styles.eventLocation}>{item.ubicacion}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <FontAwesome name="users" size={20} color="gray" />
+              <Text style={styles.eventAforo}>{`${item.aforo}/25`}</Text>
+            </View>
+          </View>
+>>>>>>> main
           <View style={styles.infoRow}>
             <FontAwesome name="users" size={20} color="gray" />
             <Text style={styles.eventAforo}>{`0/${item.aforo}`}</Text>
           </View>
         </View>
 
+<<<<<<< HEAD
         <View style={styles.actions}>
           <TouchableOpacity
             style={styles.actionButton}
@@ -104,6 +139,22 @@ const VerEvento = ({ eventos, navigation, setEventos, actualizarEventos }) => {
           </TouchableOpacity>
         </View>
       </View>
+=======
+          <View style={styles.actions}>
+            <TouchableOpacity 
+              style={styles.actionButton} 
+              onPress={() => navigation.navigate('CrearEvento', { evento: item })}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+              <Text>Modificar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton}>
+              <MaterialIcons name="delete" size={24} color="black" />
+              <Text>Eliminar</Text>
+            </TouchableOpacity>
+          </View>
+      </TouchableOpacity>
+>>>>>>> main
     );
   };
 

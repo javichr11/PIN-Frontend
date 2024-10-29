@@ -14,5 +14,9 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^9.0.1"
+  },
+  "dependencies": {
+    "expo": "^51.0.38",
+    "metro": "^0.81.0"
   }
 }
