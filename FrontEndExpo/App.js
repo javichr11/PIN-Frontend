@@ -41,22 +41,32 @@ function VerEventosStack({ eventos }) {
 
 export default function App() {
   const [eventos, setEventos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Función para obtener eventos desde la base de datos
   useEffect(() => {
     const fetchEventos = async () => {
+      setLoading(true);
       try {
         const response = await fetch('https://croacky.onrender.com/evento/obtener');
         const data = await response.json();
         console.log(data);
-        // Extraemos los eventos desde 'data.data'
-        setEventos(data.data); 
+        setEventos(data.data || []);
       } catch (error) {
         console.error('Error al obtener eventos:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchEventos();
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
