@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';  
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,8 +20,7 @@ const CrearEvento = () => {
   const [usuario_id, setUsuarioId] = useState('');
 
   useEffect(() => {
-    // Es provisional, simplemente para probar si funciona
-    const idObtenido = 10;
+    const idObtenido = 10; // Simulando obtención del usuario
     setUsuarioId(idObtenido);
   }, []);
 
@@ -30,51 +29,39 @@ const CrearEvento = () => {
     const nuevaFecha = new Date(fecha);
     nuevaFecha.setHours(hora.getHours());
     nuevaFecha.setMinutes(hora.getMinutes());
-    // Devuelve la fecha en formato ISO
-    return nuevaFecha.toISOString(); // Formato compatible con la mayoría de bases de datos y APIs
+    return nuevaFecha.toISOString(); // Devuelve la fecha en formato ISO
   };
 
-  // Función para crear evento
   const handleCrearEvento = async () => {
     const fechaISO = combinarFechaHora(); // Obtiene la fecha en formato ISO
-
-    const formData = new FormData(); // Crear una instancia de FormData
-
-    // Agregar los campos al FormData
+    const formData = new FormData();
     formData.append('usuario_id', usuario_id);
     formData.append('nombre', titulo);
     formData.append('descripcion', descripcion);
     formData.append('tematica', tematica);
     formData.append('ubicacion', localizacion);
     formData.append('aforo', parseInt(aforo));
-    formData.append('fecha', fechaISO); // Enviar como ISO string
+    formData.append('fecha', fechaISO);
     formData.append('duracion', '2 hours');
 
-    // Verificar si hay una imagen seleccionada
     if (image) {
       formData.append('foto', {
-        uri: image, // URI de la imagen
-        type: 'image/jpeg', // Tipo de archivo
-        name: 'evento.jpg', // Nombre del archivo
+        uri: image,
+        type: 'image/jpeg',
+        name: 'evento.jpg',
       });
     }
 
-    formData.append('creado_en', new Date().toISOString()); // Fecha actual en formato ISO
+    formData.append('creado_en', new Date().toISOString());
 
     try {
       const response = await fetch('https://croacky.onrender.com/evento/crear', {
         method: 'POST',
         body: formData,
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: { 'Accept': 'application/json' },
       });
 
-      // Captura la respuesta como texto
       const textResponse = await response.text();
-      console.log('Texto de respuesta:', textResponse); // Muestra el contenido de la respuesta
-
-      // Intenta parsear la respuesta como JSON
       const responseData = JSON.parse(textResponse);
 
       if (response.ok) {
@@ -93,7 +80,6 @@ const CrearEvento = () => {
         Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
       }
     } catch (error) {
-      console.log('Error al crear evento:', error);
       Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
     }
   };
@@ -101,7 +87,7 @@ const CrearEvento = () => {
   // Función para seleccionar imagen
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permissionResult.granted === false) {
+    if (!permissionResult.granted) {
       alert('Se requiere permiso para acceder a la galería.');
       return;
     }
@@ -126,6 +112,10 @@ const CrearEvento = () => {
     setMostrarPicker(false);
     if (pickerMode === 'date') {
       setFecha(selectedDate || fecha);
+      // Resetear la hora si cambia la fecha
+      if (selectedDate && selectedDate.toDateString() !== new Date().toDateString()) {
+        setHora(new Date(0, 0, 0, 0, 0)); // Reinicia la hora
+      }
     } else {
       setHora(selectedDate || hora);
     }
@@ -176,12 +166,14 @@ const CrearEvento = () => {
 
           {mostrarPicker && (
             <DateTimePicker
-              value={pickerMode === 'date' ? fecha : hora}
-              mode={pickerMode}
-              is24Hour={true}
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={manejarFechaHoraCambio}
-            />
+            value={pickerMode === 'date' ? fecha : hora}
+            mode={pickerMode}
+            is24Hour={true}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            minimumDate={pickerMode === 'date' ? new Date() : (fecha.toDateString() === new Date().toDateString() ? new Date() : null)}  // Corrigiendo el atributo duplicado
+            onChange={manejarFechaHoraCambio}
+          />
+          
           )}
 
           <Text style={styles.fechaTexto}>Fecha seleccionada: {fecha.toLocaleDateString()}</Text>
@@ -270,7 +262,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   botonTexto: {
-    color: '#fff',
+    color: '#FFF',
     fontSize: 16,
   },
   fechaTexto: {
