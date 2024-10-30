@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
-
-const userID = '10';  
+const userID = '10'; 
 
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -17,9 +16,22 @@ const formatearFechaHora = (fechaISO) => {
 };
 
 const Mapa = ({ eventos, navigation }) => {
-  if (eventos.length === 0) {
-    return <Text>No hay eventos disponibles.</Text>;
-  }
+  const [eventosData, setEventosData] = useState([]);
+
+  const fetchEventos = async () => {
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener');
+      const data = await response.json();
+      console.log(data);
+      setEventosData(data);
+    } catch (error) {
+      console.error("Error al obtener eventos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEventos(); 
+  }, []);
 
   const unirseAEvento = (id) => {
     Alert.alert(
@@ -49,6 +61,7 @@ const Mapa = ({ eventos, navigation }) => {
 
       if (response.ok) {
         Alert.alert('Éxito', 'Te has unido al evento');
+        await fetchEventos();
       } else {
         const errorData = await response.json();
         Alert.alert('Error', errorData.message || 'No te pudiste unir al evento');
@@ -83,7 +96,7 @@ const Mapa = ({ eventos, navigation }) => {
           </View>
           <View style={styles.infoRow}>
             <FontAwesome name="users" size={20} color="gray" />
-            <Text style={styles.eventAforo}>{`${item.aforo}/25`}</Text>
+            <Text style={styles.eventAforo}>{`${item.inscritos}/${item.aforo}`}</Text>
           </View>
         </View>
 
@@ -103,7 +116,7 @@ const Mapa = ({ eventos, navigation }) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={eventos}
+        data={eventosData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
@@ -112,6 +125,7 @@ const Mapa = ({ eventos, navigation }) => {
   );
 };
 
+// Resto del código de estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
