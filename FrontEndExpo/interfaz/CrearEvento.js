@@ -76,6 +76,11 @@ const CrearEvento = () => {
         setImage(null);
         setFecha(new Date());
         setHora(new Date());
+
+
+        await fetchEventos(); // Actualiza la lista de eventos en la pantalla principal
+        navigation.goBack();
+
       } else {
         Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
       }
