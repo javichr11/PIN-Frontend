@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-export default function RegistroFoto({ navigation }) {
-  const [nombre, setNombre] = useState('');
+export default function RegistroFoto({ route, navigation }) {
+  const [nombreUsuario, setNombreUsuario] = useState('');
   const [edad, setEdad] = useState(null);
   const [foto, setFoto] = useState(null);
+  const { nombre, phone, password } = route.params; // Recibe los datos de la pantalla anterior
+
+  
 
   // Función para abrir la galería o la cámara
   // Función para pedir permisos y abrir la galería
@@ -31,14 +34,67 @@ export default function RegistroFoto({ navigation }) {
   };
 
   const handleSubmit = () => {
-    if (nombre === '' || !foto) {
-      Alert.alert('Error', 'Por favor ingresa un nombre y selecciona una foto.');
+    if (nombreUsuario === '') {
+      Alert.alert('Error', 'Por favor ingresa un nombre de usuario correcto.');
+      return;
+    }
+    if (!edad || edad>100 || edad<1){
+      Alert.alert('Error', 'Por favor ingresa una edad correcta');
+      return;
+    }
+    if (!foto){
+      Alert.alert('Error', 'Por favor ingresa una foto');
       return;
     }
 
-    Alert.alert('Registro Completo', `Usuario ${nombre} registrado con foto.`);
-    // Puedes continuar el flujo de la app, como navegar a otra pantalla o enviar los datos al backend.
+    handleCrearEvento()
+    // Alert.alert('Registro Completo', `Usuario ${nombreUsuario} registrado con foto.
+    //   Nombre: ${nombre}, Contraseña: ${password}, Phone: ${phone}`);
   };
+
+  const handleCrearEvento = async () => {
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('edad', edad);
+    formData.append('password', password);
+    formData.append('movil', phone)
+    formData.append('nombre_usuario', nombreUsuario);
+    formData.append('foto', {
+        uri: foto,
+        type: 'image/jpeg',
+        name: 'perfil.jpg',
+      });
+    
+
+    try {
+      const response = await fetch('https://croacky.onrender.com/usuario/crear', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' },
+      });
+
+      const textResponse = await response.text();
+      const responseData = JSON.parse(textResponse);
+
+      if (response.ok) {
+        Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente.');
+        // Resetea el formulario
+        setNombreUsuario('');
+        setEdad(null);
+        setFoto(null);     
+      } else {
+        Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
+    }
+  };
+
+  handleReturn = () => {
+    navigation.navigate('Registro',{nombre, phone, password});
+
+  }
+
 
   return (
     <View style={styles.container}>
@@ -48,38 +104,43 @@ export default function RegistroFoto({ navigation }) {
         style={styles.image}
       />
       <View style={styles.inputContainer}>
-      <Text style={styles.title}>Registro de Usuario</Text>
+        <Text style={styles.title}>Registro de Usuario</Text>
 
-      <Text style={styles.label}>Nombre</Text>
-      <TextInput
-        style={styles.input}
-        value={nombre}
-        onChangeText={setNombre}
-      />
-
-    <Text style={styles.label}>Edad</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={edad}
-        onChangeText={setEdad}
-      />
-
-      <Text style={styles.label}>Foto de Perfil</Text>
-      <TouchableOpacity style={styles.fotoContainer} onPress={seleccionarFoto}>
-        {foto ? (
-          <Image source={{ uri: foto }} style={styles.foto} />
-        ) : (
-          <Image
-          source={require('../assets/default-user.png')} // Cambia la URL por la de tu imagen
-          style={styles.foto}
+        <Text style={styles.label}>Nombre</Text>
+        <TextInput
+          style={styles.input}
+          value={nombreUsuario}
+          onChangeText={setNombreUsuario}
         />
-        )}
-      </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Completar Registro</Text>
-      </TouchableOpacity>
+      <Text style={styles.label}>Edad</Text>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          value={edad}
+          onChangeText={setEdad}
+        />
+
+        <Text style={styles.label}>Foto de Perfil</Text>
+        <TouchableOpacity style={styles.fotoContainer} onPress={seleccionarFoto}>
+          {foto ? (
+            <Image source={{ uri: foto }} style={styles.foto} />
+          ) : (
+            <Image
+            source={require('../assets/default-user.png')} // Cambia la URL por la de tu imagen
+            style={styles.foto}
+          />
+          )}
+          </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity style={[styles.button,{backgroundColor:'orange'}]} onPress={handleReturn}>
+            <Text style={styles.buttonText}>Volver</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Completar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -135,6 +196,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     marginBottom: 0,
   },
+  buttonContainer: {
+    width: '100%',
+    flexDirection:'row',
+    justifyContent:'space-around',
+    padding: 0,
+    margin: 0,
+  },
   fotoContainer: {
     width: 130,
     height: 130,
@@ -153,7 +221,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   button: {
-    width: '70%',
+    width: '40%',
     borderRadius: 50,
     borderColor: '#FFFFFF',
     borderWidth: 4,

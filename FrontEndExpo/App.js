@@ -10,27 +10,46 @@ import registro from "./interfaz/Registro";
 import registroFoto from "./interfaz/RegistroFoto";
 import perfil from "./interfaz/perfil";
 import Archivos from "./interfaz/Archivos";
-import mapa from "./interfaz/mapa";
+import Mapa from "./interfaz/mapa";
 import notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function VerEventosStack({ eventos }) {
-  return(
+function VerEventosStack({ eventos, setEventos, fetchEventos }) {
+  return (
     <Stack.Navigator>
       <Stack.Screen 
         name="VerEvento" 
-        options={{ headerShown: false }} // Oculta el header de esta pantalla
+        options={{ headerShown: false }}
       >
-        {props => <VerEvento {...props} eventos={eventos} />}
+        {props => <VerEvento {...props} eventos={eventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
       <Stack.Screen 
-        name="CrearEvento" 
-        component={CrearEvento} 
-        options={{ title: 'Modificar Evento' }} 
+        name="CrearEvento"
+        options={{ title: 'Modificar Evento' }}
+      >
+        {props => <CrearEvento {...props} setEventos={setEventos} fetchEventos={fetchEventos} />}
+      </Stack.Screen>
+      <Stack.Screen 
+        name="DetalleEvento"
+        component={DetalleEvento} 
+        options={{ title: 'Detalle del Evento' }} 
       />
+    </Stack.Navigator>
+  );
+}
+
+function MapaStack({ eventos }) {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="VistaMapa"
+        options={{ headerShown: false }}
+      >
+        {props => <Mapa {...props} eventos={eventos} />}
+      </Stack.Screen>
       <Stack.Screen 
         name="DetalleEvento" 
         component={DetalleEvento} 
@@ -47,20 +66,20 @@ export default function App() {
   const [eventos, setEventos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchEventos = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener');
+      const data = await response.json();
+      setEventos(data.data || []);
+    } catch (error) {
+      console.error('Error al obtener eventos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchEventos = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('https://croacky.onrender.com/evento/obtener');
-        const data = await response.json();
-        console.log(data);
-        setEventos(data.data || []);
-      } catch (error) {
-        console.error('Error al obtener eventos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchEventos();
   }, []);
 
@@ -77,44 +96,55 @@ export default function App() {
       <Tab.Navigator
         screenOptions={{
           tabBarActiveTintColor: 'tomato',
-          tabBarTinactiveintColor: 'gray',
+          tabBarInactiveTintColor: 'gray',
         }}>
-        {/* Stack para la pantalla VerEvento */}
         <Tab.Screen 
-          name="VerEventos" options={{ title: 'Mis Eventos', tabBarIcon:({color, size}) => (
-            <Ionicons name = "list" color={color} size={size} /> ), }}
+          name="VerEventos"
+          options={{
+            title: 'Mis Eventos',
+            tabBarIcon:({color, size}) => (
+              <Ionicons name="list" color={color} size={size} /> 
+            ),
+          }}
         >
-          {() => <VerEventosStack eventos={eventos} />}
+          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
         </Tab.Screen>
         <Tab.Screen 
-          name="Archivos" component={Archivos} options={{ 
+          name="Archivos"
+          component={Archivos} 
+          options={{ 
             title: 'Tus archivos',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="folder" color={color} size={size} />
-              ),
-            }} 
-          />
+            ),
+          }} 
+        />
         <Tab.Screen 
-          name="Mapa" component={mapa} options={{ 
+          name="Mapa"
+          options={{
             title: 'Mapa',
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon:({color, size}) => (
               <Ionicons name="map" color={color} size={size} />
-              ),
-            }} 
-          />
+            ),
+          }}
+        >
+          {() => <MapaStack eventos={eventos} />}
+        </Tab.Screen>
         <Tab.Screen 
-          name="notificaciones" component={notificaciones} options={{ 
+          name="notificaciones"
+          component={notificaciones} 
+          options={{
             title: 'Notificaciones',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="notifications" color={color} size={size} />
-              ),
-            }} 
-          />
-          
-        {/* Otra pestaña para la creación de eventos */}
+            ),
+          }} 
+        />
         <Tab.Screen 
-          name="perfil" component={perfil} options={{ 
-            title: 'tu perfil',
+          name="perfil"
+          component={perfil} 
+          options={{
+            title: 'Tu perfil',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="person" color={color} size={size} />
               ),
@@ -138,6 +168,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,

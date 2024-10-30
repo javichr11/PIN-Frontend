@@ -1,22 +1,54 @@
 import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import { useState } from 'react';
-import { FontAwesome } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
-export default function Registro({ navigation }) {
+export default function Registro({ route, navigation }) {
   const [nombre, setNombre] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params) {
+        const { nombre: savedNombre, phone: savedPhone, password: savedPassword } = route.params;
+        if (savedNombre) setNombre(savedNombre);
+        if (savedPhone) setPhone(savedPhone);
+        if (savedPassword) setPassword(savedPassword);
+      }
+    }, [route.params])
+  );
 
   const handleNext = () => {
+    // Validación del campo de Nombre Completo
+    if (!nombre.trim() || nombre.split(" ").length < 2) {
+      Alert.alert("Error", "Por favor, ingresa tu nombre completo (nombre y apellido).");
+      return;
+    }
+
+    // Validación del Número de Móvil (sólo dígitos y longitud de 9 a 12 caracteres)
+    const phoneRegex = /^[0-9]{9,12}$/;
+    if (!phoneRegex.test(phone)) {
+      Alert.alert("Error", "Por favor, ingresa un número de móvil válido.");
+      return;
+    }
+
+    // Validación de la Contraseña (al menos 8 caracteres)
+    if (password.length < 8) {
+      Alert.alert("Error", "La contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    // Validación de confirmación de contraseña (coincidencia)
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Las contraseñas no coinciden.");
+      return;
+    }
+
+    // Si pasa todas las validaciones, procede a la siguiente pantalla
     navigation.navigate('RegistroFoto', { nombre, phone, password });
-    // if (nombre  && phone && password) {
-      
-    // } else {
-    //   alert('Por favor, completa todos los campos');
-    // }
   };
 
   const handleSubmit = async () => {
