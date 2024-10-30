@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
+
+const userID = '10';  
+
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
   const hora = fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -13,38 +16,42 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
-const VerEvento = ({ eventos, navigation }) => {
+const Mapa = ({ eventos, navigation }) => {
   if (eventos.length === 0) {
     return <Text>No hay eventos disponibles.</Text>;
   }
 
-  const confirmarEliminar = (id) => {
+  const unirseAEvento = (id) => {
     Alert.alert(
-      '¿Estás seguro?',
-      '¿Estás seguro de que deseas eliminar el evento?',
+      '¿Quieres unirte al evento?',
+      'Confirma para unirte al evento',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Eliminar evento',
-          onPress: () => eliminarEvento(id),
-          style: 'destructive'
+          text: 'Unirse',
+          onPress: () => inscribirseAEvento(id),
+          style: 'default'
         },
       ],
       { cancelable: true }
     );
   };
 
-  const eliminarEvento = async (id) => {
+  const inscribirseAEvento = async (eventID) => {
     try {
-      const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
-        method: 'DELETE',
+      const response = await fetch('https://croacky.onrender.com/evento/inscribir', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ eventID, userID }),
       });
 
       if (response.ok) {
-        Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
-        // Aquí puedes actualizar la lista de eventos
+        Alert.alert('Éxito', 'Te has unido al evento');
       } else {
-        Alert.alert('Error', 'No se pudo eliminar el evento');
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message || 'No te pudiste unir al evento');
       }
     } catch (error) {
       Alert.alert('Error', `Ocurrió un error: ${error.message}`);
@@ -66,38 +73,27 @@ const VerEvento = ({ eventos, navigation }) => {
             <FontAwesome name="clock-o" size={20} color="gray" />
             <Text style={styles.eventTime}>{hora}</Text>
           </View>
-
           <View style={styles.infoRow}>
             <MaterialIcons name="date-range" size={20} color="gray" />
             <Text style={styles.eventDate}>{fechaFormateada}</Text>
           </View>
-
           <View style={styles.infoRow}>
             <MaterialIcons name="location-on" size={20} color="gray" />
             <Text style={styles.eventLocation}>{item.ubicacion}</Text>
           </View>
-
           <View style={styles.infoRow}>
             <FontAwesome name="users" size={20} color="gray" />
             <Text style={styles.eventAforo}>{`${item.aforo}/25`}</Text>
           </View>
         </View>
 
-        {/* Botones dentro de la tarjeta */}
         <View style={styles.actions}>
           <TouchableOpacity 
-            style={styles.actionButton} 
-            onPress={() => navigation.navigate('CrearEvento', { evento: item })}
-          >
-            <FontAwesome name="refresh" size={24} color="black" />
-            <Text>Modificar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
             style={styles.actionButton}
-            onPress={() => confirmarEliminar(item.id)}
+            onPress={() => unirseAEvento(item.id)}
           >
-            <MaterialIcons name="delete" size={24} color="black" />
-            <Text>Eliminar</Text>
+            <MaterialIcons name="person-add" size={24} color="black" />
+            <Text>Unirse</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -181,4 +177,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VerEvento;
+export default Mapa;
