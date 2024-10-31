@@ -56,7 +56,7 @@ const Mapa = ({ eventos, navigation }) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ eventID, userID }),
+            body: JSON.stringify({ eventID, userID}),
         });
 
         const responseData = await response.json();
