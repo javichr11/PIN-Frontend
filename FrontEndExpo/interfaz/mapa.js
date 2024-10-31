@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, TextInput } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
-const userID = '10'; 
+const userID = '10';
 
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -16,22 +16,7 @@ const formatearFechaHora = (fechaISO) => {
 };
 
 const Mapa = ({ eventos, navigation }) => {
-  const [eventosData, setEventosData] = useState([]);
-
-  const fetchEventos = async () => {
-    try {
-      const response = await fetch('https://croacky.onrender.com/evento/obtener');
-      const data = await response.json();
-      console.log(data);
-      setEventosData(data.data);
-    } catch (error) {
-      console.error("Error al obtener eventos:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchEventos(); 
-  }, []);
+  const [searchText, setSearchText] = useState('');
 
   const unirseAEvento = (id) => {
     Alert.alert(
@@ -51,28 +36,24 @@ const Mapa = ({ eventos, navigation }) => {
 
   const inscribirseAEvento = async (eventID) => {
     try {
-        const response = await fetch('https://croacky.onrender.com/evento/inscribir', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ eventID, userID}),
-        });
+      const response = await fetch('https://croacky.onrender.com/evento/inscribir', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ eventID, userID }),
+      });
 
-        const responseData = await response.json();
-        console.log("Respuesta del backend:", responseData);
-
-        if (response.ok) {
-            Alert.alert('Éxito', 'Te has unido al evento');
-            await fetchEventos();
-        } else {
-            Alert.alert('Error', responseData.message);
-        }
+      if (response.ok) {
+        Alert.alert('Éxito', 'Te has unido al evento');
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message || 'No te pudiste unir al evento');
+      }
     } catch (error) {
-        Alert.alert('Error', `Ocurrió un error: ${error.message}`);
+      Alert.alert('Error', `Ocurrió un error: ${error.message}`);
     }
-};
-
+  };
 
   const renderItem = ({ item }) => {
     const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
@@ -116,24 +97,56 @@ const Mapa = ({ eventos, navigation }) => {
     );
   };
 
+  const filteredEventos = eventos.filter(evento =>
+    evento.nombre.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
+      <View style={styles.searchBarContainer}>
+        <FontAwesome name="search" size={20} color="#8aba86" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Buscar eventos..."
+          placeholderTextColor="#888"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
       <FlatList
-        data={eventosData}
+        data={filteredEventos}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<Text>No hay eventos disponibles.</Text>}
       />
     </View>
   );
 };
 
-// Resto del código de estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: '#EAF2E6',
+  },
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#8aba86',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
+    color: '#000000',
   },
   eventCard: {
     backgroundColor: '#fff',
