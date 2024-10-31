@@ -6,6 +6,8 @@ import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import VerEvento from "./interfaz/VerEvento";
+import registro from "./interfaz/Registro";
+import registroFoto from "./interfaz/RegistroFoto";
 import perfil from "./interfaz/perfil";
 import Archivos from "./interfaz/Archivos";
 import Mapa from "./interfaz/mapa";
@@ -53,6 +55,9 @@ function MapaStack({ eventos }) {
         component={DetalleEvento} 
         options={{ title: 'Detalle del Evento' }} 
       />
+      <Stack.Screen name="Registro"  component={registro} />
+      <Stack.Screen name="RegistroFoto" options={{  headerShown: false }} component={registroFoto} />
+      
     </Stack.Navigator>
   );
 }
@@ -142,9 +147,23 @@ export default function App() {
             title: 'Tu perfil',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="person" color={color} size={size} />
-            ),
-          }} 
-        />
+              ),
+            }} 
+            />
+
+          {/* {¡¡¡REGISTRO!!! 
+          Si lo descomentais lo podeis ver a la derecha del todo de la interfaz} */}
+          {
+          /* {{Prueba para registro}
+          <Tab.Screen 
+          name="registro" component={registro} options={{ 
+            title: 'Registro',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="person" color={color} size={size} />
+              ),
+            }} 
+            />} */
+            }
       </Tab.Navigator>
     </NavigationContainer>
   );
