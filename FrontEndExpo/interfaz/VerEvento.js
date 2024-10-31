@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
@@ -13,12 +13,32 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
-const VerEvento = ({ eventos, navigation }) => {
+const VerEvento = ({ navigation }) => {
+  const [eventos, setEventos] = useState([]);
+
+  const fetchEventos = async () => {
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener'); // Cambia esto por tu endpoint real
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setEventos(data.data);
+      } else {
+        Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+    }
+  };
+  useEffect(() => {
+    fetchEventos();
+  }, []);
   if (eventos.length === 0) {
     return <Text>No hay eventos disponibles.</Text>;
   }
 
   const confirmarEliminar = (id) => {
+    console.log('El id del evento es: ', id)
     Alert.alert(
       '¿Estás seguro?',
       '¿Estás seguro de que deseas eliminar el evento?',
@@ -36,20 +56,22 @@ const VerEvento = ({ eventos, navigation }) => {
 
   const eliminarEvento = async (id) => {
     try {
-      const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
-        method: 'DELETE',
-      });
+        const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
+            method: 'DELETE',
+        });
 
-      if (response.ok) {
-        Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
-        // Aquí puedes actualizar la lista de eventos
-      } else {
-        Alert.alert('Error', 'No se pudo eliminar el evento');
-      }
+        if (response.ok) {
+            Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
+            await fetchEventos();
+        } else {
+            const errorData = await response.json(); // Obtén detalles del error
+            Alert.alert('Error', errorData.message);
+        }
     } catch (error) {
-      Alert.alert('Error', `Ocurrió un error: ${error.message}`);
+        Alert.alert('Error', `Ocurrió un error: ${error.message}`);
     }
   };
+
 
   const renderItem = ({ item }) => {
     const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
@@ -79,7 +101,7 @@ const VerEvento = ({ eventos, navigation }) => {
 
           <View style={styles.infoRow}>
             <FontAwesome name="users" size={20} color="gray" />
-            <Text style={styles.eventAforo}>{`${item.aforo}/25`}</Text>
+            <Text style={styles.eventAforo}>{`${item.inscritos}/${item.aforo}`}</Text>
           </View>
         </View>
 

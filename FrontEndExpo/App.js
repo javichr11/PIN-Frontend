@@ -43,7 +43,7 @@ function MapaStack({ eventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Mapa"
+        name="VistaMapa"
         options={{ headerShown: false }}
       >
         {props => <Mapa {...props} eventos={eventos} />}

@@ -23,7 +23,7 @@ const Mapa = ({ eventos, navigation }) => {
       const response = await fetch('https://croacky.onrender.com/evento/obtener');
       const data = await response.json();
       console.log(data);
-      setEventosData(data);
+      setEventosData(data.data);
     } catch (error) {
       console.error("Error al obtener eventos:", error);
     }
@@ -51,25 +51,28 @@ const Mapa = ({ eventos, navigation }) => {
 
   const inscribirseAEvento = async (eventID) => {
     try {
-      const response = await fetch('https://croacky.onrender.com/evento/inscribir', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ eventID, userID }),
-      });
+        const response = await fetch('https://croacky.onrender.com/evento/inscribir', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ eventID, userID }),
+        });
 
-      if (response.ok) {
-        Alert.alert('Éxito', 'Te has unido al evento');
-        await fetchEventos();
-      } else {
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.message || 'No te pudiste unir al evento');
-      }
+        const responseData = await response.json();
+        console.log("Respuesta del backend:", responseData);
+
+        if (response.ok) {
+            Alert.alert('Éxito', 'Te has unido al evento');
+            await fetchEventos();
+        } else {
+            Alert.alert('Error', responseData.message);
+        }
     } catch (error) {
-      Alert.alert('Error', `Ocurrió un error: ${error.message}`);
+        Alert.alert('Error', `Ocurrió un error: ${error.message}`);
     }
-  };
+};
+
 
   const renderItem = ({ item }) => {
     const { hora, fechaFormateada } = formatearFechaHora(item.fecha);

@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, Pla
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
 
 const CrearEvento = () => {
   const [titulo, setTitulo] = useState('');
@@ -20,6 +21,7 @@ const CrearEvento = () => {
   const [usuario_id, setUsuarioId] = useState('');
   const [duracion, setDuracion] = useState('1');
   const [mostrarDuracionPicker, setMostrarDuracionPicker] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const idObtenido = 10; // Simulación de usuario
@@ -32,6 +34,23 @@ const CrearEvento = () => {
     nuevaFecha.setMinutes(hora.getMinutes());
     return nuevaFecha.toISOString();
   };
+
+  const [eventos, setEventos] = useState([]); // Estado para almacenar la lista de eventos
+
+const fetchEventos = async () => {
+  try {
+    const response = await fetch('https://croacky.onrender.com/evento/obtener'); // Cambia esto por tu endpoint real
+    const data = await response.json();
+
+    if (response.ok) {
+      setEventos(data);
+    } else {
+      Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+    }
+  } catch (error) {
+    Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+  }
+};
 
   const handleCrearEvento = async () => {
     const fechaISO = combinarFechaHora();
@@ -61,26 +80,11 @@ const CrearEvento = () => {
         body: formData,
         headers: { 'Accept': 'application/json' },
       });
-
-      const textResponse = await response.text();
-      const responseData = JSON.parse(textResponse);
-
+  
+      const responseData = await response.json();
+  
       if (response.ok) {
         Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente.');
-        setUsuarioId('');
-        setTitulo('');
-        setDescripcion('');
-        setTematica('');
-        setLocalizacion('');
-        setAforo('');
-        setImage(null);
-        setFecha(new Date());
-        setHora(new Date());
-
-
-        await fetchEventos(); // Actualiza la lista de eventos en la pantalla principal
-        navigation.goBack();
-
       } else {
         Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
       }
