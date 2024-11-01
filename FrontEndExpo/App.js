@@ -37,6 +37,8 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
         component={DetalleEvento} 
         options={{ title: 'Detalle del Evento' }} 
       />
+      <Stack.Screen name="Registro"  component={registro} />
+      <Stack.Screen name="RegistroFoto" options={{  headerShown: false }} component={registroFoto} />
     </Stack.Navigator>
   );
 }
@@ -55,8 +57,7 @@ function MapaStack({ eventos }) {
         component={DetalleEvento} 
         options={{ title: 'Detalle del Evento' }} 
       />
-      <Stack.Screen name="Registro"  component={registro} />
-      <Stack.Screen name="RegistroFoto" options={{  headerShown: false }} component={registroFoto} />
+
       
     </Stack.Navigator>
   );
