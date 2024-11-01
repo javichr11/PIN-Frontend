@@ -84,7 +84,8 @@ const fetchEventos = async () => {
       const responseData = await response.json();
   
       if (response.ok) {
-        Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente.');
+        Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente', [{text: 'OK', onPress: ()=> navigation.navigate('VerEvento', {refresh:true})}]
+      );
       } else {
         Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
       }

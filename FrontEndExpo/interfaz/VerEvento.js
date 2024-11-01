@@ -13,12 +13,12 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
-const VerEvento = ({ navigation }) => {
+const VerEvento = ({ navigation, route }) => {
   const [eventos, setEventos] = useState([]);
 
   const fetchEventos = async () => {
     try {
-      const response = await fetch('https://croacky.onrender.com/evento/obtener'); // Cambia esto por tu endpoint real
+      const response = await fetch('https://croacky.onrender.com/evento/obtener'); 
       const data = await response.json();
       console.log(data);
       if (response.ok) {
@@ -32,7 +32,10 @@ const VerEvento = ({ navigation }) => {
   };
   useEffect(() => {
     fetchEventos();
-  }, []);
+
+    if(route.params?.refresh){fetchEventos();}
+
+  }, [route.params]);
   if (eventos.length === 0) {
     return <Text>No hay eventos disponibles.</Text>;
   }
