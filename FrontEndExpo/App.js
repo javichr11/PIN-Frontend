@@ -120,7 +120,7 @@ export default function App() {
           }} 
         />
         <Tab.Screen 
-          name="Mapa"
+          name="verMapa"
           options={{
             title: 'Mapa',
             tabBarIcon:({color, size}) => (
