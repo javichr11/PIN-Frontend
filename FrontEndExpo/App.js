@@ -151,10 +151,8 @@ export default function App() {
             }} 
             />
 
-          {/* {¡¡¡REGISTRO!!! 
-          Si lo descomentais lo podeis ver a la derecha del todo de la interfaz} */}
-          {
-          /* {{Prueba para registro}
+          {/*  REGISTRO  */}
+          
           <Tab.Screen 
           name="registro" component={registro} options={{ 
             title: 'Registro',
@@ -162,8 +160,8 @@ export default function App() {
               <Ionicons name="person" color={color} size={size} />
               ),
             }} 
-            />} */
-            }
+            />
+            
       </Tab.Navigator>
     </NavigationContainer>
   );
