@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, TextInput } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
@@ -15,8 +15,35 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
-const Mapa = ({ eventos, navigation }) => {
+const Mapa = ({ eventos, route }) => {
   const [searchText, setSearchText] = useState('');
+  const [nuevosEventos, setEventos] = useState([]);
+
+  const fetchEventos = async () => {
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener'); 
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setEventos(data.data);
+      } else {
+        Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchEventos();
+
+    if(route.params?.refresh){fetchEventos();}
+
+  }, [route.params]);
+  if (nuevosEventos.length === 0) {
+    return <Text>No hay eventos disponibles.</Text>;
+  }
+  
 
   const unirseAEvento = (id) => {
     Alert.alert(
@@ -43,12 +70,16 @@ const Mapa = ({ eventos, navigation }) => {
         },
         body: JSON.stringify({ eventID, userID }),
       });
-
+      
+      console.log("Status Code:", response.status);
+      const responseData = await response.json();
+      console.log("Response Data:", responseData);
+      
       if (response.ok) {
         Alert.alert('Éxito', 'Te has unido al evento');
+        fetchEventos();
       } else {
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.message || 'No te pudiste unir al evento');
+        Alert.alert('Error', responseData.message || 'No te pudiste unir al evento');
       }
     } catch (error) {
       Alert.alert('Error', `Ocurrió un error: ${error.message}`);
@@ -97,7 +128,7 @@ const Mapa = ({ eventos, navigation }) => {
     );
   };
 
-  const filteredEventos = eventos.filter(evento =>
+  const filteredEventos = nuevosEventos.filter(evento =>
     evento.nombre.toLowerCase().includes(searchText.toLowerCase())
   );
 
