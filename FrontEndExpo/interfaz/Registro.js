@@ -54,7 +54,7 @@ export default function Registro({ route, navigation }) {
   const handleSubmit = async () => {
     console.log('Enviando...');
     try {
-      const response = await fetch('https://pin-backend-fe7p.onrender.com/usuario', {
+      const response = await fetch('https://pin-backend-fe7p.onrender.com/usuario/registrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
