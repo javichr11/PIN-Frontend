@@ -22,61 +22,27 @@ export default function Registro({ route, navigation }) {
   );
 
   const handleNext = () => {
-    // Validación del campo de Nombre Completo
     if (!nombre.trim() || nombre.split(" ").length < 2) {
       Alert.alert("Error", "Por favor, ingresa tu nombre completo (nombre y apellido).");
       return;
     }
 
-    // Validación del Número de Móvil (sólo dígitos y longitud de 9 a 12 caracteres)
     const phoneRegex = /^[0-9]{9,12}$/;
     if (!phoneRegex.test(phone)) {
       Alert.alert("Error", "Por favor, ingresa un número de móvil válido.");
       return;
     }
 
-    // Validación de la Contraseña (al menos 8 caracteres)
     if (password.length < 8) {
       Alert.alert("Error", "La contraseña debe tener al menos 8 caracteres.");
       return;
     }
 
-    // Validación de confirmación de contraseña (coincidencia)
     if (password !== confirmPassword) {
       Alert.alert("Error", "Las contraseñas no coinciden.");
       return;
     }
-
-    // Si pasa todas las validaciones, procede a la siguiente pantalla
     navigation.navigate('RegistroFoto', { nombre, phone, password });
-  };
-
-  const handleSubmit = async () => {
-    console.log('Enviando...');
-    try {
-      const response = await fetch('https://pin-backend-fe7p.onrender.com/usuario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre,
-          edad,
-        }),
-      });
-
-      const responseData = response.status;
-
-      if (response.ok) {
-        Alert.alert('¡Bienvenido!', `Te has registrado satisfactoriamente. ${responseData}`);
-        setNombre('');
-        setEdad('');
-      } else {
-        Alert.alert('Error', `No te has podido registrar satisfactoriamente. ${responseData}`);
-      }
-    } catch (error) {
-      Alert.alert('Error', `Ha ocurrido un error: ${error.message}`);
-    }
   };
 
   return (
@@ -96,13 +62,6 @@ export default function Registro({ route, navigation }) {
         value={nombre}
         onChangeText={setNombre}
       />
-      
-      {/**<TextInput
-        style={styles.input}
-        placeholder="Nombre de Usuario"
-        value={nombreUsuario}
-        onChangeText={setNombreUsuario}
-      />**/}
 
       <Text style={styles.label}>Número de Móvil</Text>
 
