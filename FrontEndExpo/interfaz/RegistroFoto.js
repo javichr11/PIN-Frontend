@@ -18,7 +18,7 @@ export default function RegistroFoto({ route, navigation }) {
 
     const result = await ImagePicker.launchImageLibraryAsync();
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setFoto(result.assets[0].uri);
     }
   };
 
