@@ -10,21 +10,15 @@ export default function RegistroFoto({ route, navigation }) {
 
   
   const seleccionarFoto = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert("Permiso denegado", "Se requiere permiso para acceder a las fotos.");
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert('Se requiere permiso para acceder a la galería.');
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
+    const result = await ImagePicker.launchImageLibraryAsync();
     if (!result.canceled) {
-      setFoto(result.assets[0].uri);
+      setImage(result.assets[0].uri);
     }
   };
 
