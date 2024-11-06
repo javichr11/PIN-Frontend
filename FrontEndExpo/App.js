@@ -6,34 +6,58 @@ import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import VerEvento from "./interfaz/VerEvento";
+import registro from "./interfaz/Registro";
+import registroFoto from "./interfaz/RegistroFoto";
 import perfil from "./interfaz/perfil";
 import Archivos from "./interfaz/Archivos";
-import mapa from "./interfaz/mapa";
+import Mapa from "./interfaz/mapa";
 import notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function VerEventosStack({ eventos }) {
-  return(
+function VerEventosStack({ eventos, setEventos, fetchEventos }) {
+  return (
     <Stack.Navigator>
       <Stack.Screen 
         name="VerEvento" 
-        options={{ headerShown: false }} // Oculta el header de esta pantalla
+        options={{ headerShown: false }}
       >
-        {props => <VerEvento {...props} eventos={eventos} />}
+        {props => <VerEvento {...props} eventos={eventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
       <Stack.Screen 
-        name="CrearEvento" 
-        component={CrearEvento} 
-        options={{ title: 'Modificar Evento' }} 
+        name="CrearEvento"
+        options={{ title: 'Modificar Evento' }}
+      >
+        {props => <CrearEvento {...props} setEventos={setEventos} fetchEventos={fetchEventos} />}
+      </Stack.Screen>
+      <Stack.Screen 
+        name="DetalleEvento"
+        component={DetalleEvento} 
+        options={{ title: 'Detalle del Evento' }} 
       />
+      <Stack.Screen name="Registro"  component={registro} />
+      <Stack.Screen name="RegistroFoto" options={{  headerShown: false }} component={registroFoto} />
+    </Stack.Navigator>
+  );
+}
+
+function MapaStack({ eventos }) {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="VistaMapa"
+        options={{ headerShown: false }}
+      >
+        {props => <Mapa {...props} eventos={eventos} />}
+      </Stack.Screen>
       <Stack.Screen 
         name="DetalleEvento" 
         component={DetalleEvento} 
         options={{ title: 'Detalle del Evento' }} 
       />
+
       
     </Stack.Navigator>
   );
@@ -41,75 +65,109 @@ function VerEventosStack({ eventos }) {
 
 export default function App() {
   const [eventos, setEventos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Función para obtener eventos desde la base de datos
+  const fetchEventos = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener');
+      const data = await response.json();
+      setEventos(data.data || []);
+    } catch (error) {
+      console.error('Error al obtener eventos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchEventos = async () => {
-      try {
-        const response = await fetch('https://croacky.onrender.com/evento/obtener');
-        const data = await response.json();
-        console.log(data);
-        // Extraemos los eventos desde 'data.data'
-        setEventos(data.data); 
-      } catch (error) {
-        console.error('Error al obtener eventos:', error);
-      }
-    };
     fetchEventos();
   }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
           tabBarActiveTintColor: 'tomato',
-          tabBarTinactiveintColor: 'gray',
+          tabBarInactiveTintColor: 'gray',
         }}>
-        {/* Stack para la pantalla VerEvento */}
         <Tab.Screen 
-          name="VerEventos" options={{ title: 'Mis Eventos', tabBarIcon:({color, size}) => (
-            <Ionicons name = "list" color={color} size={size} /> ), }}
+          name="VerEventos"
+          options={{
+            title: 'Mis Eventos',
+            tabBarIcon:({color, size}) => (
+              <Ionicons name="list" color={color} size={size} /> 
+            ),
+          }}
         >
-          {() => <VerEventosStack eventos={eventos} />}
+          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
         </Tab.Screen>
         <Tab.Screen 
-          name="Archivos" component={Archivos} options={{ 
+          name="Archivos"
+          component={Archivos} 
+          options={{ 
             title: 'Tus archivos',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="folder" color={color} size={size} />
-              ),
-            }} 
-          />
+            ),
+          }} 
+        />
         <Tab.Screen 
-          name="Mapa" component={mapa} options={{ 
+          name="verMapa"
+          options={{
             title: 'Mapa',
-            tabBarIcon: ({ color, size }) => (
+            tabBarIcon:({color, size}) => (
               <Ionicons name="map" color={color} size={size} />
-              ),
-            }} 
-          />
+            ),
+          }}
+        >
+          {() => <MapaStack eventos={eventos} />}
+        </Tab.Screen>
         <Tab.Screen 
-          name="notificaciones" component={notificaciones} options={{ 
+          name="notificaciones"
+          component={notificaciones} 
+          options={{
             title: 'Notificaciones',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="notifications" color={color} size={size} />
-              ),
-            }} 
-          />
-          
-        {/* Otra pestaña para la creación de eventos */}
+            ),
+          }} 
+        />
         <Tab.Screen 
-          name="perfil" component={perfil} options={{ 
-            title: 'tu perfil',
+          name="perfil"
+          component={perfil} 
+          options={{
+            title: 'Tu perfil',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="person" color={color} size={size} />
               ),
             }} 
             />
+
+          {/*  REGISTRO  */}
+          
+          <Tab.Screen 
+          name="registro" component={registro} options={{ 
+            title: 'Registro',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="person" color={color} size={size} />
+              ),
+            }} 
+            />
+            
       </Tab.Navigator>
     </NavigationContainer>
   );
 }
+
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
