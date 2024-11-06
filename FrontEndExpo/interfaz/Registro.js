@@ -6,14 +6,14 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function Registro({ route, navigation }) {
   const [nombre, setNombre] = useState('');
-  const [phone, setPhone] = useState('');
+  const [movil, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   useFocusEffect(
     React.useCallback(() => {
       if (route.params) {
-        const { nombre: savedNombre, phone: savedPhone, password: savedPassword } = route.params;
+        const { nombre: savedNombre, movil: savedPhone, password: savedPassword } = route.params;
         if (savedNombre) setNombre(savedNombre);
         if (savedPhone) setPhone(savedPhone);
         if (savedPassword) setPassword(savedPassword);
@@ -28,7 +28,7 @@ export default function Registro({ route, navigation }) {
     }
 
     const phoneRegex = /^[0-9]{9,12}$/;
-    if (!phoneRegex.test(phone)) {
+    if (!phoneRegex.test(movil)) {
       Alert.alert("Error", "Por favor, ingresa un número de móvil válido.");
       return;
     }
@@ -42,7 +42,7 @@ export default function Registro({ route, navigation }) {
       Alert.alert("Error", "Las contraseñas no coinciden.");
       return;
     }
-    navigation.navigate('RegistroFoto', { nombre, phone, password });
+    navigation.navigate('RegistroFoto', { nombre, movil, password });
   };
 
   return (
@@ -68,7 +68,7 @@ export default function Registro({ route, navigation }) {
       <TextInput
         style={styles.input}
         keyboardType="numeric"
-        value={phone}
+        value={movil}
         onChangeText={setPhone}
       />    
 

@@ -6,7 +6,7 @@ export default function RegistroFoto({ route, navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [edad, setEdad] = useState(null);
   const [foto, setFoto] = useState(null);
-  const { nombre, phone, password } = route.params;
+  const { nombre, movil, password } = route.params;
 
   
   const seleccionarFoto = async () => {
@@ -35,7 +35,7 @@ export default function RegistroFoto({ route, navigation }) {
     formData.append('edad', parseInt(edad));
     formData.append('password', password);
     formData.append('nombre_usuario', nombreUsuario);
-    formData.append('movil', parseInt(phone));
+    formData.append('movil', parseInt(movil));
     if (foto) {
       formData.append('foto', {
         uri: foto,
@@ -64,7 +64,7 @@ export default function RegistroFoto({ route, navigation }) {
   };
 
   handleReturn = () => {
-    navigation.navigate('Registro',{nombre, phone, password});
+    navigation.navigate('Registro',{nombre, movil, password});
 
   }
 
