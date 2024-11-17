@@ -13,6 +13,7 @@ import Archivos from "./interfaz/Archivos";
 import Mapa from "./interfaz/mapa";
 import notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
+import Preferencias from "./interfaz/Preferencias";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -112,7 +113,7 @@ export default function App() {
         </Tab.Screen>
         <Tab.Screen 
           name="Archivos"
-          component={Archivos} 
+          component={ Preferencias} 
           options={{ 
             title: 'Tus archivos',
             tabBarIcon: ({ color, size }) => (
