@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 
 const Preferencias = () => {
   const [selectedPreferences, setSelectedPreferences] = useState([]);
@@ -9,6 +9,42 @@ const Preferencias = () => {
       setSelectedPreferences(selectedPreferences.filter((item) => item !== preference));
     } else {
       setSelectedPreferences([...selectedPreferences, preference]);
+    }
+  };
+
+  const handleSavePreferences = async () => {
+    if (selectedPreferences.length === 0) {
+      Alert.alert("Aviso", "Por favor, selecciona al menos una preferencia.");
+      return;
+    }
+
+    try {
+      // Crear un FormData
+      const formData = new FormData();
+      formData.append("preferences", JSON.stringify(selectedPreferences)); // Convertir las preferencias en un JSON string
+
+      // Realizar la solicitud al backend
+      const response = await fetch("https://tu-backend-api.com/preferencias", {
+        method: "POST",
+        headers: {
+          // Puedes usar este header si trabajas con otros datos además del FormData
+          // No incluyas 'Content-Type' al enviar un FormData, ya que el navegador lo configura automáticamente.
+          Accept: "application/json",
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        Alert.alert("¡Éxito!", "Tus preferencias han sido guardadas en el servidor.");
+        console.log("Respuesta del servidor:", data);
+      } else {
+        Alert.alert("Error", "No se pudo guardar tus preferencias. Inténtalo más tarde.");
+        console.error("Error en la respuesta:", response.status);
+      }
+    } catch (error) {
+      console.error("Error al enviar las preferencias:", error);
+      Alert.alert("Error", "Hubo un problema al conectarse con el servidor.");
     }
   };
 
@@ -49,11 +85,11 @@ const Preferencias = () => {
           </TouchableOpacity>
         ))}
       </View>
- 
+
       {/* Aforo */}
       <Text style={styles.sectionTitle}>Aforo:</Text>
       <View style={styles.optionsContainer}>
-        {['-10', '10-15', '16-25', '+25'].map((capacity) => (
+        {['-10', '10-15', '16-25'].map((capacity) => (
           <TouchableOpacity
             key={capacity}
             style={[
@@ -83,6 +119,11 @@ const Preferencias = () => {
           </TouchableOpacity>
         ))}
       </View>
+
+      {/* Botón para guardar */}
+      <TouchableOpacity style={styles.saveButton} onPress={handleSavePreferences}>
+        <Text style={styles.saveButtonText}>Guardar preferencias</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -126,6 +167,18 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     fontWeight: '500',
+  },
+  saveButton: {
+    marginTop: 20,
+    backgroundColor: '#4CAF50',
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
