@@ -54,6 +54,8 @@ export default function RegistroFoto({ route, navigation }) {
 
     if(response.ok){
       Alert.alert('¡Éxito!', 'Usuario registrado satisfactoriamente');
+      //Redirige a preferencias
+      navigation.navigate('Preferencias', { nombreUsuario });
     }else {
       Alert.alert('Error', `No se pudo registrar el usuario: ${responseData.message}`);
     }

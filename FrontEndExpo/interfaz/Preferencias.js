@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 
+
 const Preferencias = () => {
   const [selectedPreferences, setSelectedPreferences] = useState([]);
 
@@ -17,23 +18,28 @@ const Preferencias = () => {
       Alert.alert("Aviso", "Por favor, selecciona al menos una preferencia.");
       return;
     }
-
+  
     try {
-      // Crear un FormData
-      const formData = new FormData();
-      formData.append("preferences", JSON.stringify(selectedPreferences)); // Convertir las preferencias en un JSON string
-
+      // Crear el objeto de preferencias en el formato esperado
+      const preferences = {
+        userID: '32', // Agregar el ID del usuario
+        // Iterar sobre las preferencias seleccionadas y asignarles un valor de `true`
+        ...selectedPreferences.reduce((acc, preference) => {
+          acc[preference] = true; // Asignamos true a cada preferencia seleccionada
+          return acc;
+        }, {})
+      };
+      console.log(preferences);  // Ver el objeto antes de enviarlo
+  
       // Realizar la solicitud al backend
-      const response = await fetch("https://tu-backend-api.com/preferencias", {
+      const response = await fetch("https://croacky.onrender.com/usuario/preferencias", {
         method: "POST",
         headers: {
-          // Puedes usar este header si trabajas con otros datos además del FormData
-          // No incluyas 'Content-Type' al enviar un FormData, ya que el navegador lo configura automáticamente.
-          Accept: "application/json",
+          "Content-Type": "application/json", // Enviar como JSON
         },
-        body: formData,
+        body: JSON.stringify(preferences), // Enviar como JSON
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         Alert.alert("¡Éxito!", "Tus preferencias han sido guardadas en el servidor.");
@@ -47,6 +53,7 @@ const Preferencias = () => {
       Alert.alert("Error", "Hubo un problema al conectarse con el servidor.");
     }
   };
+  
 
   return (
     <ScrollView style={styles.container}>
@@ -89,7 +96,7 @@ const Preferencias = () => {
       {/* Aforo */}
       <Text style={styles.sectionTitle}>Aforo:</Text>
       <View style={styles.optionsContainer}>
-        {['-10', '10-15', '16-25'].map((capacity) => (
+        {['-5', '-10', '-15', '-25'].map((capacity) => (
           <TouchableOpacity
             key={capacity}
             style={[

@@ -40,9 +40,15 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
       />
       <Stack.Screen name="Registro"  component={registro} />
       <Stack.Screen name="RegistroFoto" options={{  headerShown: false }} component={registroFoto} />
+      <Stack.Screen 
+        name="Preferencias" 
+        component={Preferencias}  
+        options={{ headerShown: false}}
+      />
     </Stack.Navigator>
   );
 }
+
 
 function MapaStack({ eventos }) {
   return (
@@ -113,7 +119,7 @@ export default function App() {
         </Tab.Screen>
         <Tab.Screen 
           name="Archivos"
-          component={ Preferencias} 
+          component={Archivos} 
           options={{ 
             title: 'Tus archivos',
             tabBarIcon: ({ color, size }) => (
