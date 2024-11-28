@@ -197,7 +197,7 @@ const fetchEventos = async () => {
             placeholder="Localización"
           />
 
-          <Button title="Crear Evento" onPress={handleCrearEvento} color="#4CAF50" />
+          <Button title="Crear Evento" onPress={fetchEventos} color="#4CAF50" />
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
