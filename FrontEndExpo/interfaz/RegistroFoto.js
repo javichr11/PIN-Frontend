@@ -6,92 +6,65 @@ export default function RegistroFoto({ route, navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [edad, setEdad] = useState(null);
   const [foto, setFoto] = useState(null);
-  const { nombre, phone, password } = route.params; // Recibe los datos de la pantalla anterior
+  const { nombre, movil, password } = route.params;
 
   
-
-  // Función para abrir la galería o la cámara
-  // Función para pedir permisos y abrir la galería
   const seleccionarFoto = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert("Permiso denegado", "Se requiere permiso para acceder a las fotos.");
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert('Se requiere permiso para acceder a la galería.');
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    let uri = result.assets[0].uri
+    const result = await ImagePicker.launchImageLibraryAsync();
     if (!result.canceled) {
-      console.log("URI de la imagen seleccionada:", uri);
-      setFoto(uri); // Guarda la URI de la imagen seleccionada
+      setFoto(result.assets[0].uri);
     }
   };
 
-  const handleSubmit = () => {
-    if (nombreUsuario === '') {
-      Alert.alert('Error', 'Por favor ingresa un nombre de usuario correcto.');
-      return;
-    }
-    if (!edad || edad>100 || edad<1){
-      Alert.alert('Error', 'Por favor ingresa una edad correcta');
-      return;
-    }
-    if (!foto){
-      Alert.alert('Error', 'Por favor ingresa una foto');
+  const handleSubmit = async () => {
+    console.log('Enviando datos de registro...');
+
+    if(edad === null){
+      Alert.alert('Error', 'Por favor, ingresa tu edad.');
       return;
     }
 
-    handleCrearEvento()
-    // Alert.alert('Registro Completo', `Usuario ${nombreUsuario} registrado con foto.
-    //   Nombre: ${nombre}, Contraseña: ${password}, Phone: ${phone}`);
-  };
-
-  const handleCrearEvento = async () => {
     const formData = new FormData();
     formData.append('nombre', nombre);
-    formData.append('edad', edad);
+    formData.append('edad', parseInt(edad));
     formData.append('password', password);
-    formData.append('movil', phone)
     formData.append('nombre_usuario', nombreUsuario);
-    formData.append('foto', {
+    formData.append('movil', parseInt(movil));
+    if (foto) {
+      formData.append('foto', {
         uri: foto,
         type: 'image/jpeg',
-        name: 'perfil.jpg',
+        name: 'usuario.jpg',
       });
-    
-
-    try {
-      const response = await fetch('https://croacky.onrender.com/usuario/crear', {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' },
-      });
-
-      const textResponse = await response.text();
-      const responseData = JSON.parse(textResponse);
-
-      if (response.ok) {
-        Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente.');
-        // Resetea el formulario
-        setNombreUsuario('');
-        setEdad(null);
-        setFoto(null);     
-      } else {
-        Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
-      }
-    } catch (error) {
-      Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
     }
+    try{
+    const response = await fetch('https://croacky.onrender.com/usuario/registrar', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' },
+    });
+
+    const responseData = await response.json();
+
+    if(response.ok){
+      Alert.alert('¡Éxito!', 'Usuario registrado satisfactoriamente');
+    }else {
+      Alert.alert('Error', `No se pudo registrar el usuario: ${responseData.message}`);
+    }
+
+  }catch(error){
+    Alert.alert('Error', `Ocurrió un error al registrar el usuario: ${error.message}`);
+  }
   };
 
   handleReturn = () => {
-    navigation.navigate('Registro',{nombre, phone, password});
+    navigation.navigate('Registro',{nombre, movil, password});
 
   }
 

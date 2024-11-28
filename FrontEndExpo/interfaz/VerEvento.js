@@ -20,7 +20,6 @@ const VerEvento = ({ navigation, route }) => {
     try {
       const response = await fetch('https://croacky.onrender.com/evento/obtener'); 
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
         setEventos(data.data);
       } else {
@@ -39,6 +38,7 @@ const VerEvento = ({ navigation, route }) => {
   if (eventos.length === 0) {
     return <Text>No hay eventos disponibles.</Text>;
   }
+
 
   const confirmarEliminar = (id) => {
     console.log('El id del evento es: ', id)
@@ -80,52 +80,54 @@ const VerEvento = ({ navigation, route }) => {
     const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
 
     return (
-      <View style={styles.eventCard}>
-        <Image
-          source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
-          style={styles.eventImage}
-        />
-        <View style={styles.eventInfo}>
-          <Text style={styles.eventTitle}>{item.nombre}</Text>
-          <View style={styles.infoRow}>
-            <FontAwesome name="clock-o" size={20} color="gray" />
-            <Text style={styles.eventTime}>{hora}</Text>
+      <TouchableOpacity onPress={() => navigation.navigate ('DetalleEvento', {evento: item})}>
+        <View style={styles.eventCard}>
+          <Image
+            source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
+            style={styles.eventImage}
+          />
+          <View style={styles.eventInfo}>
+            <Text style={styles.eventTitle}>{item.nombre}</Text>
+            <View style={styles.infoRow}>
+              <FontAwesome name="clock-o" size={20} color="gray" />
+              <Text style={styles.eventTime}>{hora}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <MaterialIcons name="date-range" size={20} color="gray" />
+              <Text style={styles.eventDate}>{fechaFormateada}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <MaterialIcons name="location-on" size={20} color="gray" />
+              <Text style={styles.eventLocation}>{item.ubicacion}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <FontAwesome name="users" size={20} color="gray" />
+              <Text style={styles.eventAforo}>{`${item.inscritos}/${item.aforo}`}</Text>
+            </View>
           </View>
 
-          <View style={styles.infoRow}>
-            <MaterialIcons name="date-range" size={20} color="gray" />
-            <Text style={styles.eventDate}>{fechaFormateada}</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <MaterialIcons name="location-on" size={20} color="gray" />
-            <Text style={styles.eventLocation}>{item.ubicacion}</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <FontAwesome name="users" size={20} color="gray" />
-            <Text style={styles.eventAforo}>{`${item.inscritos}/${item.aforo}`}</Text>
+          {/* Botones dentro de la tarjeta */}
+          <View style={styles.actions}>
+            <TouchableOpacity 
+              style={styles.actionButton} 
+              onPress={() => navigation.navigate('CrearEvento', { evento: item })}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+              <Text>Modificar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => confirmarEliminar(item.id)}
+            >
+              <MaterialIcons name="delete" size={24} color="black" />
+              <Text>Eliminar</Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-        {/* Botones dentro de la tarjeta */}
-        <View style={styles.actions}>
-          <TouchableOpacity 
-            style={styles.actionButton} 
-            onPress={() => navigation.navigate('CrearEvento', { evento: item })}
-          >
-            <FontAwesome name="refresh" size={24} color="black" />
-            <Text>Modificar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.actionButton}
-            onPress={() => confirmarEliminar(item.id)}
-          >
-            <MaterialIcons name="delete" size={24} color="black" />
-            <Text>Eliminar</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

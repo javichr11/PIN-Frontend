@@ -52,47 +52,6 @@ const fetchEventos = async () => {
   }
 };
 
-  const handleCrearEvento = async () => {
-    const fechaISO = combinarFechaHora();
-    const formData = new FormData();
-    formData.append('usuario_id', usuario_id);
-    formData.append('nombre', titulo);
-    formData.append('descripcion', descripcion);
-    formData.append('tematica', tematica);
-    formData.append('ubicacion', localizacion);
-    formData.append('aforo', parseInt(aforo));
-    formData.append('fecha', fechaISO);
-    formData.append('duracion', `${duracion} hours`);
-
-    if (image) {
-      formData.append('foto', {
-        uri: image,
-        type: 'image/jpeg',
-        name: 'evento.jpg',
-      });
-    }
-
-    formData.append('creado_en', new Date().toISOString());
-
-    try {
-      const response = await fetch('https://croacky.onrender.com/evento/crear', {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' },
-      });
-  
-      const responseData = await response.json();
-  
-      if (response.ok) {
-        Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente', [{text: 'OK', onPress: ()=> navigation.navigate('VerEvento', {refresh:true})}]
-      );
-      } else {
-        Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
-      }
-    } catch (error) {
-      Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
-    }
-  };
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -238,7 +197,7 @@ const fetchEventos = async () => {
             placeholder="Localización"
           />
 
-          <Button title="Crear Evento" onPress={handleCrearEvento} color="#4CAF50" />
+          <Button title="Crear Evento" onPress={fetchEventos} color="#4CAF50" />
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
