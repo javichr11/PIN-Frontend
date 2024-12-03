@@ -42,7 +42,6 @@ export default function Registro({ route, navigation }) {
       Alert.alert("Error", "Las contraseñas no coinciden.");
       return;
     }
-<<<<<<< HEAD
 
     // Si pasa todas las validaciones, procede a la siguiente pantalla
     navigation.navigate('RegistroFoto', { nombre, phone, password });
@@ -74,9 +73,6 @@ export default function Registro({ route, navigation }) {
     } catch (error) {
       Alert.alert('Error', `Ha ocurrido un error: ${error.message}`);
     }
-=======
-    navigation.navigate('RegistroFoto', { nombre, movil, password });
->>>>>>> main
   };
 
   return (
