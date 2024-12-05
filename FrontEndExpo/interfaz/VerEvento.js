@@ -67,7 +67,7 @@ const VerEvento = ({ navigation, route }) => {
             Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
             await fetchEventos();
         } else {
-            const errorData = await response.json(); // Obtén detalles del error
+            const errorData = await response.json();
             Alert.alert('Error', errorData.message);
         }
     } catch (error) {

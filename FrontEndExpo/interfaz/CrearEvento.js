@@ -35,22 +35,66 @@ const CrearEvento = () => {
     return nuevaFecha.toISOString();
   };
 
-  const [eventos, setEventos] = useState([]); // Estado para almacenar la lista de eventos
+  const [eventos, setEventos] = useState([]); 
 
-const fetchEventos = async () => {
-  try {
-    const response = await fetch('https://croacky.onrender.com/evento/obtener'); // Cambia esto por tu endpoint real
-    const data = await response.json();
+  const fetchEventos = async () => {
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener'); 
+      const data = await response.json();
 
-    if (response.ok) {
-      setEventos(data);
-    } else {
-      Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+      if (response.ok) {
+        setEventos(data);
+      } else {
+        Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
     }
-  } catch (error) {
-    Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
-  }
-};
+  };
+
+  const createEvent = async () =>{
+      const formData = new FormData();
+  
+      formData.append('nombre', titulo);
+      formData.append('descripcion', descripcion);
+      formData.append('tematica', tematica);
+      formData.append('aforo', aforo);
+      formData.append('ubicacion', localizacion);
+      formData.append('fecha', combinarFechaHora()); 
+      formData.append('userID', usuario_id);
+      formData.append('duracion', duracion);
+
+      if (image) {
+        formData.append('foto', {
+          uri: image,
+          type: 'image/jpeg',
+          name: 'usuario.jpg',
+        });
+      }
+
+      try {
+      
+        const response = await fetch('https://croacky.onrender.com/evento/crear', {
+          method: 'POST',
+          body: formData,
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          fetchEventos();
+          Alert.alert('Éxito', 'El evento se ha creado correctamente.');
+
+
+          navigation.navigate('VerEvento', { refresh: true });  
+        }else{
+          Alert.alert('Error', `No se pudo crear el evento: ${data.message}`);
+        }
+      } catch (error) {
+        Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
+      }
+  };
+
 
 
   const pickImage = async () => {
@@ -197,7 +241,7 @@ const fetchEventos = async () => {
             placeholder="Localización"
           />
 
-          <Button title="Crear Evento" onPress={fetchEventos} color="#4CAF50" />
+          <Button title="Crear Evento" onPress={createEvent} color="#4CAF50" />
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
