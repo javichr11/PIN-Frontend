@@ -10,7 +10,9 @@ const DetalleEvento = ({route}) => {
     const [averageRating, setAverageRating] = useState(0);
     const [newComment, setNewComment] = useState('');
     //const [userId] = useState(1); // Suponiendo un ID de usuario fijo, cámbialo según tu lógica de autenticación
-    const [usuario_id, setUsuarioId] = useState('');
+    //const [usuario_id, setUsuarioId] = useState('');
+    const [usuario_id, setUsuarioId] = useState(123); // Usuario siempre 123
+
 
     const [userRating, setUserRating] = useState(0);
 
@@ -27,24 +29,24 @@ const DetalleEvento = ({route}) => {
   };
 
 
-    useEffect(() => {
-      const fetchUsuarioId = async () => {
-        try {
-          const storedUserId = await AsyncStorage.getItem('usuario_id');
-          if (storedUserId) {
-            setUsuarioId(storedUserId); // Guarda el usuario_id en el estado
-          } else {
-            Alert.alert('Error', 'No se encontró el usuario en el almacenamiento');
-          }
-        } catch (error) {
-          console.error('Error obteniendo usuario_id:', error);
-        }
-      };
+    //useEffect(() => {
+    //  const fetchUsuarioId = async () => {
+    //    try {
+    //      const storedUserId = await AsyncStorage.getItem('usuario_id');
+     //     if (storedUserId) {
+      //      setUsuarioId(storedUserId); // Guarda el usuario_id en el estado
+    //      } else {
+    //        Alert.alert('Error', 'No se encontró el usuario en el almacenamiento');
+    //      }
+    //    } catch (error) {
+    //      console.error('Error obteniendo usuario_id:', error);
+    //    }
+   //   };
     
-    fetchUsuarioId();
-    fetchComments();
-    fetchAverageRating();
-  }, [evento.id]);
+  //  fetchUsuarioId();
+  //  fetchComments();
+  //  fetchAverageRating();
+  //}, [evento.id]);
 
   const handleCommentSubmit = async () => {
     try {
@@ -79,28 +81,9 @@ const fetchAverageRating = async () => {
       console.error('Error obteniendo media de valoraciones:', );
   }
 };
-const handleRating = async (rating) => {
-  setUserRating(rating);
-  // Aquí puedes agregar lógica para guardar la valoración en el backend si es necesario
-  try {
-    const response = await fetch('https://croacky.onrender.com/valoracion/crear', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            evento_id: evento.id,
-            usuario_id,
-            rating
-        })
-    });
 
-    if (response.ok) {
-        fetchAverageRating(); // Actualizar la media de valoraciones
-    } else {
-        console.error('Error guardando la valoración');
-    }
-} catch (error) {
-    console.error('Error al enviar valoración:', error);
-}
+const handleRating = (rating) => {
+  setUserRating(rating);  // Guarda el número de estrellas seleccionadas
 };
 
 

@@ -13,7 +13,7 @@ const CrearEvento = () => {
   const [mostrarTematicaPicker, setMostrarTematicaPicker] = useState(false);
   const [aforo, setAforo] = useState('');
   const [localizacion, setLocalizacion] = useState('');
-  const [direccion, setDireccion] = useState(null);
+  const [direccion, setDireccion] = useState('');
   const [image, setImage] = useState(null);
   const [fecha, setFecha] = useState(new Date());
   const [hora, setHora] = useState(new Date());
@@ -88,11 +88,11 @@ const CrearEvento = () => {
       formData.append('userID', usuario_id);
       formData.append('duracion', duracion);
       console.log('Datos enviados:', {
-        latitud: direccion.latitud,
-        longitud: direccion.longitud,
-        nombre: titulo,
-        // Añade aquí más datos para depurar
-      });
+  latitud: direccion.latitud,
+  longitud: direccion.longitud,
+  nombre: titulo,
+  // Añade aquí más datos para depurar
+});
 
       if (image) {
         formData.append('foto', {
@@ -269,14 +269,14 @@ const CrearEvento = () => {
             placeholder="Localización"
           />
           
-          
+          <BuscarDireccion onDireccionSeleccionada={handleDireccionSeleccionada} />
             
           
 
       
           <Button title="Crear Evento" onPress={createEvent} color="#4CAF50" />
 
-          <BuscarDireccion onDireccionSeleccionada={handleDireccionSeleccionada} />
+          
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>

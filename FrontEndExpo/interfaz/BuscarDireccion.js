@@ -37,6 +37,7 @@ const BuscarDireccion = ({ onDireccionSeleccionada }) => {
           <TouchableOpacity
             onPress={() => {
               if (item.lat && item.lon) {
+                console.log("Coordenadas seleccionadas: Latitud:", item.lat, "Longitud:", item.lon);
                 onDireccionSeleccionada({
                   lat: parseFloat(item.lat),
                   lon: parseFloat(item.lon),
