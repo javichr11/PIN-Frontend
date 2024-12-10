@@ -13,6 +13,7 @@ import mapita from "./interfaz/mapita";
 import Mapa from "./interfaz/mapa";
 import notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
+import Logros from "./interfaz/Logros";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -121,6 +122,17 @@ export default function App() {
           }} 
           initialParams={{ eventos }} 
         />
+
+        <Tab.Screen
+
+          name="Logros"
+          component={Logros} 
+          options={{ 
+            title: 'Tus logros', 
+          }} 
+          initialParams={{ eventos }}  
+        />
+        
         <Tab.Screen 
           name="verMapa"
           options={{
