@@ -18,6 +18,9 @@ const formatearFechaHora = (fechaISO) => {
 const Mapa = ({ eventos, route }) => {
   const [searchText, setSearchText] = useState('');
   const [nuevosEventos, setEventos] = useState([]);
+  const [eventosFiltrados, setEventosFiltrados] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false); // Para alternar entre eventos filtrados y no filtrados
+
 
   const fetchEventos = async () => {
     try {
@@ -33,6 +36,19 @@ const Mapa = ({ eventos, route }) => {
       Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
     }
   };
+  const fetchEventosFiltrados = async () => {
+    try {
+      const response = await fetch(`https://croacky.onrender.com/evento/obtenerFiltrado/${userID}`);
+      const data = await response.json();
+      if (response.ok) {
+        setEventosFiltrados(data.eventos); // Cargar eventos filtrados
+      } else {
+        Alert.alert('Error', `No se pudieron obtener los eventos filtrados: ${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error al obtener eventos filtrados: ${error.message}`);
+    }
+  };
 
   useEffect(() => {
     fetchEventos();
@@ -40,9 +56,16 @@ const Mapa = ({ eventos, route }) => {
     if(route.params?.refresh){fetchEventos();}
 
   }, [route.params]);
-  if (nuevosEventos.length === 0) {
-    return <Text>No hay eventos disponibles.</Text>;
-  }
+  // if (nuevosEventos.length === 0) {
+  //   return <Text>No hay eventos disponibles.</Text>;
+  // };
+
+  // Cuando se modifica la propiedad de filtro, carga los eventos filtrados si no están ya cargados
+  useEffect(() => {
+    if (isFiltered && eventos.length == 0) {
+      fetchEventosFiltrados(); 
+    }
+  }, [isFiltered]);
   
 
   const unirseAEvento = (id) => {
@@ -128,29 +151,45 @@ const Mapa = ({ eventos, route }) => {
     );
   };
 
-  const filteredEventos = nuevosEventos.filter(evento =>
-    evento.nombre.toLowerCase().includes(searchText.toLowerCase())
-  );
+ 
+
+  const filteredEventos1 = isFiltered ? eventosFiltrados : nuevosEventos;
+  const filteredEventos = filteredEventos1.filter(evento => evento.nombre.toLowerCase().includes(searchText.toLowerCase())); 
+
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchBarContainer}>
-        <FontAwesome name="search" size={20} color="#8aba86" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Buscar eventos..."
-          placeholderTextColor="#888"
-          value={searchText}
-          onChangeText={setSearchText}
-        />
-      </View>
-      <FlatList
-        data={filteredEventos}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text>No hay eventos disponibles.</Text>}
-      />
+       {nuevosEventos.length === 0 ? (
+        <Text>No hay eventos disponibles.</Text>
+      ) : (
+        <>
+          <View style={styles.searchBarContainer}>
+            <FontAwesome name="search" size={20} color="#8aba86" style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Buscar eventos..."
+              placeholderTextColor="#888"
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={() => setIsFiltered(!isFiltered)}
+            style={styles.filterButton}
+          >
+            <Text style={styles.filterButtonText}>
+              {isFiltered ? 'Ver todos los eventos' : 'Ver eventos filtrados'}
+            </Text>
+          </TouchableOpacity>
+          <FlatList
+            data={filteredEventos}
+            renderItem={renderItem}
+            keyExtractor={item => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={<Text>No hay eventos disponibles.</Text>}
+          />
+        </>
+      )}
     </View>
   );
 };
@@ -178,6 +217,19 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     color: '#000000',
+  },
+  filterButton: {
+    backgroundColor: '#8aba86',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  filterButtonText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
   },
   eventCard: {
     backgroundColor: '#fff',
