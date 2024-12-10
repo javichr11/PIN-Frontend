@@ -9,7 +9,7 @@ import VerEvento from "./interfaz/VerEvento";
 import registro from "./interfaz/Registro";
 import registroFoto from "./interfaz/RegistroFoto";
 import perfil from "./interfaz/perfil";
-import Archivos from "./interfaz/Archivos";
+import mapita from "./interfaz/mapita";
 import Mapa from "./interfaz/mapa";
 import notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
@@ -111,14 +111,15 @@ export default function App() {
           {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
         </Tab.Screen>
         <Tab.Screen 
-          name="Archivos"
-          component={Archivos} 
+          name="mapita"
+          component={mapita} 
           options={{ 
-            title: 'Tus archivos',
+            title: 'Tus mapas',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="folder" color={color} size={size} />
             ),
           }} 
+          initialParams={{ eventos }} 
         />
         <Tab.Screen 
           name="verMapa"

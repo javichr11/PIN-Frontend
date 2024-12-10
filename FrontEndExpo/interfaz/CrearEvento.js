@@ -4,6 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
+import BuscarDireccion from './BuscarDireccion';
 
 const CrearEvento = () => {
   const [titulo, setTitulo] = useState('');
@@ -12,6 +13,7 @@ const CrearEvento = () => {
   const [mostrarTematicaPicker, setMostrarTematicaPicker] = useState(false);
   const [aforo, setAforo] = useState('');
   const [localizacion, setLocalizacion] = useState('');
+  const [direccion, setDireccion] = useState(null);
   const [image, setImage] = useState(null);
   const [fecha, setFecha] = useState(new Date());
   const [hora, setHora] = useState(new Date());
@@ -52,17 +54,45 @@ const CrearEvento = () => {
     }
   };
 
+  const handleDireccionSeleccionada = (direccion) => {
+    if (direccion && direccion.lat && direccion.lon) {
+      setDireccion({
+        //nombre: direccion.display_name,
+        latitud: parseFloat(direccion.lat),
+        longitud: parseFloat(direccion.lon),
+        
+      });
+      
+    } else {
+      Alert.alert('Error', 'La dirección seleccionada no tiene coordenadas válidas.');
+    }
+  };
+
+
   const createEvent = async () =>{
       const formData = new FormData();
+      if (!direccion|| !direccion.latitud || !direccion.longitud) {
+        Alert.alert('Error', 'Selecciona una dirección antes de crear el evento.');
+        return;
+      }
   
       formData.append('nombre', titulo);
       formData.append('descripcion', descripcion);
       formData.append('tematica', tematica);
       formData.append('aforo', aforo);
       formData.append('ubicacion', localizacion);
+      //formData.append('sitio', JSON.stringify(direccion));
+      formData.append('latitud', direccion.latitud);
+      formData.append('longitud', direccion.longitud);
       formData.append('fecha', combinarFechaHora()); 
       formData.append('userID', usuario_id);
       formData.append('duracion', duracion);
+      console.log('Datos enviados:', {
+        latitud: direccion.latitud,
+        longitud: direccion.longitud,
+        nombre: titulo,
+        // Añade aquí más datos para depurar
+      });
 
       if (image) {
         formData.append('foto', {
@@ -84,8 +114,6 @@ const CrearEvento = () => {
         if (response.ok) {
           fetchEventos();
           Alert.alert('Éxito', 'El evento se ha creado correctamente.');
-
-
           navigation.navigate('VerEvento', { refresh: true });  
         }else{
           Alert.alert('Error', `No se pudo crear el evento: ${data.message}`);
@@ -240,8 +268,15 @@ const CrearEvento = () => {
             onChangeText={setLocalizacion}
             placeholder="Localización"
           />
+          
+          
+            
+          
 
+      
           <Button title="Crear Evento" onPress={createEvent} color="#4CAF50" />
+
+          <BuscarDireccion onDireccionSeleccionada={handleDireccionSeleccionada} />
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>

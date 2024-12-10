@@ -3,6 +3,8 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
 import { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function Registro({ route, navigation }) {
   const [nombre, setNombre] = useState('');
@@ -44,7 +46,7 @@ export default function Registro({ route, navigation }) {
     }
 
     // Si pasa todas las validaciones, procede a la siguiente pantalla
-    navigation.navigate('RegistroFoto', { nombre, phone, password });
+    navigation.navigate('RegistroFoto', { nombre, movil, password });
   };
 
   const handleSubmit = async () => {
@@ -61,9 +63,11 @@ export default function Registro({ route, navigation }) {
         }),
       });
 
-      const responseData = response.status;
+      const responseData = await response.json();
 
       if (response.ok) {
+        const { usuario_id } = responseData;
+        await AsyncStorage.setItem('usuario_id', usuario_id);
         Alert.alert('¡Bienvenido!', `Te has registrado satisfactoriamente. ${responseData}`);
         setNombre('');
         setEdad('');

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'; 
 import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, ScrollView} from 'react-native';
 import { Ionicons } from 'react-native-vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const DetalleEvento = ({route}) => {
@@ -28,11 +29,17 @@ const DetalleEvento = ({route}) => {
 
     useEffect(() => {
       const fetchUsuarioId = async () => {
-        // Ejemplo con AsyncStorage (asegúrate de importar AsyncStorage si lo usas)
-        // const storedUserId = await AsyncStorage.getItem('usuario_id');
-        const storedUserId = '123'; // O reemplaza esto con la lógica para obtener el usuario_id
-        setUsuarioId(storedUserId);
-    };
+        try {
+          const storedUserId = await AsyncStorage.getItem('usuario_id');
+          if (storedUserId) {
+            setUsuarioId(storedUserId); // Guarda el usuario_id en el estado
+          } else {
+            Alert.alert('Error', 'No se encontró el usuario en el almacenamiento');
+          }
+        } catch (error) {
+          console.error('Error obteniendo usuario_id:', error);
+        }
+      };
     
     fetchUsuarioId();
     fetchComments();
@@ -69,7 +76,7 @@ const fetchAverageRating = async () => {
       const data = await response.json();
       setAverageRating(data.averageRating);
   } catch (error) {
-      console.error('Error obteniendo media de valoraciones:', error);
+      console.error('Error obteniendo media de valoraciones:', );
   }
 };
 const handleRating = async (rating) => {
