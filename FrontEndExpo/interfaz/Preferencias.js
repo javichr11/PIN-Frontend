@@ -22,7 +22,7 @@ const Preferencias = () => {
     try {
       // Crear el objeto de preferencias en el formato esperado
       const preferences = {
-        userID: '32', // Agregar el ID del usuario
+        userID: '10', // Agregar el ID del usuario
         // Iterar sobre las preferencias seleccionadas y asignarles un valor de `true`
         ...selectedPreferences.reduce((acc, preference) => {
           acc[preference] = true; // Asignamos true a cada preferencia seleccionada
@@ -62,7 +62,7 @@ const Preferencias = () => {
       {/* Tipos de eventos */}
       <Text style={styles.sectionTitle}>Tipos de eventos:</Text>
       <View style={styles.optionsContainer}>
-        {['Música', 'Arte', 'Deporte'].map((event) => (
+        {['musica', 'arte', 'deporte'].map((event) => (
           <TouchableOpacity
             key={event}
             style={[

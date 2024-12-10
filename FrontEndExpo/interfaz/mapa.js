@@ -38,7 +38,7 @@ const Mapa = ({ eventos, route }) => {
   };
   const fetchEventosFiltrados = async () => {
     try {
-      const response = await fetch(`https://croacky.onrender.com/evento/obtenerFiltrado/${userID}`);
+      const response = await fetch('https://croacky.onrender.com/evento/obtenerFiltrado/' + userID);
       const data = await response.json();
       if (response.ok) {
         setEventosFiltrados(data.eventos); // Cargar eventos filtrados

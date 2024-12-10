@@ -249,7 +249,7 @@ const CrearEvento = () => {
                 <Picker.Item label="Seleccione una temática" value="" />
                 <Picker.Item label="Música" value="musica" />
                 <Picker.Item label="Arte" value="arte" />
-                <Picker.Item label="Deportes" value="deportes" />
+                <Picker.Item label="Deporte" value="deporte" />
               </Picker>
             </View>
           )}
