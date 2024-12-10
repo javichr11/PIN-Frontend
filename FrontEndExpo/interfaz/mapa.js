@@ -1,9 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
+import React, {useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, TextInput } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
-
-const userID = '10';  
+const userID = '10';
 
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -16,10 +15,35 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
-const Mapa = ({ eventos, navigation }) => {
-  if (eventos.length === 0) {
+const Mapa = ({ eventos, route }) => {
+  const [searchText, setSearchText] = useState('');
+  const [nuevosEventos, setEventos] = useState([]);
+
+  const fetchEventos = async () => {
+    try {
+      const response = await fetch('https://croacky.onrender.com/evento/obtener'); 
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setEventos(data.data);
+      } else {
+        Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchEventos();
+
+    if(route.params?.refresh){fetchEventos();}
+
+  }, [route.params]);
+  if (nuevosEventos.length === 0) {
     return <Text>No hay eventos disponibles.</Text>;
   }
+  
 
   const unirseAEvento = (id) => {
     Alert.alert(
@@ -46,12 +70,16 @@ const Mapa = ({ eventos, navigation }) => {
         },
         body: JSON.stringify({ eventID, userID }),
       });
-
+      
+      console.log("Status Code:", response.status);
+      const responseData = await response.json();
+      console.log("Response Data:", responseData);
+      
       if (response.ok) {
         Alert.alert('Éxito', 'Te has unido al evento');
+        fetchEventos();
       } else {
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.message || 'No te pudiste unir al evento');
+        Alert.alert('Error', responseData.message || 'No te pudiste unir al evento');
       }
     } catch (error) {
       Alert.alert('Error', `Ocurrió un error: ${error.message}`);
@@ -83,7 +111,7 @@ const Mapa = ({ eventos, navigation }) => {
           </View>
           <View style={styles.infoRow}>
             <FontAwesome name="users" size={20} color="gray" />
-            <Text style={styles.eventAforo}>{`${item.aforo}/25`}</Text>
+            <Text style={styles.eventAforo}>{`${item.inscritos}/${item.aforo}`}</Text>
           </View>
         </View>
 
@@ -100,13 +128,28 @@ const Mapa = ({ eventos, navigation }) => {
     );
   };
 
+  const filteredEventos = nuevosEventos.filter(evento =>
+    evento.nombre.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
+      <View style={styles.searchBarContainer}>
+        <FontAwesome name="search" size={20} color="#8aba86" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Buscar eventos..."
+          placeholderTextColor="#888"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
       <FlatList
-        data={eventos}
+        data={filteredEventos}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<Text>No hay eventos disponibles.</Text>}
       />
     </View>
   );
@@ -117,6 +160,24 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#EAF2E6',
+  },
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#8aba86',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
+    color: '#000000',
   },
   eventCard: {
     backgroundColor: '#fff',
