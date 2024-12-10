@@ -13,6 +13,7 @@ import mapita from "./interfaz/mapita";
 import Mapa from "./interfaz/mapa";
 import notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
+import Preferencias from "./interfaz/Preferencias";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,15 +40,21 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
       />
       <Stack.Screen name="Registro"  component={registro} />
       <Stack.Screen name="RegistroFoto" options={{  headerShown: false }} component={registroFoto} />
+      <Stack.Screen 
+        name="Preferencias" 
+        component={Preferencias}  
+        options={{ headerShown: false}}
+      />
     </Stack.Navigator>
   );
 }
+
 
 function MapaStack({ eventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="VistaMapa"
+        name="verMapa"
         options={{ headerShown: false }}
       >
         {props => <Mapa {...props} eventos={eventos} />}
