@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from 'react-native-vector-icons';
+import { Ionicons } from 'react-native-vector-icons'; 
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import VerEvento from "./interfaz/VerEvento";
@@ -139,7 +139,7 @@ export default function App() {
           }} 
           initialParams={{ eventos }}  
         />
-        
+
         <Tab.Screen 
           name="verMapa"
           options={{
