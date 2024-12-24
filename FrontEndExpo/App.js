@@ -15,6 +15,9 @@ import notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
 import Logros from "./interfaz/Logros";
 import Preferencias from "./interfaz/Preferencias";
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
+import * as Device from 'expo-device';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -91,6 +94,7 @@ export default function App() {
   useEffect(() => {
     fetchEventos();
   }, []);
+
 
   if (loading) {
     return (

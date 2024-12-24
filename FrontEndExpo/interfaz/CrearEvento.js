@@ -81,7 +81,6 @@ const CrearEvento = () => {
       formData.append('tematica', tematica);
       formData.append('aforo', aforo);
       formData.append('ubicacion', localizacion);
-      //formData.append('sitio', JSON.stringify(direccion));
       formData.append('latitud', direccion.latitud);
       formData.append('longitud', direccion.longitud);
       formData.append('fecha', combinarFechaHora()); 
