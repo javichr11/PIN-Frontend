@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, FlatList, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { TextInput, FlatList, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
 
 const BuscarDireccion = ({ onDireccionSeleccionada }) => {
   const [query, setQuery] = useState('');
@@ -30,26 +30,13 @@ const BuscarDireccion = ({ onDireccionSeleccionada }) => {
         onChangeText={buscarDireccion}
         placeholder="Buscar dirección"
       />
-      <FlatList
+      <ScrollView
         data={resultados}
         keyExtractor={(item) => item.place_id.toString()}
+        keyboardShouldPersistTaps="handled" // Permite interactuar con la lista mientras el teclado está abierto
+        style={{ maxHeight: 200 }} // Limita la altura del FlatList para evitar conflictos con el diseño
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => {
-              if (item.lat && item.lon) {
-                console.log("Coordenadas seleccionadas: Latitud:", item.lat, "Longitud:", item.lon);
-                onDireccionSeleccionada({
-                  lat: parseFloat(item.lat),
-                  lon: parseFloat(item.lon),
-                  display_name: item.display_name, // Por si necesitas también el nombre
-                });
-                setQuery(item.display_name);
-                setResultados([]);
-              } else {
-                Alert.alert('Error', 'La dirección seleccionada no tiene coordenadas válidas.');
-              }
-            }}
-          >
+          <TouchableOpacity onPress={() => handlePress(item)}>
             <Text style={styles.resultado}>{item.display_name}</Text>
           </TouchableOpacity>
         )}
