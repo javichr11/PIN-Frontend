@@ -38,7 +38,7 @@ export default function InicioSesion() {
       {/* Campo de usuario o teléfono */}
       <View style={styles.container1}>
       <TextInput
-        placeholder="usuario o teléfono"
+        label="usuario o teléfono"
         value={userInput}
         onChangeText={setUserInput}
         mode="outlined"
@@ -47,7 +47,7 @@ export default function InicioSesion() {
 
       {/* Campo de contraseña */}
       <TextInput
-        placeholder="contraseña"
+        label="contraseña"
         value={password}
         onChangeText={setPassword}
         mode="outlined"
