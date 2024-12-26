@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { useUser } from '../context/UserProvider';
 
 
 const Preferencias = () => {
+  const { user, setIsNewUser } = useUser();
   const [selectedPreferences, setSelectedPreferences] = useState([]);
 
   const handleSelect = (preference) => {
@@ -22,7 +24,7 @@ const Preferencias = () => {
     try {
       // Crear el objeto de preferencias en el formato esperado
       const preferences = {
-        userID: '10', // Agregar el ID del usuario
+        userID: user.id, // Agregar el ID del usuario
         // Iterar sobre las preferencias seleccionadas y asignarles un valor de `true`
         ...selectedPreferences.reduce((acc, preference) => {
           acc[preference] = true; // Asignamos true a cada preferencia seleccionada
@@ -43,6 +45,7 @@ const Preferencias = () => {
       if (response.ok) {
         const data = await response.json();
         Alert.alert("¡Éxito!", "Tus preferencias han sido guardadas en el servidor.");
+        setIsNewUser(false);
         console.log("Respuesta del servidor:", data);
       } else {
         Alert.alert("Error", "No se pudo guardar tus preferencias. Inténtalo más tarde.");

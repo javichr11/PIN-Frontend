@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 export default function RegistroFoto({ route, navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('');
-  const [edad, setEdad] = useState(null);
+  const [edad, setEdad] = useState(' ');
   const [foto, setFoto] = useState(null);
   const { nombre, movil, password } = route.params;
 

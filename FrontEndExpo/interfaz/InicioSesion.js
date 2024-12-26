@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "react-native-vector-icons"; 
+import { useUser } from "../context/UserProvider";
 
-export default function InicioSesion() {
+export default function InicioSesion({ navigation, onLogin }) { // Recibimos onLogin como propiedad
   const [userInput, setUserInput] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Estado para la visibilidad de la contraseña
+  const { saveUser } = useUser();
+
 
   const handleLogin = async () => {
     if (!userInput || !password) {
@@ -28,8 +33,11 @@ export default function InicioSesion() {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert("Inicio de sesión exitoso", `¡Bienvenido, ${data.user.nombre}!`);
-        // Aquí puedes redirigir al usuario a la siguiente pantalla
+        Alert.alert("Inicio de sesión exitoso", `¡Bienvenid@, ${data.user.nombre}!`);
+        saveUser(data.user);
+        onLogin(data.user);
+        // Llamar a onLogin para indicar que el usuario ha iniciado sesión
+        onLogin(data.user); // Pasar el objeto de usuario a onLogin
       } else {
         Alert.alert("Error", data.message || "Error al iniciar sesión.");
       }
@@ -44,8 +52,10 @@ export default function InicioSesion() {
   };
 
   const handleRegister = () => {
-    Alert.alert("Redirigir", "Redirigir a pantalla de registro.");
+    navigation.navigate("Registro"); // Navegar a la pantalla de registro
   };
+
+  
 
   return (
     <View style={styles.container}>
@@ -70,14 +80,26 @@ export default function InicioSesion() {
         />
 
         {/* Campo de contraseña */}
-        <TextInput
-          label="Contraseña"
-          value={password}
-          onChangeText={setPassword}
-          mode="outlined"
-          secureTextEntry
-          style={styles.input}
-        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            label="Contraseña"
+            value={password}
+            onChangeText={setPassword}
+            mode="outlined"
+            secureTextEntry={!isPasswordVisible} // Dependiendo del estado, ocultar o mostrar la contraseña
+            style={styles.input}
+          />
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)} // Cambiar visibilidad
+          >
+            <Ionicons
+              name={isPasswordVisible ? "eye-off" : "eye"}
+              size={24}
+              color="gray"
+            />
+          </TouchableOpacity>
+        </View>
 
         {/* Enlace de contraseña olvidada */}
         <TouchableOpacity onPress={handleForgotPassword}>
@@ -114,14 +136,14 @@ const styles = StyleSheet.create({
   },
   gradient: {
     width: "100%", // Esto asegura que ocupe todo el ancho de la pantalla
-    height: 250,
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
   title: {
-    fontSize: 36,
+    fontSize: 50,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -129,10 +151,21 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "#fff",
   },
+  
   forgotPassword: {
     color: "#1630BE",
     textAlign: "right",
     marginBottom: 20,
+  },
+  passwordContainer: {
+    position: "relative",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    zIndex: 1,
+    paddingBlockStart: 10
   },
   loginButton: {
     backgroundColor: "#3A39F5",
@@ -140,7 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   register: {
-    textAlign: "center",
+    textAlign: "center", 
     marginTop: 20,
     fontSize: 14,
   },
