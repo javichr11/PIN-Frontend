@@ -18,6 +18,7 @@ import Preferencias from "./interfaz/Preferencias";
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import * as Device from 'expo-device';
+import InicioSesion from "./interfaz/InicioSesion";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -167,7 +168,7 @@ export default function App() {
         />
         <Tab.Screen 
           name="perfil"
-          component={perfil} 
+          component={InicioSesion} 
           options={{
             title: 'Tu perfil',
             tabBarIcon: ({ color, size }) => (
