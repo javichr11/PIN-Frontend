@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -7,20 +7,44 @@ export default function InicioSesion() {
   const [userInput, setUserInput] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if ((userInput === "admin" || userInput === "1234567890") && password === "1234") {
-      alert("Inicio de sesión exitoso. ¡Bienvenido!");
-    } else {
-      alert("Error: Usuario o contraseña incorrectos.");
+  const handleLogin = async () => {
+    if (!userInput || !password) {
+      Alert.alert("Error", "Por favor, complete todos los campos.");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://croacky.onrender.com/usuario/iniciarSesion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nombre_usuario: userInput, // Puede ser nombre de usuario o móvil
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert("Inicio de sesión exitoso", `¡Bienvenido, ${data.user.nombre}!`);
+        // Aquí puedes redirigir al usuario a la siguiente pantalla
+      } else {
+        Alert.alert("Error", data.message || "Error al iniciar sesión.");
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      Alert.alert("Error", "Ocurrió un problema al conectar con el servidor.");
     }
   };
 
   const handleForgotPassword = () => {
-    alert("Redirigir a recuperar contraseña.");
+    Alert.alert("Redirigir", "Redirigir a recuperar contraseña.");
   };
 
   const handleRegister = () => {
-    alert("Redirigir a pantalla de registro.");
+    Alert.alert("Redirigir", "Redirigir a pantalla de registro.");
   };
 
   return (
@@ -37,41 +61,41 @@ export default function InicioSesion() {
 
       {/* Campo de usuario o teléfono */}
       <View style={styles.container1}>
-      <TextInput
-        label="usuario o teléfono"
-        value={userInput}
-        onChangeText={setUserInput}
-        mode="outlined"
-        style={styles.input}
-      />
+        <TextInput
+          label="Usuario o teléfono"
+          value={userInput}
+          onChangeText={setUserInput}
+          mode="outlined"
+          style={styles.input}
+        />
 
-      {/* Campo de contraseña */}
-      <TextInput
-        label="contraseña"
-        value={password}
-        onChangeText={setPassword}
-        mode="outlined"
-        secureTextEntry
-        style={styles.input}
-      />
+        {/* Campo de contraseña */}
+        <TextInput
+          label="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          mode="outlined"
+          secureTextEntry
+          style={styles.input}
+        />
 
-      {/* Enlace de contraseña olvidada */}
-      <TouchableOpacity onPress={handleForgotPassword}>
-        <Text style={styles.forgotPassword}>¿Has olvidado tu contraseña?</Text>
-      </TouchableOpacity>
+        {/* Enlace de contraseña olvidada */}
+        <TouchableOpacity onPress={handleForgotPassword}>
+          <Text style={styles.forgotPassword}>¿Has olvidado tu contraseña?</Text>
+        </TouchableOpacity>
 
-      {/* Botón de inicio de sesión */}
-      <Button mode="contained" onPress={handleLogin} style={styles.loginButton}>
-        Finalizar
-      </Button>
+        {/* Botón de inicio de sesión */}
+        <Button mode="contained" onPress={handleLogin} style={styles.loginButton}>
+          Finalizar
+        </Button>
 
-      {/* Enlace de registro */}
-      <Text style={styles.register}>
-        ¿No tienes una cuenta?{" "}
-        <Text style={styles.registerLink} onPress={handleRegister}>
-          Regístrate
+        {/* Enlace de registro */}
+        <Text style={styles.register}>
+          ¿No tienes una cuenta?{" "}
+          <Text style={styles.registerLink} onPress={handleRegister}>
+            Regístrate
+          </Text>
         </Text>
-      </Text>
       </View>
     </View>
   );
@@ -82,14 +106,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  container1:{
+  container1: {
     flex: 1,
     backgroundColor: "#ffffff",
     paddingHorizontal: 20,
-    paddingTop : 60,
+    paddingTop: 60,
   },
   gradient: {
-    width: '100%', // Esto asegura que ocupe todo el ancho de la pantalla
+    width: "100%", // Esto asegura que ocupe todo el ancho de la pantalla
     height: 250,
     justifyContent: "center",
     alignItems: "center",
