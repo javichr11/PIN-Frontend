@@ -5,10 +5,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "react-native-vector-icons"; 
 import { useUser } from "../context/UserProvider";
 
-export default function InicioSesion({ navigation, onLogin }) { // Recibimos onLogin como propiedad
+export default function InicioSesion({ navigation}) { 
   const [userInput, setUserInput] = useState("");
   const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Estado para la visibilidad de la contraseña
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
   const { saveUser } = useUser();
 
 
@@ -25,7 +25,7 @@ export default function InicioSesion({ navigation, onLogin }) { // Recibimos onL
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          nombre_usuario: userInput, // Puede ser nombre de usuario o móvil
+          nombre_usuario: userInput,
           password,
         }),
       });
@@ -34,10 +34,12 @@ export default function InicioSesion({ navigation, onLogin }) { // Recibimos onL
 
       if (response.ok) {
         Alert.alert("Inicio de sesión exitoso", `¡Bienvenid@, ${data.user.nombre}!`);
+
+        console.log(data.user);
+
         saveUser(data.user);
-        onLogin(data.user);
-        // Llamar a onLogin para indicar que el usuario ha iniciado sesión
-        onLogin(data.user); // Pasar el objeto de usuario a onLogin
+
+        navigation.replace('verMapa');
       } else {
         Alert.alert("Error", data.message || "Error al iniciar sesión.");
       }
@@ -108,7 +110,7 @@ export default function InicioSesion({ navigation, onLogin }) { // Recibimos onL
 
         {/* Botón de inicio de sesión */}
         <Button mode="contained" onPress={handleLogin} style={styles.loginButton}>
-          Finalizar
+          Iniciar Sesión
         </Button>
 
         {/* Enlace de registro */}

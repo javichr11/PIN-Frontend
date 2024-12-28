@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppState } from "react-native";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(undefined); // Estado del usuario
-  const [isNewUser, seetIsNewUser] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState();
+  const [isNewUser, setIsNewUser] = useState(false);
 
   // Cargar la información del usuario desde AsyncStorage al iniciar la app
   useEffect(() => {
@@ -14,12 +14,13 @@ export const UserProvider = ({ children }) => {
       try {
         const storedUser = await AsyncStorage.getItem('user');
         if (storedUser) {
-          setUser(JSON.parse(storedUser)); // Si hay un usuario guardado, cargarlo
+          setUser(JSON.parse(storedUser));
+        } else {
+          setUser(null);
         }
       } catch (error) {
         console.error("Error al cargar el usuario:", error);
-      } finally {
-        setLoading(false); // Marcar como cargado
+        setUser(null);
       }
     };
 
@@ -31,8 +32,10 @@ export const UserProvider = ({ children }) => {
     try {
       await AsyncStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
+      return true;
     } catch (error) {
       console.error("Error al guardar el usuario:", error);
+      return false;
     }
   };
 
@@ -41,21 +44,44 @@ export const UserProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('user');
       setUser(null);
+      setIsNewUser(false);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
   };
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "inactive" || nextAppState === "background") {
+        logout();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   return (
-    <UserContext.Provider value={{ user, setUser, isNewUser, saveUser, logout }}>
+    <UserContext.Provider value={{ 
+      user, 
+      setUser, 
+      isNewUser, 
+      setIsNewUser,
+      saveUser, 
+      logout
+    }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = () => {const context = useContext(UserContext);
-    if (!context) {
-      throw new Error('useUser debe usarse dentro de un UserProvider');
-    }
-    return context;
-  };
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser debe usarse dentro de un UserProvider');
+  }
+  return context;
+};
+
+export default UserProvider;

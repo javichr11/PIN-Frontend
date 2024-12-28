@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useUser } from '../context/UserProvider';
-
 
 const Preferencias = () => {
   const { user, setIsNewUser } = useUser();
   const [selectedPreferences, setSelectedPreferences] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  console.log('Valor de user en Preferencias:', user);
 
   const handleSelect = (preference) => {
     if (selectedPreferences.includes(preference)) {
@@ -22,24 +24,21 @@ const Preferencias = () => {
     }
   
     try {
-      // Crear el objeto de preferencias en el formato esperado
       const preferences = {
-        userID: user.id, // Agregar el ID del usuario
-        // Iterar sobre las preferencias seleccionadas y asignarles un valor de `true`
+        userID: user.id,
         ...selectedPreferences.reduce((acc, preference) => {
-          acc[preference] = true; // Asignamos true a cada preferencia seleccionada
+          acc[preference] = true;
           return acc;
         }, {})
       };
-      console.log(preferences);  // Ver el objeto antes de enviarlo
+      console.log(preferences);
   
-      // Realizar la solicitud al backend
       const response = await fetch("https://croacky.onrender.com/usuario/preferencias", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Enviar como JSON
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(preferences), // Enviar como JSON
+        body: JSON.stringify(preferences),
       });
   
       if (response.ok) {
@@ -56,7 +55,15 @@ const Preferencias = () => {
       Alert.alert("Error", "Hubo un problema al conectarse con el servidor.");
     }
   };
-  
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+        <Text style={styles.loadingText}>Cargando preferencias...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -129,8 +136,6 @@ const Preferencias = () => {
           </TouchableOpacity>
         ))}
       </View>
-
-      {/* Botón para guardar */}
       <TouchableOpacity style={styles.saveButton} onPress={handleSavePreferences}>
         <Text style={styles.saveButtonText}>Guardar preferencias</Text>
       </TouchableOpacity>
@@ -143,6 +148,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#EAF7E4',
     padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#EAF7E4',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#4CAF50',
   },
   title: {
     fontSize: 24,

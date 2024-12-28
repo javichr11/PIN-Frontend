@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useUser } from "../context/UserProvider";
 
 export default function RegistroFoto({ route, navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [edad, setEdad] = useState(' ');
   const [foto, setFoto] = useState(null);
   const { nombre, movil, password } = route.params;
-
+  const { saveUser } = useUser();
   
   const seleccionarFoto = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -50,14 +51,19 @@ export default function RegistroFoto({ route, navigation }) {
       headers: { 'Accept': 'application/json' },
     });
 
-    const responseData = await response.json();
+    const data = await response.json();
 
     if(response.ok){
       Alert.alert('¡Éxito!', 'Usuario registrado satisfactoriamente');
-      //Redirige a preferencias
-      navigation.navigate('Preferencias', { nombreUsuario });
+
+      console.log(data.user);
+
+      saveUser(data.user);
+
+      navigation.navigate('Preferencias');
+      
     }else {
-      Alert.alert('Error', `No se pudo registrar el usuario: ${responseData.message}`);
+      Alert.alert('Error', `No se pudo registrar el usuario: ${data.message}`);
     }
 
   }catch(error){

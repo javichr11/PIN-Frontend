@@ -10,10 +10,10 @@ const Perfil = () => {
     <View style={styles.container}>
       {user ? (
         <>
-          <Text style={styles.welcomeText}>Bienvenido, {user.nombre}</Text>
+          <Text style={styles.welcomeText}> Bienvenido {"\n"} {user.nombre}</Text>
           <Text style={styles.infoText}>ID: {user.id}</Text>
-          <Text style={styles.infoText}>Edad: {user.edad}</Text> {/* Mostrar edad */}
-          <Text style={styles.infoText}>Móvil: {user.movil}</Text> {/* Mostrar edad */}
+          <Text style={styles.infoText}>Edad: {user.edad}</Text>
+          <Text style={styles.infoText}>Móvil: {user.movil}</Text> 
           {/* Mostrar foto de perfil si existe */}
           {user.foto ? (
             <Image source={{ uri: user.foto }} style={styles.profileImage} />
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign : 'center'
   },
   infoText: {
     fontSize: 18,
