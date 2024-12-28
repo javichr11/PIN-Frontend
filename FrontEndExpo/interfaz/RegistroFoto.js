@@ -54,13 +54,17 @@ export default function RegistroFoto({ route, navigation }) {
     const data = await response.json();
 
     if(response.ok){
-      Alert.alert('¡Éxito!', 'Usuario registrado satisfactoriamente');
 
-      console.log(data.user);
+      const usuario = await saveUser(data.user);
 
-      saveUser(data.user);
+      console.log("Repuesta al registro de usuario: ", usuario);
 
-      navigation.navigate('Preferencias');
+      if(usuario){
+        Alert.alert('¡Éxito!', data.message);
+        console.log("Navegando a Preferencias...");
+        navigation.navigate('Preferencias'); //ESTA LINEA NO LA HACE
+        console.log("No he navegado a Preferencias...");
+      }
       
     }else {
       Alert.alert('Error', `No se pudo registrar el usuario: ${data.message}`);

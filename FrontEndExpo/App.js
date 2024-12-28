@@ -198,10 +198,9 @@ function AppContent() {
           <Stack.Screen name="Inicio Sesión" options={{ headerShown: false }}>
             {props => <InicioSesion {...props} />}
           </Stack.Screen>
-          <Stack.Screen name="Registro" component={registro} options={{ title: 'Registro' }} />
-          <Stack.Screen name="RegistroFoto" component={RegistroFoto} options={{ title: 'Registro' }}/>
-          <Stack.Screen name="Preferencias" component={Preferencias} options={{ headerShown: false }}
-          />
+          <Stack.Screen name="Registro" component={Registro} options={{ title: 'Registro de usuario' }} />
+          <Stack.Screen name="RegistroFoto" component={RegistroFoto} options={{ title: 'Registro de usuario' }}/>
+          <Stack.Screen name="Preferencias" component={Preferencias} options={{ title: 'Preferencias' }} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

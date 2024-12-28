@@ -15,6 +15,7 @@ export const UserProvider = ({ children }) => {
         const storedUser = await AsyncStorage.getItem('user');
         if (storedUser) {
           setUser(JSON.parse(storedUser));
+          return true;
         } else {
           setUser(null);
         }
@@ -52,7 +53,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (nextAppState === "inactive" || nextAppState === "background") {
+      if (nextAppState === "background") {
         logout();
       }
     });

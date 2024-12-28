@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useUser } from '../context/UserProvider';
 
-const Preferencias = () => {
+const Preferencias = ({navigation}) => {
   const { user, setIsNewUser } = useUser();
   const [selectedPreferences, setSelectedPreferences] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log('Valor de user en Preferencias:', user);
 
   const handleSelect = (preference) => {
     if (selectedPreferences.includes(preference)) {
