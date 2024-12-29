@@ -54,30 +54,38 @@ export default function RegistroFoto({ route, navigation }) {
     const data = await response.json();
 
     if(response.ok){
-
-      const usuario = await saveUser(data.user);
-
-      console.log("Repuesta al registro de usuario: ", usuario);
-
-      if(usuario){
-        Alert.alert('¡Éxito!', data.message);
-        console.log("Navegando a Preferencias...");
-        navigation.navigate('Preferencias'); //ESTA LINEA NO LA HACE
-        console.log("No he navegado a Preferencias...");
-      }
-      
-    }else {
+      Alert.alert(
+        '¡Éxito!', 
+        data.message,
+        [
+          {
+            text: 'OK',
+            onPress: async () => {
+              await saveUser(data.user);
+              navigation.navigate("PreferenciasUsuario");
+            }
+          }
+        ]
+      );
+    } else {
       Alert.alert('Error', `No se pudo registrar el usuario: ${data.message}`);
     }
 
   }catch(error){
     Alert.alert('Error', `Ocurrió un error al registrar el usuario: ${error.message}`);
   }
-  };
+};
 
   handleReturn = () => {
-    navigation.navigate('Registro',{nombre, movil, password});
+    navigation.navigate("Registro",{nombre, movil, password});
+  }
 
+  handleSendToPreferencias = () => {
+    try {
+      navigation.navigate("PreferenciasUsuario");
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   }
 
 

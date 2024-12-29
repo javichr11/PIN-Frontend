@@ -54,7 +54,7 @@ export default function InicioSesion({ navigation}) {
   };
 
   const handleRegister = () => {
-    navigation.navigate("Registro"); // Navegar a la pantalla de registro
+    navigation.navigate("Registro"); 
   };
 
   

@@ -47,41 +47,11 @@ export default function Registro({ route, navigation }) {
     navigation.navigate('RegistroFoto', { nombre, movil, password });
   };
 
-  const handleSubmit = async () => {
-    console.log('Enviando...');
-    try {
-      const response = await fetch('https://pin-backend-fe7p.onrender.com/usuario/registrar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre,
-          edad,
-        }),
-      });
-
-      const responseData = await response.json();
-
-      if (response.ok) {
-        const { usuario_id } = responseData;
-        await AsyncStorage.setItem('usuario_id', usuario_id);
-        Alert.alert('¡Bienvenido!', `Te has registrado satisfactoriamente. ${responseData}`);
-        setNombre('');
-        setEdad('');
-      } else {
-        Alert.alert('Error', `No te has podido registrar satisfactoriamente. ${responseData}`);
-      }
-    } catch (error) {
-      Alert.alert('Error', `Ha ocurrido un error: ${error.message}`);
-    }
-  };
-
   return (
     <View style={styles.container}>
       {/* Imagen en la parte superior */}
       <Image
-        source={require('../assets/frog.png')} // Cambia la URL por la de tu imagen
+        source={require('../assets/frog.png')} 
         style={styles.image}
       />
 

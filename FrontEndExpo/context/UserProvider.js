@@ -7,6 +7,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [isNewUser, setIsNewUser] = useState(false);
+  const[isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Cargar la información del usuario desde AsyncStorage al iniciar la app
   useEffect(() => {
@@ -15,9 +16,11 @@ export const UserProvider = ({ children }) => {
         const storedUser = await AsyncStorage.getItem('user');
         if (storedUser) {
           setUser(JSON.parse(storedUser));
+          setIsAuthenticated(true);
           return true;
         } else {
           setUser(null);
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Error al cargar el usuario:", error);
@@ -33,6 +36,7 @@ export const UserProvider = ({ children }) => {
     try {
       await AsyncStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
+      setIsAuthenticated(true);
       return true;
     } catch (error) {
       console.error("Error al guardar el usuario:", error);
@@ -46,6 +50,7 @@ export const UserProvider = ({ children }) => {
       await AsyncStorage.removeItem('user');
       setUser(null);
       setIsNewUser(false);
+      setIsAuthenticated(false);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
@@ -67,7 +72,8 @@ export const UserProvider = ({ children }) => {
     <UserContext.Provider value={{ 
       user, 
       setUser, 
-      isNewUser, 
+      isNewUser,
+      isAuthenticated, 
       setIsNewUser,
       saveUser, 
       logout

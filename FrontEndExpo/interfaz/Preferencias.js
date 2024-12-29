@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useUser } from '../context/UserProvider';
 
-const Preferencias = ({navigation}) => {
-  const { user, setIsNewUser } = useUser();
+const Preferencias = ({route, navigation}) => {
+  const { setIsNewUser, saveUser } = useUser();
   const [selectedPreferences, setSelectedPreferences] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,7 +24,7 @@ const Preferencias = ({navigation}) => {
   
     try {
       const preferences = {
-        userID: user.id,
+        userID: 33,//User.id
         ...selectedPreferences.reduce((acc, preference) => {
           acc[preference] = true;
           return acc;
@@ -42,9 +42,10 @@ const Preferencias = ({navigation}) => {
   
       if (response.ok) {
         const data = await response.json();
-        Alert.alert("¡Éxito!", "Tus preferencias han sido guardadas en el servidor.");
+        Alert.alert("¡Éxito!", "Tus preferencias han sido guardadas correctamente");
+       // await saveUser(userData);
         setIsNewUser(false);
-        console.log("Respuesta del servidor:", data);
+        navigation.navigate("VerEventos");
       } else {
         Alert.alert("Error", "No se pudo guardar tus preferencias. Inténtalo más tarde.");
         console.error("Error en la respuesta:", response.status);
@@ -54,15 +55,6 @@ const Preferencias = ({navigation}) => {
       Alert.alert("Error", "Hubo un problema al conectarse con el servidor.");
     }
   };
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-        <Text style={styles.loadingText}>Cargando preferencias...</Text>
-      </View>
-    );
-  }
 
   return (
     <ScrollView style={styles.container}>
