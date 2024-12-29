@@ -2,7 +2,7 @@ import React, {useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, TextInput } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
-const userID = '10';
+const userID = '33';
 
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -62,7 +62,7 @@ const Mapa = ({ eventos, route }) => {
 
   // Cuando se modifica la propiedad de filtro, carga los eventos filtrados si no están ya cargados
   useEffect(() => {
-    if (isFiltered && eventos.length == 0) {
+    if (isFiltered && eventosFiltrados.length == 0) {
       fetchEventosFiltrados(); 
     }
   }, [isFiltered]);
