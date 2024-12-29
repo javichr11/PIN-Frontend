@@ -2,28 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useUser } from '../context/UserProvider';
 import { ImageBackground } from 'react-native';
+import EventosInscritos from './EventosInscritos'; 
 
 
-const formatearFecha = (fechaISO) => {
-  const fecha = new Date(fechaISO);
-
-  // Opciones para formatear la fecha
-  const opciones = {
-    weekday: 'short', // día de la semana abreviado (ej. "sáb.")
-    day: '2-digit', // día del mes con dos dígitos
-    month: '2-digit', // mes abreviado
-    year: 'numeric', // año completo
-    hour: '2-digit', // hora en formato 24h
-    minute: '2-digit', // minutos
-  };
-
-  // Convertir la fecha al idioma deseado (ej. español)
-  return fecha.toLocaleDateString('es-ES', opciones).replace(',', ' ·');
-};
-
-// Ejemplo de uso
-const fechaFormateada = formatearFecha('2024-11-30T10:00:56');
-console.log(fechaFormateada); // "sáb. 30/11/2024 · 10:00"
 
 
 
@@ -100,32 +81,7 @@ const Perfil = () => {
             {/* Eventos inscritos */}
             <View style={styles.eventsSection}>
               <Text style={styles.sectionTitle}>Eventos inscritos</Text>
-              {eventos.length > 0 ? (
-                eventos.map((evento) => (
-                  <ImageBackground
-                    key={evento.id}
-                    source={{ uri: evento.foto || 'https://via.placeholder.com/300x150' }} // Cambia la URL de placeholder si es necesario
-                    style={styles.eventCard}
-                    imageStyle={{ borderRadius: 15 }} // Bordes redondeados en la imagen
-                  >
-                    {/* Encabezado de la tarjeta */}
-                    <View style={styles.eventHeader}>
-                      <Text style={styles.eventDate}>{formatearFecha(evento.fecha) || 'Fecha no disponible'}</Text>
-                      <View style={styles.participantsBadge}>
-                        <Image
-                          source={require('../assets/white-default-user.png')} // Ícono de participantes
-                          style={styles.participantIcon}
-                        />
-                        <Text style={styles.participantText}>
-                          {evento.inscritos}/{evento.aforo}
-                        </Text>
-                      </View>
-                    </View>
-                  </ImageBackground>
-                ))
-              ) : (
-                <Text style={styles.noEventsText}>No estás inscrito a ningún evento.</Text>
-              )}
+              <EventosInscritos eventos={eventos} />
             </View>
 
           </>
