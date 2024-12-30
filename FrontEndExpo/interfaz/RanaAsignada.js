@@ -27,7 +27,7 @@ const RANA_TYPES = {
     title: '¡Juntos hacemos el cambio! ',
     subtitle: 'Rana Solidaria está interesada en ayudar, socializar y crear comunidad.'
   }
-};
+}; 
 
 const RanaAsignada = ({ route, navigation }) => {
   const { ranaType } = route.params;
