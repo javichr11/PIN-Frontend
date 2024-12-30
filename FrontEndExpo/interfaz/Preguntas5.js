@@ -18,7 +18,7 @@ const Preguntas5 = ({ navigation }) => {
   const handleNext = () => {
     if (selectedOption) {
         // Store the selected option if needed
-        navigation.navigate('Preguntas2');
+        navigation.navigate('RanaAsignada');
       }
   };
 

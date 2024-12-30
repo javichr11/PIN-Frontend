@@ -23,6 +23,7 @@ import Preguntas2 from "./interfaz/Preguntas2";
 import Preguntas3 from "./interfaz/Preguntas3";
 import Preguntas4 from "./interfaz/Preguntas4";
 import Preguntas5 from "./interfaz/Preguntas5";
+import RanaAsignada from "./interfaz/RanaAsignada";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -189,6 +190,7 @@ function AppContent() {
       <Stack.Screen name="Preguntas3" component={Preguntas3} options={{ headerShown: false }} />
       <Stack.Screen name="Preguntas4" component={Preguntas4} options={{ headerShown: false }} />
       <Stack.Screen name="Preguntas5" component={Preguntas5} options={{ headerShown: false }} />
+      <Stack.Screen name="RanaAsignada" component={RanaAsignada} options={{ headerShown: false }} />
   </Stack.Navigator>
     )}
   </NavigationContainer>
