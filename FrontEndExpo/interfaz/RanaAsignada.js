@@ -1,37 +1,59 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Animated, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Animated, Image, ActivityIndicator } from 'react-native';
 import { useFonts } from 'expo-font';
 
 const RANA_TYPES = {
-  WISE: {
+  PARTY: {
     image: require("../assets/ranaFestiva.png"),
     color: '#9B59B6',
     title: '¡Donde hay diversión, ahí estoy! ',
-    subtitle: 'Rana Festiva ama la música, la diversión y los ambientes sociales.'
+    subtitle: 'Rana Festiva, ama la música, la diversión y los ambientes sociales.'
   },
-  PARTY: {
+  WISE: {
     image: require("../assets/ranaSabia.png"),
     color: '#4A66E0',
     title: '¡La sabiduría salta contigo!',
-    subtitle: 'Rana Sabia está interesada en el arte, la cultura y el aprendizaje.'
+    subtitle: 'Rana Sabia, está interesada en el arte, la cultura y el aprendizaje.'
   },
   ACTIVE: {
     image: require("../assets/ranaActiva.png"),
     color: '#27AE60',
     title: '¡Siempre en movimiento!',
-    subtitle: 'Rana Activa es deportiva y amantes de la naturaleza.'
+    subtitle: 'Rana Activa, es deportiva y amantes de la naturaleza.'
   },
   HELPER: {
     image: require("../assets/ranaSolidaria.png"),
     color: '#E67E22',
     title: '¡Juntos hacemos el cambio! ',
-    subtitle: 'Rana Solidaria está interesada en ayudar, socializar y crear comunidad.'
+    subtitle: 'Rana Solidaria, está interesada en ayudar, socializar y crear comunidad.'
   }
 }; 
 
 const RanaAsignada = ({ route, navigation }) => {
-  const { ranaType } = route.params;
-  const ranaConfig = RANA_TYPES[ranaType];
+  const [ranaConfig, setRanaConfig] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const puntuacionAcumulada = route.params.puntuacionAcumulada;
+
+  const assignFrog = () => {
+    let mayorPuntuacion = -1; 
+    let tipoRanaConMayorPuntuacion = null;
+    
+    for (const categoria in puntuacionAcumulada) {
+      if (puntuacionAcumulada.hasOwnProperty(categoria)) {
+        const puntuacion = puntuacionAcumulada[categoria];
+        if (puntuacion > mayorPuntuacion) {
+          mayorPuntuacion = puntuacion;
+          tipoRanaConMayorPuntuacion = categoria;
+        }
+      }
+    }
+    setRanaConfig(RANA_TYPES[tipoRanaConMayorPuntuacion]);
+    setIsLoading(false);
+  };
+
+  React.useEffect(() => {
+    assignFrog();
+  }, [puntuacionAcumulada]);
 
   const [fontsLoaded] = useFonts({
     'System': require('expo-font')
@@ -56,6 +78,15 @@ const RanaAsignada = ({ route, navigation }) => {
     ).start();
   }, []);
 
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <ActivityIndicator size="large" color="#4A66E0" />
+        <Text style={styles.loadingText}>Asignando tu rana...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.progressContainer}>
@@ -66,7 +97,7 @@ const RanaAsignada = ({ route, navigation }) => {
         <View style={[styles.progressDot, { backgroundColor: '#444444' }]} />
         <View style={[styles.progressDot, { backgroundColor: '#444444' }]} />
         <View style={[styles.progressDot, { backgroundColor: '#4A66E0' }]} />
-        </View>
+      </View>
 
       <View style={styles.imageContainer}>
         <Image
@@ -82,7 +113,7 @@ const RanaAsignada = ({ route, navigation }) => {
 
       <TouchableOpacity 
         style={[styles.button, { backgroundColor: ranaConfig.color }]}
-        onPress={() => navigation.navigate('InicioSesion')}
+        onPress={() => navigation.navigate('VerEvento')}
       >
         <Text style={styles.buttonText}>Finalizar</Text>
       </TouchableOpacity>
@@ -95,60 +126,70 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000000',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 60,
-    paddingBottom: 40,
+    justifyContent: 'flex-start',
+    paddingTop: 40, 
+    paddingBottom: 20, 
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+  },
+  loadingText: {
+    color: 'white',
+    marginTop: 20,
+    fontSize: 16,
   },
   imageContainer: {
     width: '100%',
-    height: 500,
+    height: '60%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10, 
   },
   frogsImage: {
     width: '80%',
-    height: '100%',
+    height: '150%', 
     resizeMode: 'contain',
   },
   progressContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 40,
+    marginTop: 10, 
+    marginBottom: 50, 
   },
   progressDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 4,
+    width: 6, 
+    height: 6, 
+    borderRadius: 3,
+    marginHorizontal: 3, 
   },
   textContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 20, 
+    paddingHorizontal: 20, 
   },
   title: {
-    fontSize: 24,
+    fontSize: 22, 
     color: 'white',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 8, 
     fontWeight: 'bold',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14, 
     color: 'white',
     textAlign: 'center',
     opacity: 0.8,
   },
   button: {
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 25, 
     borderRadius: 25,
-    width: '80%',
+    width: '75%', 
+    marginTop: 10, 
   },
   buttonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
     fontWeight: 'bold',
   },

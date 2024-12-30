@@ -106,7 +106,7 @@ export default function RegistroFoto({ route, navigation }) {
       <View style={styles.inputContainer}>
         <Text style={styles.title}>Registro de Usuario</Text>
 
-        <Text style={styles.label}>Nombre</Text>
+        <Text style={styles.label}>Nombre de usuario</Text>
         <TextInput
           style={styles.input}
           value={nombreUsuario}

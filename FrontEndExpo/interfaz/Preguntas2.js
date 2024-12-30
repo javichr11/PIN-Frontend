@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Preguntas2 = ({ navigation }) => {
+const Preguntas2 = ({ navigation , route}) => {
   const [selectedOption, setSelectedOption] = useState(null);
+  const puntuacionAcumulada = route.params;
 
   const options = [
-    "Visitar un museo o una exposición",
-    "Ir a un concierto o festival",
-    "Hacer senderismo o jugar fútbol",
-    "Participar en una jornada de voluntariado"
+    {text: "Visitar un museo o una exposición",puntos: { WISE: 3, ACTIVE: 2, PARTY: 0, HELPER: 1 }},
+    {text: "Ir a un concierto o festival", puntos: { WISE: 1, ACTIVE: 2, PARTY: 3, HELPER: 0 }},
+    {text: "Hacer senderismo o jugar fútbol", puntos: {  WISE: 1, ACTIVE: 3, PARTY: 2, HELPER: 2 }},
+    {text: "Participar en una jornada de voluntariado", puntos: {  WISE: 1, ACTIVE: 2, PARTY: 0, HELPER: 3  }}
   ];
 
   const handleSelect = (option) => {
@@ -17,8 +18,16 @@ const Preguntas2 = ({ navigation }) => {
 
   const handleNext = () => {
     if (selectedOption) {
-        // Store the selected option if needed
-        navigation.navigate('Preguntas3');
+      
+      
+      const nuevaPuntuacion = {
+        WISE: puntuacionAcumulada.puntuacionAcumulada.WISE + parseInt(selectedOption.puntos.WISE),
+        ACTIVE: puntuacionAcumulada.puntuacionAcumulada.ACTIVE + parseInt(selectedOption.puntos.ACTIVE),
+        PARTY: puntuacionAcumulada.puntuacionAcumulada.PARTY + parseInt(selectedOption.puntos.PARTY),
+        HELPER: puntuacionAcumulada.puntuacionAcumulada.HELPER + parseInt(selectedOption.puntos.HELPER),
+      };
+      console.log("Navegando a Preguntas3 con opción:", nuevaPuntuacion);
+        navigation.navigate('Preguntas3',  { puntuacionAcumulada: nuevaPuntuacion });
       }
   };
 
@@ -58,7 +67,7 @@ const Preguntas2 = ({ navigation }) => {
               styles.optionText,
               selectedOption === option && styles.optionTextSelected
             ]}>
-              {option}
+              {option.text}
             </Text>
           </TouchableOpacity>
         ))}

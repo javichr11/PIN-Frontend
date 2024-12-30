@@ -5,10 +5,11 @@ const Preguntas1 = ({ navigation }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const options = [
-    "Aprender algo nuevo",
-    "Disfrutar de la música y la creatividad",
-    "Hacer deporte o estar activo",
-    "Ayudar y conocer personas"
+    {text: "Aprender algo nuevo", puntos: { WISE: 3, ACTIVE: 2, PARTY: 0, HELPER: 1 }},
+    {text: "Disfrutar de la música y la creatividad", puntos: { WISE: 1, ACTIVE: 2, PARTY: 3, HELPER: 0 }},
+    {text: "Hacer deporte o estar activo", puntos: { WISE: 1, ACTIVE: 3, PARTY: 2, HELPER: 2 }},
+    {text: "Ayudar y conocer personas", puntos: { WISE: 1, ACTIVE: 2, PARTY: 0, HELPER: 3 }}
+  
   ];
 
   const handleSelect = (option) => {
@@ -17,8 +18,9 @@ const Preguntas1 = ({ navigation }) => {
 
   const handleNext = () => {
     if (selectedOption) {
-      console.log("Navegando a Preguntas2 con opción:", selectedOption);
-      navigation.navigate('Preguntas2');
+      console.log("Navegando a Preguntas2 con opción:", selectedOption.puntos);
+      const puntuacionAcumulada = selectedOption.puntos;
+      navigation.navigate('Preguntas2',  { puntuacionAcumulada });
     }
   };
   
@@ -59,7 +61,7 @@ const Preguntas1 = ({ navigation }) => {
               styles.optionText,
               selectedOption === option && styles.optionTextSelected
             ]}>
-              {option}
+              {option.text}
             </Text>
           </TouchableOpacity>
         ))}

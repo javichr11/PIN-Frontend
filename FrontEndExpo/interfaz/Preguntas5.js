@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Preguntas5 = ({ navigation }) => {
+const Preguntas5 = ({ navigation , route}) => {
   const [selectedOption, setSelectedOption] = useState(null);
+  const puntuacionAcumulada = route.params;
 
   const options = [
-    "Aprender algo nuevo o reflexionar",
-    "Haber disfrutado con amigos",
-    "Sentirme físicamente activo",
-    "Haber ayudado o compartido con alguien"
+    {text: "Aprender algo nuevo o reflexionar", puntos: { WISE: 3, ACTIVE: 2, PARTY: 0, HELPER: 1 }},
+    {text: "Haber disfrutado con amigos",puntos: {WISE: 1, ACTIVE: 2, PARTY: 3, HELPER: 0}},
+    {text: "Sentirme físicamente activo", puntos: {  WISE: 1, ACTIVE: 3, PARTY: 2, HELPER: 2 }},
+    {text: "Haber ayudado o compartido con alguien",puntos: {  WISE: 1, ACTIVE: 2, PARTY: 0, HELPER: 3 }}
   ];
 
   const handleSelect = (option) => {
@@ -17,8 +18,17 @@ const Preguntas5 = ({ navigation }) => {
 
   const handleNext = () => {
     if (selectedOption) {
-        // Store the selected option if needed
-        navigation.navigate('RanaAsignada');
+      console.log(puntuacionAcumulada);
+      console.log(selectedOption.WISE)
+      
+      const nuevaPuntuacion = {
+        WISE: puntuacionAcumulada.puntuacionAcumulada.WISE + parseInt(selectedOption.puntos.WISE),
+        ACTIVE: puntuacionAcumulada.puntuacionAcumulada.ACTIVE + parseInt(selectedOption.puntos.ACTIVE),
+        PARTY: puntuacionAcumulada.puntuacionAcumulada.PARTY + parseInt(selectedOption.puntos.PARTY),
+        HELPER: puntuacionAcumulada.puntuacionAcumulada.HELPER + parseInt(selectedOption.puntos.HELPER),
+      };
+      console.log("Navegando a RanaAsignada con opción:", nuevaPuntuacion);
+        navigation.navigate('RanaAsignada',  { puntuacionAcumulada: nuevaPuntuacion });
       }
   };
 
@@ -58,7 +68,7 @@ const Preguntas5 = ({ navigation }) => {
               styles.optionText,
               selectedOption === option && styles.optionTextSelected
             ]}>
-              {option}
+              {option.text}
             </Text>
           </TouchableOpacity>
         ))}
