@@ -73,6 +73,7 @@ export const UserProvider = ({ children }) => {
       user, 
       setUser, 
       isNewUser,
+      setIsAuthenticated,
       isAuthenticated, 
       setIsNewUser,
       saveUser, 

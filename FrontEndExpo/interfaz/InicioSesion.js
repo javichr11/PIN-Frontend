@@ -39,7 +39,7 @@ export default function InicioSesion({ navigation}) {
 
         saveUser(data.user);
 
-        navigation.replace('verMapa');
+        navigation.navigate('VerEvento');
       } else {
         Alert.alert("Error", data.message || "Error al iniciar sesión.");
       }

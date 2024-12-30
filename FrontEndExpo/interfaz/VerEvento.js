@@ -35,9 +35,6 @@ const VerEvento = ({ navigation, route }) => {
     if(route.params?.refresh){fetchEventos();}
 
   }, [route.params]);
-  if (eventos.length === 0) {
-    return <Text>No hay eventos disponibles.</Text>;
-  }
 
 
   const confirmarEliminar = (id) => {

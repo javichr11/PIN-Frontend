@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Image, ActivityIndicator } from 'react-native';
 import { useFonts } from 'expo-font';
+import { useUser } from '../context/UserProvider';
 
 const RANA_TYPES = {
   PARTY: {
@@ -33,6 +34,7 @@ const RanaAsignada = ({ route, navigation }) => {
   const [ranaConfig, setRanaConfig] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const puntuacionAcumulada = route.params.puntuacionAcumulada;
+  const { setIsAuthenticated } = useUser();
 
   const assignFrog = () => {
     let mayorPuntuacion = -1; 
@@ -58,6 +60,20 @@ const RanaAsignada = ({ route, navigation }) => {
   const [fontsLoaded] = useFonts({
     'System': require('expo-font')
   });
+
+  const handleFinish = () => {
+    setIsAuthenticated(true);
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'VerEventos'
+          }
+        ],
+      })
+    );
+  };
 
   const dotOpacity = React.useRef(new Animated.Value(0)).current;
 
@@ -113,7 +129,7 @@ const RanaAsignada = ({ route, navigation }) => {
 
       <TouchableOpacity 
         style={[styles.button, { backgroundColor: ranaConfig.color }]}
-        onPress={() => navigation.navigate('VerEvento')}
+        onPress={() => handleFinish()}
       >
         <Text style={styles.buttonText}>Finalizar</Text>
       </TouchableOpacity>

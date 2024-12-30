@@ -116,7 +116,7 @@ function AppContent() {
           tabBarInactiveTintColor: 'gray',
         }}>
         <Tab.Screen 
-          name="VerEventos"
+          name="VerEvento"
           options={{
             title: 'Mis Eventos', 
             tabBarIcon:({color, size}) => (
@@ -191,6 +191,9 @@ function AppContent() {
       <Stack.Screen name="Preguntas4" component={Preguntas4} options={{ headerShown: false }} />
       <Stack.Screen name="Preguntas5" component={Preguntas5} options={{ headerShown: false }} />
       <Stack.Screen name="RanaAsignada" component={RanaAsignada} options={{ headerShown: false }} />
+      <Stack.Screen name="VerEvento" options={{ headerShown: false }}>
+         {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
+      </Stack.Screen>
   </Stack.Navigator>
     )}
   </NavigationContainer>
