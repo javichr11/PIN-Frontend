@@ -15,9 +15,14 @@ import Mapa from "./interfaz/mapa";
 import Notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
 import Logros from "./interfaz/Logros";
-import PreferenciasUsuario from "./interfaz/Preferencias";
 import * as Notifications from 'expo-notifications';
 import { UserProvider, useUser } from "./context/UserProvider";
+import PreguntasInicial from "./interfaz/PreguntasInicial";
+import Preguntas1 from "./interfaz/Preguntas1";
+import Preguntas2 from "./interfaz/Preguntas2";
+import Preguntas3 from "./interfaz/Preguntas3";
+import Preguntas4 from "./interfaz/Preguntas4";
+import Preguntas5 from "./interfaz/Preguntas5";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -152,7 +157,7 @@ function AppContent() {
         </Tab.Screen>
         <Tab.Screen 
           name="notificaciones"
-          component={Notificaciones}
+          component={PreguntasInicial}
           options={{
             title: 'Notificaciones',
             tabBarIcon: ({ color, size }) => (
@@ -173,13 +178,18 @@ function AppContent() {
       </Tab.Navigator>
     ) : (
       <Stack.Navigator>
-        <Stack.Screen name="InicioSesion" options={{ headerShown: false }}>
-          {props => <InicioSesion {...props} setIsAuthenticated={isAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="Registro" component={Registro} options={{ title: 'Registro de usuario' }} />
-        <Stack.Screen name="RegistroFoto" component={RegistroFoto} options={{ title: 'Registro de usuario' }}/>
-        <Stack.Screen name="PreferenciasUsuario" component={PreferenciasUsuario} options={{ title: 'Preferencias de usuario' }} />
-      </Stack.Navigator>
+  <Stack.Screen name="InicioSesion" options={{ headerShown: false }}>
+    {props => <InicioSesion {...props} setIsAuthenticated={isAuthenticated} />}
+  </Stack.Screen>
+      <Stack.Screen name="Registro" component={Registro} options={{ title: 'Registro de usuario' }} />
+      <Stack.Screen name="RegistroFoto" component={RegistroFoto} options={{ title: 'Registro de usuario' }}/>
+      <Stack.Screen name="PreguntasInicial" component={PreguntasInicial} options={{ headerShown: false }} />
+      <Stack.Screen name="Preguntas1" component={Preguntas1} options={{ headerShown: false }} />
+      <Stack.Screen name="Preguntas2" component={Preguntas2} options={{ headerShown: false }} />
+      <Stack.Screen name="Preguntas3" component={Preguntas3} options={{ headerShown: false }} />
+      <Stack.Screen name="Preguntas4" component={Preguntas4} options={{ headerShown: false }} />
+      <Stack.Screen name="Preguntas5" component={Preguntas5} options={{ headerShown: false }} />
+  </Stack.Navigator>
     )}
   </NavigationContainer>
 );

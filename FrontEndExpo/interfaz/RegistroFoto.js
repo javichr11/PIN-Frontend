@@ -8,7 +8,7 @@ export default function RegistroFoto({ route, navigation }) {
   const [edad, setEdad] = useState(' ');
   const [foto, setFoto] = useState(null);
   const { nombre, movil, password } = route.params;
-  const { saveUser } = useUser();
+  const { saveUser, setIsNewUser } = useUser();
   
   const seleccionarFoto = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -52,8 +52,14 @@ export default function RegistroFoto({ route, navigation }) {
     });
 
     const data = await response.json();
+    console.log('Respuesta del servidor:', data);
 
     if(response.ok){
+
+       // Primero guardamos el usuario y establecemos isNewUser
+       await saveUser(data.user);
+       setIsNewUser(true);
+
       Alert.alert(
         '¡Éxito!', 
         data.message,
@@ -61,8 +67,9 @@ export default function RegistroFoto({ route, navigation }) {
           {
             text: 'OK',
             onPress: async () => {
-              await saveUser(data.user);
-              navigation.navigate("PreferenciasUsuario");
+              console.log('Navegando a Preferencias...');
+              navigation.navigate('PreguntasInicial');
+              
             }
           }
         ]
@@ -82,7 +89,7 @@ export default function RegistroFoto({ route, navigation }) {
 
   handleSendToPreferencias = () => {
     try {
-      navigation.navigate("PreferenciasUsuario");
+      navigation.navigate('PreguntasInicial');
     } catch (error) {
       console.error("Navigation error:", error);
     }
