@@ -3,15 +3,14 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } fr
 import { useUser } from '../context/UserProvider';
 import { ImageBackground } from 'react-native';
 import EventosInscritos from './EventosInscritos'; 
-
-
-
-
+import Logros from './Logros';
 
 
 const Perfil = () => {
   const { user, logout } = useUser();
   const [eventos, setEventos] = useState([]);
+  const [mostrarLogros, setMostrarLogros] = useState(false); 
+  const [numInsignias, setNumInsignias] = useState(0);
 
   const fetchEventosInscrito = async () => {
     try {
@@ -27,14 +26,35 @@ const Perfil = () => {
     }
   };
 
+  const cuentaInsignias = async () => {
+    try {
+      const response = await fetch(`https://croacky.onrender.com/insignia/insigniasLogradas/${user.id}`);
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data.logrosAdaptados.length);
+        setNumInsignias(data.logrosAdaptados.length);
+      } else {
+        Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+    }
+  }
+
   useEffect(() => {
     if (user) {
       fetchEventosInscrito();
+      cuentaInsignias();
     }
   }, [user]);
 
   return (
+    
     <ScrollView contentContainerStyle={styles.scrollContainer}>
+      {/* Mostrar la ventana de logros si se activa */}
+      {mostrarLogros ? (
+        <Logros userID={user.id} onClose={() => setMostrarLogros(false)} />
+      ) : (
       <View style={styles.container}>
         {user ? (
           <>
@@ -55,13 +75,13 @@ const Perfil = () => {
             <View style={styles.optionsSection}>
               <Text style={styles.sectionTitle}>Perfil</Text>
               <View style={styles.optionsSubsection}>
-                <TouchableOpacity style={styles.optionButton}>
-                <View style={styles.optionRow}>
-                  <Text style={styles.optionText}>⭐ Logros</Text>
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>3</Text>
+                <TouchableOpacity style={styles.optionButton} onPress={() => setMostrarLogros(true)}>
+                  <View style={styles.optionRow}>
+                    <Text style={styles.optionText}>⭐ Logros</Text>
+                    <View style={styles.badge}>
+                      <Text style={styles.badgeText}>{numInsignias}</Text>
+                    </View>
                   </View>
-                </View>
                   <Image
                     source={require('../assets/flecha_Derecha.png')}
                     style={{ width: 20, height: 20 }}
@@ -92,6 +112,7 @@ const Perfil = () => {
           <Text style={styles.logoutText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>
+      )}
     </ScrollView>
 
   );

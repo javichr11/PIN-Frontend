@@ -1,82 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, Alert, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
+import Insignia from './Insignia';
 
-const Logros = () => {
-  const [logros, setLogros] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const Logros = ({ userID, onClose }) => {
+  const [insignias, setInsignias] = useState([]);
 
-  const fetchLogros = async () => {
+  // Llamada a la API para obtener las insignias
+  const fetchInsignias = async () => {
     try {
-      const response = await fetch('https://croacky.onrender.com/insignia/insigniasLogradas/10'); // Reemplaza '10' con el userID dinámico
+      const response = await fetch(`https://croacky.onrender.com/insignia/insigniasLogradas/${userID}`);
       const data = await response.json();
       console.log(data);
       if (response.ok) {
-        const logrosAdaptados = data.insignias.map((logro) => ({
-          id: logro.id,
-          nombre: logro.nombre || `Insignia ${logro.id}`,
-          descripcion: logro.descripcion || 'Sin descripción',
-          icono: logro.icono || 'https://via.placeholder.com/50', // Icono por defecto si no hay URL
-          progreso: logro.criterioMin || 0, // Criterio mínimo para completar la insignia
-          desbloqueado: true, // Todas las insignias en este endpoint están desbloqueadas
-        }));
-        setLogros(logrosAdaptados);
+        setInsignias(data.logrosAdaptados); // Asegúrate de que la API devuelve "insignias"
       } else {
-        Alert.alert('Error', `No se pudieron obtener los logros: ${data.message}`);
+        Alert.alert('Error', `No se pudieron cargar las insignias: ${data.message}`);
       }
     } catch (error) {
-      Alert.alert('Error', `Ocurrió un error al obtener logros: ${error.message}`);
-    } finally {
-      setIsLoading(false);
+      Alert.alert('Error', `Ocurrió un error al cargar insignias: ${error.message}`);
     }
   };
 
   useEffect(() => {
-    fetchLogros();
+    fetchInsignias();
   }, []);
 
-  const renderItem = ({ item }) => {
-    return (
-      <View style={[styles.logroCard, item.desbloqueado ? styles.desbloqueado : styles.bloqueado]}>
-        <View style={styles.iconContainer}>
-          <Image
-            source={{ uri: item.icono }}
-            style={styles.logroIcon}
-          />
-        </View>
-        <View style={styles.logroInfo}>
-          <Text style={styles.logroTitle}>{item.nombre}</Text>
-          <Text style={styles.logroDescription}>{item.descripcion}</Text>
-          <Text style={styles.logroProgress}>{`Criterio mínimo: ${item.progreso}`}</Text>
-        </View>
+  const renderItem = ({ item }) => (
+    <View style={styles.insigniaContainer}>
+      {/* Icono de la insignia */}
+      <View style={[styles.insigniaIcon, item.lograda && styles.insigniaLograda]}>
+        <Image
+          source={require('../assets/white-ticket.png')} // Icono genérico
+          style={styles.iconImage}
+        />
       </View>
-    );
-  };
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-        <Text style={styles.loadingText}>Cargando logros...</Text>
-      </View>
-    );
-  }
+      {/* Nombre y descripción */}
+      <Text style={styles.insigniaTitle}>{item.nombre}</Text>
+      <Text style={styles.insigniaDescription}>{item.descripcion}</Text>
 
-  if (logros.length === 0) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.noLogrosText}>No tienes logros desbloqueados todavía.</Text>
+      {/* Progreso */}
+      <View style={[styles.progress, item.lograda && styles.progressCompleted]}>
+        <Text style={styles.progressText}>{item.progreso}/{item.meta}</Text>
       </View>
-    );
-  }
+    </View>
+  );
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Logros</Text>
       <FlatList
-        data={logros}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-      />
+      data={insignias}
+      renderItem={({ item }) => (
+        <Insignia
+          nombre={item.nombre}
+          descripcion={item.descripcion}
+          progreso={item.progreso}
+          meta={item.meta}
+          desbloqueada={item.desbloqueada}
+          icono={item.icono}
+        />
+      )}
+      keyExtractor={(item) => item.id.toString()}
+      numColumns={2} 
+      columnWrapperStyle={styles.row} 
+      
+    />
+      <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+        <Text style={styles.closeButtonText}>Cerrar</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -84,76 +76,76 @@ const Logros = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
     padding: 20,
-    backgroundColor: '#121212', // Fondo oscuro
   },
-  logroCard: {
-    flexDirection: 'row',
-    padding: 20,
-    marginBottom: 15,
-    borderRadius: 15,
-    backgroundColor: '#121212', // Fondo oscuro para tarjetas
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 8,
-    borderWidth: 1,
+  title: {
+    fontSize: 20,
+    color: '#FFF',
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  desbloqueado: {
-    borderColor: '#4CAF50', // Verde para desbloqueados
-    backgroundColor: '#212121',
+  row: {
+    justifyContent: 'space-between',
   },
-  bloqueado: {
-    opacity: 0.6,
-    borderColor: '#BDBDBD', // Gris para bloqueados
-    backgroundColor: '#212121',
+  insigniaContainer: {
+    flex: 1,
+    alignItems: 'center',
+    margin: 10,
   },
-  iconContainer: {
+  insigniaIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#444',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 60, // Tamaño del círculo
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#212121',
-    marginRight: 20,
-    overflow: 'hidden', // Esto asegura que la imagen se recorte dentro del círculo
+    marginBottom: 10,
   },
-  logroIcon: {
-    width: '100%', // La imagen ocupará todo el ancho del contenedor
-    height: '100%', // La imagen ocupará todo el alto del contenedor
-    resizeMode: 'cover', // Ajusta la imagen para cubrir el contenedor
+  insigniaLograda: {
+    backgroundColor: '#8e44ad', // Fondo morado para logros completados
   },
-  logroInfo: {
-    flex: 1,
-    justifyContent: 'center',
+  iconImage: {
+    width: 40,
+    height: 40,
+    tintColor: '#FFF',
   },
-  logroTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  insigniaTitle: {
+    fontSize: 14,
     color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  insigniaDescription: {
+    fontSize: 12,
+    color: '#AAA',
+    textAlign: 'center',
     marginBottom: 5,
   },
-  logroDescription: {
-    fontSize: 14,
-    color: '#BDBDBD',
-    marginBottom: 8,
+  progress: {
+    backgroundColor: '#444',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
-  logroProgress: {
-    fontSize: 14,
-    color: '#4CAF50',
-    fontWeight: 'bold',
+  progressCompleted: {
+    backgroundColor: '#3498db', // Fondo azul para progreso completado
   },
-  noLogrosText: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#BDBDBD',
+  progressText: {
+    color: '#FFF',
+    fontSize: 12,
+  },
+  closeButton: {
+    backgroundColor: '#444',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignSelf: 'center',
     marginTop: 20,
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#BDBDBD',
-    textAlign: 'center',
+  closeButtonText: {
+    color: '#FFF',
+    fontSize: 14,
   },
 });
 
