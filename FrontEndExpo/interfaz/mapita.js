@@ -81,6 +81,7 @@ const Mapita = () => {
         if (evento.latitud && evento.longitud) {
           return (
             <Marker
+            key={evento.id}
               coordinate={{
                 latitude: evento.latitud,
                 longitude: evento.longitud
