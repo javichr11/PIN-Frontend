@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useUser } from "../context/UserProvider";
+import PreguntasInicial from './PreguntasInicial';
 
 export default function RegistroFoto({ route, navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('');
@@ -56,24 +57,20 @@ export default function RegistroFoto({ route, navigation }) {
 
     if(response.ok){
 
-       // Primero guardamos el usuario y establecemos isNewUser
-       await saveUser(data.user);
-       setIsNewUser(true);
+      Alert.alert('Éxito!', data.message);
+      
+      try{
+        await saveUser(data.user);
+        setIsNewUser(true);
 
-      Alert.alert(
-        '¡Éxito!', 
-        data.message,
-        [
-          {
-            text: 'OK',
-            onPress: async () => {
-              console.log('Navegando a Preferencias...');
-              navigation.navigate('PreguntasInicial');
-              
-            }
-          }
-        ]
-      );
+        navigation.reset({
+          index: 0,
+          routes: [{name:PreguntasInicial}]
+        });
+      }catch(error){
+        console.error('Error:', error);
+      }
+
     } else {
       Alert.alert('Error', `No se pudo registrar el usuario: ${data.message}`);
     }

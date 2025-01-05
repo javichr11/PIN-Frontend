@@ -1,14 +1,33 @@
-import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from "../context/UserProvider";
+import React, { useEffect } from 'react';
 
 const PreguntasInicial = ({ navigation }) => {
+  const {user, setIsAuthenticated} = useUser();
+
   const startQuiz = () => {
     navigation.navigate('Preguntas1');
   };
 
-  const skipQuiz = () => {
-    navigation.navigate('InicioSesion');
+  const skipQuiz = async () => {
+    try {
+      if (!user) {
+        console.error('No se encontró información del usuario');
+        return;
+      }
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Error in skipQuizz:', error);
+    }
   };
+
+
+  useEffect(() => {
+    if (!user) {
+      console.log("N ha llegado el usuario correctamente");
+    }
+  }, [user]);
 
   return (
     <View style={styles.container}>

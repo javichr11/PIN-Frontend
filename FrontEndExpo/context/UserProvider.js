@@ -58,9 +58,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (nextAppState === "background") {
         logout();
-      }
     });
 
     return () => {

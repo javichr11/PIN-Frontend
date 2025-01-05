@@ -15,7 +15,6 @@ import Mapa from "./interfaz/mapa";
 import Notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
 import Logros from "./interfaz/Logros";
-import * as Notifications from 'expo-notifications';
 import { UserProvider, useUser } from "./context/UserProvider";
 import PreguntasInicial from "./interfaz/PreguntasInicial";
 import Preguntas1 from "./interfaz/Preguntas1";
@@ -68,7 +67,7 @@ function MapaStack({ eventos }) {
 }
 
 function AppContent() {
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated , setIsAuthenticated} = useUser();
   const [eventos, setEventos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -158,7 +157,7 @@ function AppContent() {
         </Tab.Screen>
         <Tab.Screen 
           name="notificaciones"
-          component={PreguntasInicial}
+          component={Notificaciones}
           options={{
             title: 'Notificaciones',
             tabBarIcon: ({ color, size }) => (
@@ -177,24 +176,37 @@ function AppContent() {
           }}
         />
       </Tab.Navigator>
-    ) : (
+    ) :(
       <Stack.Navigator>
-  <Stack.Screen name="InicioSesion" options={{ headerShown: false }}>
-    {props => <InicioSesion {...props} setIsAuthenticated={isAuthenticated} />}
-  </Stack.Screen>
-      <Stack.Screen name="Registro" component={Registro} options={{ title: 'Registro de usuario' }} />
-      <Stack.Screen name="RegistroFoto" component={RegistroFoto} options={{ title: 'Registro de usuario' }}/>
-      <Stack.Screen name="PreguntasInicial" component={PreguntasInicial} options={{ headerShown: false }} />
-      <Stack.Screen name="Preguntas1" component={Preguntas1} options={{ headerShown: false }} />
-      <Stack.Screen name="Preguntas2" component={Preguntas2} options={{ headerShown: false }} />
-      <Stack.Screen name="Preguntas3" component={Preguntas3} options={{ headerShown: false }} />
-      <Stack.Screen name="Preguntas4" component={Preguntas4} options={{ headerShown: false }} />
-      <Stack.Screen name="Preguntas5" component={Preguntas5} options={{ headerShown: false }} />
-      <Stack.Screen name="RanaAsignada" component={RanaAsignada} options={{ headerShown: false }} />
-      <Stack.Screen name="VerEvento" options={{ headerShown: false }}>
-         {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
-      </Stack.Screen>
-  </Stack.Navigator>
+        <Stack.Screen name="InicioSesion" options={{ headerShown: false }}>
+          {props => <InicioSesion {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="Registro" component={Registro} options={{ title: 'Registro de usuario' }} />
+        <Stack.Screen name="RegistroFoto" options={{ title: 'Registro de usuario' }}>
+          {props => <RegistroFoto {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="PreguntasInicial" options={{ headerShown: false }}>
+          {props => <PreguntasInicial {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="Preguntas1" options={{ headerShown: false }}>
+          {props => <Preguntas1 {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="Preguntas2" options={{ headerShown: false }}>
+          {props => <Preguntas2 {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="Preguntas3" options={{ headerShown: false }}>
+          {props => <Preguntas3 {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="Preguntas4" options={{ headerShown: false }}>
+          {props => <Preguntas4 {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="Preguntas5" options={{ headerShown: false }}>
+          {props => <Preguntas5 {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+        <Stack.Screen name="RanaAsignada" options={{ headerShown: false }}>
+          {props => <RanaAsignada {...props} setIsAuthenticated={setIsAuthenticated} />}
+        </Stack.Screen>
+      </Stack.Navigator>
     )}
   </NavigationContainer>
 );
