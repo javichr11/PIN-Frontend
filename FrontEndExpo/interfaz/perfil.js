@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useUser } from '../context/UserProvider';
-import { ImageBackground } from 'react-native';
 import EventosInscritos from './EventosInscritos'; 
 import Logros from './Logros';
 
@@ -73,7 +72,6 @@ const Perfil = () => {
 
             {/* Opciones del perfil */}
             <View style={styles.optionsSection}>
-              <Text style={styles.sectionTitle}>Perfil</Text>
               <View style={styles.optionsSubsection}>
                 <TouchableOpacity style={styles.optionButton} onPress={() => setMostrarLogros(true)}>
                   <View style={styles.optionRow}>
@@ -100,7 +98,7 @@ const Perfil = () => {
 
             {/* Eventos inscritos */}
             <View style={styles.eventsSection}>
-              <Text style={styles.sectionTitle}>Eventos inscritos</Text>
+          
               <EventosInscritos eventos={eventos} />
             </View>
 
