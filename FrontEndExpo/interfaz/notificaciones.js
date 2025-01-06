@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
 import { useUser } from '../context/UserProvider';
 import { Ionicons } from 'react-native-vector-icons';
+import dayjs from 'dayjs';
 
 const NotificationsComponent = () => {
   const [notifications, setNotifications] = useState([]);
@@ -49,16 +50,9 @@ const NotificationsComponent = () => {
               </View>
               <View style={styles.contentContainer}>
                 <Text style={styles.notificationText}>{notification.mensaje}</Text>
-                <Text style={styles.dateText}>     
-                Recibida el{' '}
-                  {new Date(notification.fecha_creacion).toLocaleString('es-ES', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </Text>
+                <Text style={styles.dateText}>
+                  Recibida el: {dayjs(notification.fecha_creacion).format('YYYY-MM-DD HH:mm:ss')}
+                </Text>       
               </View>
             </View>
           ))}
