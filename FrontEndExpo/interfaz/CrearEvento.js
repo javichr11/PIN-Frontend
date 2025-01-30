@@ -47,10 +47,10 @@ const CrearEvento = () => {
       if (response.ok) {
         setEventos(data);
       } else {
-        Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+        Alert.alert('Error',`No se pudieron obtener los eventos: ${data.message}`);
       }
     } catch (error) {
-      Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+      Alert.alert('Error',` Ocurrió un error al obtener eventos: ${error.message}`);
     }
   };
 
@@ -166,116 +166,160 @@ const CrearEvento = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={styles.container} scrollEnabled={scrollEnabled}>
-          <TouchableOpacity style={styles.botonFoto} onPress={pickImage}>
-            <Text style={styles.botonTexto}>+ FOTO</Text>
-          </TouchableOpacity>
+        <ScrollView 
+          contentContainerStyle={styles.container} 
+          scrollEnabled={scrollEnabled}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.imageSection}>
+            <TouchableOpacity 
+              style={styles.botonFoto} 
+              onPress={pickImage}
+            >
+              {image ? (
+                <Image source={{ uri: image }} style={styles.imagenSeleccionada} />
+              ) : (
+                <View style={styles.placeholderContainer}>
+                  <Text style={styles.placeholderText}>+ AÑADIR FOTO</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
 
-          {image ? (
-            <View style={styles.imagenContainer}>
-              <Image source={{ uri: image }} style={styles.imagenSeleccionada} />
-            </View>
-          ) : (
-            <Text>No hay imagen seleccionada</Text>
-          )}
-
-          <TextInput
-            style={styles.input}
-            value={titulo}
-            onChangeText={setTitulo}
-            placeholder="Título"
-          />
-
-          <TouchableOpacity onPress={() => setMostrarDuracionPicker(true)} style={styles.botonDuracion}>
-            <Text style={styles.botonTexto}>Duración del evento: {duracion} horas</Text>
-          </TouchableOpacity>
-
-          {mostrarDuracionPicker && (
-            <View>
-              <Picker
-                selectedValue={duracion}
-                onValueChange={(itemValue) => setDuracion(itemValue)}
-                style={styles.picker}
-              >
-                {Array.from({ length: 24 }, (_, i) => i + 1).map((hour) => (
-                  <Picker.Item key={hour} label={`${hour} horas`} value={hour} />
-                ))}
-              </Picker>
-              <Button title="OK" onPress={() => setMostrarDuracionPicker(false)} color="#4CAF50" />
-            </View>
-          )}
-
-          <TextInput
-            style={[styles.input, styles.descripcionInput]}
-            value={descripcion}
-            onChangeText={setDescripcion}
-            placeholder="Descripción"
-            multiline
-          />
-
-          <TouchableOpacity style={styles.botonFecha} onPress={mostrarFechaPicker}>
-            <Text style={styles.botonTexto}>Seleccionar Fecha</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.botonFecha} onPress={mostrarHoraPicker}>
-            <Text style={styles.botonTexto}>Seleccionar Hora</Text>
-          </TouchableOpacity>
-
-          {mostrarPicker && (
-            <DateTimePicker
-              value={pickerMode === 'date' ? fecha : hora}
-              mode={pickerMode}
-              is24Hour={true}
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              minimumDate={pickerMode === 'date' ? new Date() : (fecha.toDateString() === new Date().toDateString() ? new Date() : null)}
-              onChange={manejarFechaHoraCambio}
+          <View style={styles.formSection}>
+            <TextInput
+              style={styles.input}
+              value={titulo}
+              onChangeText={setTitulo}
+              placeholder="Título del evento"
+              placeholderTextColor="#666"
             />
-          )}
 
-          <Text style={styles.fechaTexto}>Fecha seleccionada: {fecha.toLocaleDateString()}</Text>
-          <Text style={styles.fechaTexto}>Hora seleccionada: {hora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+            <TouchableOpacity 
+              style={styles.pickerButton}
+              onPress={() => setMostrarDuracionPicker(true)}
+            >
+              <Text style={styles.pickerButtonText}>
+                Duración: {duracion} horas
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.botonFecha} onPress={mostrarTematicaPickerHandler}>
-            <Text style={styles.botonTexto}>Seleccionar Temática</Text>
-          </TouchableOpacity>
+            {mostrarDuracionPicker && (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={duracion}
+                  onValueChange={(itemValue) => setDuracion(itemValue)}
+                  style={styles.picker}
+                >
+                  {Array.from({ length: 24 }, (_, i) => i + 1).map((hour) => (
+                    <Picker.Item 
+                      key={hour} 
+                      label={`${hour} horas`} 
+                      value={hour}
+                      color="#333"
+                    />
+                  ))}
+                </Picker>
+                <TouchableOpacity 
+                  style={styles.confirmButton}
+                  onPress={() => setMostrarDuracionPicker(false)}
+                >
+                  <Text style={styles.confirmButtonText}>Confirmar</Text>
+                </TouchableOpacity>
+              </View>
+            )}
 
-          {mostrarTematicaPicker && (
-            <View style={Platform.OS === 'android' ? styles.pickerAndroid : styles.pickerIOS}>
-              <Picker
-                selectedValue={tematica}
-                onValueChange={(itemValue) => setTematica(itemValue)}
+            <TextInput
+              style={[styles.input, styles.descripcionInput]}
+              value={descripcion}
+              onChangeText={setDescripcion}
+              placeholder="Descripción del evento"
+              placeholderTextColor="#666"
+              multiline
+              textAlignVertical="top"
+            />
+
+            <View style={styles.dateTimeSection}>
+              <TouchableOpacity 
+                style={styles.dateTimeButton} 
+                onPress={mostrarFechaPicker}
               >
-                <Picker.Item label="Seleccione una temática" value="" />
-                <Picker.Item label="Música" value="musica" />
-                <Picker.Item label="Arte" value="arte" />
-                <Picker.Item label="Deporte" value="deporte" />
-              </Picker>
+                <Text style={styles.dateTimeButtonText}>
+                  {fecha.toLocaleDateString()}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.dateTimeButton} 
+                onPress={mostrarHoraPicker}
+              >
+                <Text style={styles.dateTimeButtonText}>
+                  {hora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </Text>
+              </TouchableOpacity>
             </View>
-          )}
 
-          <TextInput
-            style={styles.input}
-            value={aforo}
-            onChangeText={setAforo}
-            placeholder="Aforo"
-            keyboardType="numeric"
-          />
+            {mostrarPicker && (
+              <DateTimePicker
+                value={pickerMode === 'date' ? fecha : hora}
+                mode={pickerMode}
+                is24Hour={true}
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                minimumDate={pickerMode === 'date' ? new Date() : null}
+                onChange={manejarFechaHoraCambio}
+              />
+            )}
 
-          <TextInput
-            style={styles.input}
-            value={localizacion}
-            onChangeText={setLocalizacion}
-            placeholder="Localización"
-          />
-          
-          <BuscarDireccion onDireccionSeleccionada={handleDireccionSeleccionada} />
-            
-          
+            <TouchableOpacity 
+              style={styles.categoryButton}
+              onPress={mostrarTematicaPickerHandler}
+            >
+              <Text style={styles.categoryButtonText}>
+                {tematica || 'Seleccionar categoría'}
+              </Text>
+            </TouchableOpacity>
 
-      
-          <Button title="Crear Evento" onPress={createEvent} color="#4CAF50" />
+            {mostrarTematicaPicker && (
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={tematica}
+                  onValueChange={(itemValue) => setTematica(itemValue)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Seleccione una temática" value="" />
+                  <Picker.Item label="Música" value="musica" />
+                  <Picker.Item label="Arte" value="arte" />
+                  <Picker.Item label="Deporte" value="deporte" />
+                </Picker>
+              </View>
+            )}
 
-          
+            <TextInput
+              style={styles.input}
+              value={aforo}
+              onChangeText={setAforo}
+              placeholder="Aforo máximo"
+              placeholderTextColor="#666"
+              keyboardType="numeric"
+            />
+
+            <TextInput
+              style={styles.input}
+              value={localizacion}
+              onChangeText={setLocalizacion}
+              placeholder="Nombre del lugar"
+              placeholderTextColor="#666"
+            />
+
+            <BuscarDireccion onDireccionSeleccionada={handleDireccionSeleccionada} />
+
+            <TouchableOpacity 
+              style={styles.submitButton}
+              onPress={createEvent}
+            >
+              <Text style={styles.submitButtonText}>Crear Evento</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -285,72 +329,96 @@ const CrearEvento = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#E3F6E6',
+    backgroundColor: '#000000',
     padding: 16,
   },
   botonFoto: {
-    backgroundColor: '#B2EBF2',
+    backgroundColor: '#1C1C1E',
     padding: 12,
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: 20,
     alignItems: 'center',
+    height: 200,
+    width: '100%',
   },
   imagenContainer: {
     alignItems: 'center',
     marginBottom: 20,
+    width: '100%',
   },
   imagenSeleccionada: {
-    width: 150,
-    height: 150,
+    width: '100%',
+    height: '100%',
     borderRadius: 10,
     resizeMode: 'cover',
   },
   input: {
     height: 50,
-    borderColor: '#ccc',
+    borderColor: '#2C2C2E',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: 20,
-    paddingHorizontal: 10,
-    backgroundColor: '#FFF',
+    paddingHorizontal: 15,
+    backgroundColor: '#1C1C1E',
+    color: '#FFFFFF',
   },
   descripcionInput: {
     height: 100,
+    textAlignVertical: 'top',
+    paddingTop: 15,
   },
   botonFecha: {
-    backgroundColor: '#BBDEFB',
-    padding: 12,
-    borderRadius: 5,
+    backgroundColor: '#1C1C1E',
+    padding: 15,
+    borderRadius: 10,
     marginBottom: 20,
     alignItems: 'center',
   },
   botonTexto: {
-    color: '#FFF',
+    color: '#FFFFFF',
     fontSize: 16,
   },
   fechaTexto: {
     marginBottom: 20,
     fontSize: 16,
+    color: '#FFFFFF',
   },
   pickerAndroid: {
     height: 50,
     width: '100%',
-    backgroundColor: '#FFF',
+    backgroundColor: '#1C1C1E',
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    borderColor: '#2C2C2E',
+    borderRadius: 10,
+    color: '#FFFFFF',
   },
   pickerIOS: {
     height: 200,
     width: '100%',
+    backgroundColor: '#1C1C1E',
   },
   botonDuracion: {
-    backgroundColor: '#BBDEFB',
-    padding: 12,
-    borderRadius: 5,
+    backgroundColor: '#1C1C1E',
+    padding: 15,
+    borderRadius: 10,
     marginBottom: 20,
     alignItems: 'center',
-  },  
+  },
+  picker: {
+    backgroundColor: '#1C1C1E',
+    color: '#FFFFFF',
+  },
+  // Estilos adicionales para que coincida con la imagen
+  placeholderText: {
+    color: '#8E8E93',
+  },
+  botonCrear: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: 'center',
+  },
 });
 
 export default CrearEvento;
