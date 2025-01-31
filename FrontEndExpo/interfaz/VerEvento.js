@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/Ionicons'; 
+
 
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -13,12 +14,27 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
+const getCardColor = (tematica) => {
+  switch (tematica?.toUpperCase()) {
+    case 'ECO':
+      return 'rgba(76, 175, 80, 0.6)';
+    case 'DEPORTE':
+      return 'rgba(255, 152, 0, 0.6)';
+    case 'ARTE':
+      return 'rgba(156, 39, 176, 0.6)';
+    case 'MUSICA':
+      return 'rgba(33, 150, 243, 0.6)';
+    default:
+      return 'rgba(255, 255, 255, 0.6)';
+  }
+};
+
 const VerEvento = ({ navigation, route }) => {
   const [eventos, setEventos] = useState([]);
 
   const fetchEventos = async () => {
     try {
-      const response = await fetch('https://croacky.onrender.com/evento/obtener'); 
+      const response = await fetch('https://croacky.onrender.com/evento/obtener');
       const data = await response.json();
       if (response.ok) {
         setEventos(data.data);
@@ -29,16 +45,69 @@ const VerEvento = ({ navigation, route }) => {
       Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
     }
   };
+
   useEffect(() => {
     fetchEventos();
-
-    if(route.params?.refresh){fetchEventos();}
-
+    if(route.params?.refresh) {
+      fetchEventos();
+    }
   }, [route.params]);
 
+  const renderItem = ({ item }) => {
+
+    const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
+    const overlayColor = getCardColor(item.tematica);
+
+    return (
+      <TouchableOpacity 
+        style={styles.cardContainer}
+        onPress={() => navigation.navigate('DetalleEvento', {evento: item})}
+      >
+        <View style={styles.eventCard}>
+          <Image
+            source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
+            style={styles.eventImage}
+          />
+          <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
+            <View style={styles.dateTimeContainer}>
+            <Text style={styles.eventDate}>{`${fechaFormateada} • ${hora}`}</Text>
+            </View>
+            <Text style={styles.eventTitle}>{item.nombre}</Text>
+          </View>
+
+          <View style={styles.inscritosAforoContainer}>
+            <Icon name="people" size={14} color="#FFFFFF" style={styles.icon} />
+            <Text style={styles.inscritosAforoText}>
+              {item.inscritos}/{item.aforo}
+            </Text>
+          </View>
+          
+          <View style={styles.actions}>
+          <TouchableOpacity 
+              style={[styles.actionButton, styles.editButton]} 
+              onPress={(e) => {
+                e.stopPropagation();
+                navigation.navigate('CrearEvento', { evento: item });
+              }}
+            >
+              <Text style={styles.actionText}>Editar</Text>
+          </TouchableOpacity>    
+          <TouchableOpacity 
+              style={[styles.actionButton, styles.deleteButton]} 
+              onPress={(e) => {
+                e.stopPropagation();
+                confirmarEliminar(item.id);
+              }}
+            >
+              <Text style={styles.actionText}>Eliminar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const confirmarEliminar = (id) => {
-    console.log('El id del evento es: ', id)
     Alert.alert(
       '¿Estás seguro?',
       '¿Estás seguro de que deseas eliminar el evento?',
@@ -56,76 +125,20 @@ const VerEvento = ({ navigation, route }) => {
 
   const eliminarEvento = async (id) => {
     try {
-        const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
-            method: 'DELETE',
-        });
+      const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
+        method: 'DELETE',
+      });
 
-        if (response.ok) {
-            Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
-            await fetchEventos();
-        } else {
-            const errorData = await response.json();
-            Alert.alert('Error', errorData.message);
-        }
+      if (response.ok) {
+        Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
+        await fetchEventos();
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message);
+      }
     } catch (error) {
-        Alert.alert('Error', `Ocurrió un error: ${error.message}`);
+      Alert.alert('Error', `Ocurrió un error: ${error.message}`);
     }
-  };
-
-
-  const renderItem = ({ item }) => {
-    const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
-
-    return (
-      <TouchableOpacity onPress={() => navigation.navigate ('DetalleEvento', {evento: item})}>
-        <View style={styles.eventCard}>
-          <Image
-            source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
-            style={styles.eventImage}
-          />
-          <View style={styles.eventInfo}>
-            <Text style={styles.eventTitle}>{item.nombre}</Text>
-            <View style={styles.infoRow}>
-              <FontAwesome name="clock-o" size={20} color="gray" />
-              <Text style={styles.eventTime}>{hora}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <MaterialIcons name="date-range" size={20} color="gray" />
-              <Text style={styles.eventDate}>{fechaFormateada}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <MaterialIcons name="location-on" size={20} color="gray" />
-              <Text style={styles.eventLocation}>{item.ubicacion}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <FontAwesome name="users" size={20} color="gray" />
-              <Text style={styles.eventAforo}>{`${item.inscritos}/${item.aforo}`}</Text>
-            </View>
-          </View>
-
-          {/* Botones dentro de la tarjeta */}
-          <View style={styles.actions}>
-            <TouchableOpacity 
-              style={styles.actionButton} 
-              onPress={() => navigation.navigate('CrearEvento', { evento: item })}
-            >
-              <FontAwesome name="refresh" size={24} color="black" />
-              <Text>Modificar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={() => confirmarEliminar(item.id)}
-            >
-              <MaterialIcons name="delete" size={24} color="black" />
-              <Text>Eliminar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -143,65 +156,106 @@ const VerEvento = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#EAF2E6',
+    backgroundColor: '#000000',
+    padding: 16,
+  },
+  cardContainer: {
+    marginBottom: 16,
+    height: 200,
   },
   eventCard: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 3,
+    height: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
   },
   eventImage: {
     width: '100%',
-    height: 150,
-    borderRadius: 10,
+    height: '100%',
+    position: 'absolute',
   },
-  eventInfo: {
-    marginTop: 10,
+  overlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '100%',
+    padding: 16,
+    justifyContent: 'space-between',
   },
-  eventTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#000',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  eventTime: {
-    marginLeft: 5,
-    fontSize: 16,
-    color: '#555',
+  dateTimeContainer: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',  
+    justifyContent: 'flex-start',
   },
   eventDate: {
-    marginLeft: 5,
-    fontSize: 16,
-    color: '#555',
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
   },
-  eventLocation: {
-    marginLeft: 5,
-    fontSize: 16,
-    color: '#555',
+  eventTime: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
-  eventAforo: {
-    marginLeft: 5,
-    fontSize: 16,
-    color: '#555',
+  eventTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 50,
   },
   actions: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    paddingVertical: 10,
   },
   actionButton: {
+    flex: 1,
+    paddingVertical: 12,
     alignItems: 'center',
+    backgroundColor: '#000000', 
+    borderRadius: 25,
+    marginHorizontal: 5,
+  },
+
+  editButton: {
+    backgroundColor: '#3A39F5', 
+  },
+  
+  deleteButton: {
+    backgroundColor: '#000000', 
+    borderWidth: 1, 
+    borderColor: '#FFFFFF', 
+  },
+  actionText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  inscritosAforoContainer: {
+    position: 'absolute',
+    top: 16, // Esto puede ajustarse a tu preferencia
+    right: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    paddingVertical: 6, 
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center', 
+  },
+  icon: {
+    marginRight: 8, 
+  },
+  inscritosAforoText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 
