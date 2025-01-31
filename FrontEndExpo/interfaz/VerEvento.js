@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; 
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 
 
 const formatearFechaHora = (fechaISO) => {
@@ -76,7 +77,7 @@ const VerEvento = ({ navigation, route }) => {
           </View>
 
           <View style={styles.inscritosAforoContainer}>
-            <Icon name="people" size={14} color="#FFFFFF" style={styles.icon} />
+            <MaterialIcons name="group" size={14} color="#FFFFFF" style={styles.icon} />
             <Text style={styles.inscritosAforoText}>
               {item.inscritos}/{item.aforo}
             </Text>
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     marginBottom: 16,
-    height: 200,
+    height: 250,
   },
   eventCard: {
     height: '100%',
@@ -187,12 +188,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     flexDirection: 'row',  
     justifyContent: 'flex-start',
+    fontFamily: 'Satoshi-Regular',
   },
   eventDate: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '600',
     marginBottom: 4,
+    fontFamily: 'Satoshi-Regular',
   },
   eventTime: {
     color: '#FFFFFF',
@@ -200,11 +202,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   eventTitle: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 50,
+    fontWeight: 400,
+    textAlign: 'left',
+    marginBottom: 55,
+    marginLeft: 10,
+    fontFamily: 'Satoshi-Regular',
   },
   actions: {
     position: 'absolute',
@@ -212,26 +216,27 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: 'row',
-    backgroundColor: 'rgba(0, 0, 0, 1)',
+    backgroundColor: '#18191A',
     paddingVertical: 10,
   },
   actionButton: {
     flex: 1,
     paddingVertical: 12,
-    alignItems: 'center',
-    backgroundColor: '#000000', 
+    alignItems: 'center', 
     borderRadius: 25,
     marginHorizontal: 5,
   },
 
   editButton: {
     backgroundColor: '#3A39F5', 
+    fontFamily: 'Satoshi-Regular',
   },
   
   deleteButton: {
     backgroundColor: '#000000', 
     borderWidth: 1, 
     borderColor: '#FFFFFF', 
+    fontFamily: 'Satoshi-Regular',
   },
   actionText: {
     color: '#FFFFFF',
@@ -240,22 +245,27 @@ const styles = StyleSheet.create({
   },
   inscritosAforoContainer: {
     position: 'absolute',
-    top: 16, // Esto puede ajustarse a tu preferencia
+    top: 16, 
     right: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor:'transparent', 
     paddingVertical: 6, 
     paddingHorizontal: 10,
-    borderRadius: 12,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'center', 
+    width: 75,
+    height: 35,
   },
   icon: {
     marginRight: 8, 
+    fontFamily: 'Satoshi-Regular',
   },
   inscritosAforoText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'Satoshi-Regular',
   },
 });
 

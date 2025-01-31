@@ -20,6 +20,7 @@
     "dayjs": "^1.11.13",
     "expo": "^52.0.23",
     "expo-device": "~7.0.1",
+    "expo-font": "~13.0.3",
     "expo-image-picker": "~16.0.2",
     "expo-linear-gradient": "~14.0.1",
     "expo-notifications": "~0.29.11",

@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   gradient: {
-    width: "100%", // Esto asegura que ocupe todo el ancho de la pantalla
+    width: "100%", 
     height: 300,
     justifyContent: "center",
     alignItems: "center",
@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   title: {
+    fontFamily: 'Satoshi-Regular',
     fontSize: 50,
     fontWeight: "bold",
     color: "#fff",
@@ -152,12 +153,14 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 15,
     backgroundColor: "#fff",
+    fontFamily: "Satoshi-Regular",
   },
   
   forgotPassword: {
     color: "#1630BE",
     textAlign: "right",
     marginBottom: 20,
+    fontFamily: "Satoshi-Regular",
   },
   passwordContainer: {
     position: "relative",
@@ -173,14 +176,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#3A39F5",
     paddingVertical: 10,
     borderRadius: 5,
+    fontFamily: "Satoshi-Regular",
   },
   register: {
     textAlign: "center", 
     marginTop: 20,
     fontSize: 14,
+    fontFamily: "Satoshi-Regular",
   },
   registerLink: {
     color: "#1630BE",
-    fontWeight: "bold",
+    fontFamily: "Satoshi-Regular",
   },
 });

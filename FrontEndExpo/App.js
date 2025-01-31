@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from 'react-native-vector-icons';
@@ -23,9 +23,16 @@ import Preguntas3 from "./interfaz/Preguntas3";
 import Preguntas4 from "./interfaz/Preguntas4";
 import Preguntas5 from "./interfaz/Preguntas5";
 import RanaAsignada from "./interfaz/RanaAsignada";
+import * as Font from 'expo-font';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const loadFonts = async () => {
+  await Font.loadAsync({
+    'Satoshi-Regular': require('./assets/font/RedHatText-Medium.ttf'),
+  });
+};
 
 function VerEventosStack({ eventos, setEventos, fetchEventos }) {
   return (
@@ -213,6 +220,16 @@ function AppContent() {
 
 }
 export default function App() {
+
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    loadFonts().then(() => setFontsLoaded(true));
+  }, []);
+
+  if (!fontsLoaded) {
+    return <ActivityIndicator size="large" color="#ffffff" />;
+  }
   return (
     <UserProvider>
       <AppContent />
