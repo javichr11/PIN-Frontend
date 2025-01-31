@@ -17,15 +17,15 @@ const formatearFechaHora = (fechaISO) => {
 const getCardColor = (tematica) => {
   switch (tematica?.toUpperCase()) {
     case 'ECO':
-      return 'rgba(76, 175, 80, 0.6)';
-    case 'DEPORTE':
-      return 'rgba(255, 152, 0, 0.6)';
+      return 'rgba(182, 252, 190, 0.5)';
+    case 'DEPORTE': 
+      return 'rgba(255, 254, 245, 0.5)';
     case 'ARTE':
-      return 'rgba(156, 39, 176, 0.6)';
+      return 'rgba(211, 182, 255, 0.5)';
     case 'MUSICA':
-      return 'rgba(33, 150, 243, 0.6)';
+      return 'rgba(250, 106, 68, 0.5)';
     default:
-      return 'rgba(255, 255, 255, 0.6)';
+      return 'rgba(255, 255, 255, 0.5)';
   }
 };
 
