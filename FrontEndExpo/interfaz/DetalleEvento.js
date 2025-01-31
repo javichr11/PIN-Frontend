@@ -5,12 +5,12 @@ import {
   StyleSheet, 
   Image, 
   TouchableOpacity, 
-  ScrollView,
-  Dimensions
+  ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
-import { formatearFecha, formatearHora} from '../context/dateFormatter';
+import { formatearFecha, formatearHora } from '../context/dateFormatter';
+import TematicaIcon from '../context/TematicaIcon';
 
 const DetalleEvento = ({ route, navigation }) => {
   const { evento } = route.params;
@@ -33,47 +33,41 @@ const DetalleEvento = ({ route, navigation }) => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Event Image Banner */}
       <Image 
         source={{ uri: evento.foto || 'https://via.placeholder.com/400x200' }} 
         style={styles.headerImage} 
       />
       
-      {/* Event Info Section */}
       <View style={styles.contentContainer}>
-        {/* Category and Like Button */}
         <View style={styles.categoryRow2}>
-        <Text style={styles.title}>{evento.nombre}</Text>
-        <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
+          <Text style={styles.title}>{evento.nombre}</Text>
+          <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
             <Ionicons name={isLiked ? "heart" : "heart-outline"} size={24} color="white" />
           </TouchableOpacity>
         </View>
         
         <View style={styles.categoryRow}>
-        <View style={styles.categoryPill}>
-          <Text style={styles.categoryText}>{evento.tematica}</Text>
-        </View>
-        <View style={styles.categoryPill2}>
-         <View style={styles.userCount}>
-          <Ionicons name="people-outline" size={16} color="white" />
-          <Text style={styles.categoryText}>{evento.inscritos}/{evento.aforo}</Text>
+          <View style={styles.categoryPill}>
+          <TematicaIcon />
+            <Text style={styles.categoryText}>{evento.tematica}</Text>
+          </View>
+          <View style={styles.categoryPill2}>
+            <View style={styles.userCount}>
+              <Ionicons name="people-outline" size={16} color="white" />
+              <Text style={styles.categoryText}>{evento.inscritos}/{evento.aforo}</Text>
+            </View>
           </View>
         </View>
-        </View>
-        
 
-        {/* Availability Badge */}
         <View style={styles.availabilityContainer}>
           <Text style={styles.availabilityText}>¡Aún quedan plazas disponibles!</Text>
         </View>
 
-        {/* About Section */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Sobre el evento</Text>
           <Text style={styles.description}>{evento.descripcion}</Text>
         </View>
 
-        {/* Date Section */}
         <View style={styles.infoSection}>
           <Ionicons name="calendar-outline" size={20} color="#666" />
           <View style={styles.infoContent}>
@@ -83,38 +77,37 @@ const DetalleEvento = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Location Section */}
-        <View style={styles.infoSection}>
-          <Ionicons name="location-outline" size={20} color="#666" />
-          <View style={styles.infoContent}>
-            <Text style={styles.infoLabel}>Ubicación</Text>
-            <Text style={styles.infoValue}>Av. Don Víctor Ateneo, n°7, Ruzafa, Valencia</Text>
+        {/* Ubicación integrada con mapa */}
+        <View style={styles.locationContainer}>
+          <Text style={styles.locationTitle}>Ubicación</Text>
+          <View style={styles.locationContent}>
+            <Ionicons name="location-outline" size={20} color="#666" />
+            <Text style={styles.locationAddress}>
+              Av. Don Víctor Ateneo, n°7, Ruzafa, Valencia
+            </Text>
           </View>
-        </View>
-
-        {/* Map */}
-        <View style={styles.mapContainer}>
-          <MapView
-            style={styles.map}
-            customMapStyle={darkMapStyle}
-            initialRegion={{
-              latitude: 39.4699,
-              longitude: -0.3763,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
-          >
-            <Marker
-              coordinate={{
+          <View style={styles.mapWrapper}>
+            <MapView
+              style={styles.map}
+              customMapStyle={darkMapStyle}
+              initialRegion={{
                 latitude: 39.4699,
                 longitude: -0.3763,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
               }}
-            />
-          </MapView>
+            >
+              <Marker
+                coordinate={{
+                  latitude: 39.4699,
+                  longitude: -0.3763,
+                }}
+              />
+            </MapView>
+          </View>
         </View>
       </View>
 
-      {/* Join Button */}
       <TouchableOpacity style={styles.joinButton}>
         <Text style={styles.joinButtonText}>Unirse al evento</Text>
       </TouchableOpacity>
@@ -141,6 +134,7 @@ const darkMapStyle = [
     stylers: [{ color: "#17263c" }]
   }
 ];
+
 
 const styles = StyleSheet.create({
   container: {
@@ -172,10 +166,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   categoryPill: {
+    flexDirection: 'row',  // Asegura que el icono y el texto estén en línea
+    alignItems: 'center',
     backgroundColor: '#3A39F5',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
+    gap: 6, // Espaciado entre el icono y el texto
   },
   categoryPill2: {
     backgroundColor: '#1A1A1A',
@@ -202,16 +199,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: 'Satoshi',
   },
-  timeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  timeText: {
-    color: '#666',
-    marginLeft: 5,
-    fontSize: 14,
-  },
   availabilityContainer: {
     backgroundColor: 'rgba(58, 57, 245, 0.1)',
     padding: 10,
@@ -225,6 +212,9 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     marginBottom: 20,
+    backgroundColor: '#18191A',
+    borderRadius: 15,
+    padding: 15,
   },
   sectionTitle: {
     fontSize: 18,
@@ -240,11 +230,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 20,
-    paddingVertical: 10,
+    padding: 15,
+    backgroundColor: '#18191A',
+    borderRadius: 15,
   },
   infoContent: {
     marginLeft: 15,
     flex: 1,
+  },
+  infoTime: {
+    color: '#666',
+    fontSize: 14,
+    marginTop: 5,
   },
   infoLabel: {
     color: '#D3B6FF',
@@ -256,16 +253,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  infoTime: {
-    color: '#666',
-    fontSize: 14,
-    marginTop: 5,
-  },
   mapContainer: {
     height: 200,
     borderRadius: 15,
     overflow: 'hidden',
     marginVertical: 20,
+    backgroundColor: '#1A1A1A',
+  },
+  locationContainer: {
+    backgroundColor: '#18191A',
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
+  },
+  locationTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#D3B6FF',
+    marginBottom: 15,
+  },
+  locationContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 15,
+  },
+  locationAddress: {
+    color: '#fff',
+    fontSize: 16,
+    marginLeft: 15,
+    flex: 1,
+  },
+  mapWrapper: {
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginTop: 5,
   },
   map: {
     width: '100%',
