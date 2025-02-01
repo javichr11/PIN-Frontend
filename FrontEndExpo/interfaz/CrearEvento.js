@@ -1,20 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
-import BuscarDireccion from './BuscarDireccion';
-import { useUser } from '../context/UserProvider';
+import { Ionicons } from '@expo/vector-icons';
+
+// AforoInput Component
+const AforoInput = ({ value, onChange }) => {
+  const handleIncrement = () => {
+    const newValue = parseInt(value || 0) + 1;
+    onChange(newValue.toString());
+  };
+
+  const handleDecrement = () => {
+    const newValue = Math.max(0, parseInt(value || 0) - 1);
+    onChange(newValue.toString());
+  };
+
+  return (
+    <View style={styles.aforoContainer}>
+      <Text style={styles.label}>Aforo</Text>
+      <View style={styles.aforoInputContainer}>
+        <TouchableOpacity 
+          style={styles.aforoButton} 
+          onPress={handleDecrement}
+        >
+          <Text style={styles.aforoButtonText}>−</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.aforoValueContainer}>
+          <Text style={styles.aforoValue}>{value || '0'}</Text>
+        </View>
+
+        <TouchableOpacity 
+          style={styles.aforoButton} 
+          onPress={handleIncrement}
+        >
+          <Text style={styles.aforoButtonText}>+</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 
 const CrearEvento = () => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [tematica, setTematica] = useState('');
-  const [mostrarTematicaPicker, setMostrarTematicaPicker] = useState(false);
   const [aforo, setAforo] = useState('');
   const [localizacion, setLocalizacion] = useState('');
-  const [direccion, setDireccion] = useState('');
   const [image, setImage] = useState(null);
   const [fecha, setFecha] = useState(new Date());
   const [hora, setHora] = useState(new Date());
@@ -23,13 +57,10 @@ const CrearEvento = () => {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [usuario_id, setUsuarioId] = useState('');
   const [duracion, setDuracion] = useState('1');
-  const [mostrarDuracionPicker, setMostrarDuracionPicker] = useState(false);
   const navigation = useNavigation();
-  const {user} = useUser();
-
 
   useEffect(() => {
-    const idObtenido = user.id;
+    const idObtenido = 10; // Simulación de usuario
     setUsuarioId(idObtenido);
   }, []);
 
@@ -40,90 +71,48 @@ const CrearEvento = () => {
     return nuevaFecha.toISOString();
   };
 
-  const [eventos, setEventos] = useState([]); 
+  const handleCrearEvento = async () => {
+    const fechaISO = combinarFechaHora();
+    const formData = new FormData();
+    formData.append('usuario_id', usuario_id);
+    formData.append('nombre', titulo);
+    formData.append('descripcion', descripcion);
+    formData.append('tematica', tematica);
+    formData.append('ubicacion', localizacion);
+    formData.append('aforo', parseInt(aforo));
+    formData.append('fecha', fechaISO);
+    formData.append('duracion', `${duracion} hours`);
 
-  const fetchEventos = async () => {
+    if (image) {
+      formData.append('foto', {
+        uri: image,
+        type: 'image/jpeg',
+        name: 'evento.jpg',
+      });
+    }
+
+    formData.append('creado_en', new Date().toISOString());
+
     try {
-      const response = await fetch('https://croacky.onrender.com/evento/obtener'); 
-      const data = await response.json();
-
+      const response = await fetch('https://croacky.onrender.com/evento/crear', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' },
+      });
+  
+      const responseData = await response.json();
+  
       if (response.ok) {
-        setEventos(data);
+        Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente', [
+          {text: 'OK', onPress: () => navigation.navigate('VerEvento', {refresh: true})}
+        ]);
       } else {
-        Alert.alert('Error',`No se pudieron obtener los eventos: ${data.message}`);
+        Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
       }
     } catch (error) {
-      Alert.alert('Error',` Ocurrió un error al obtener eventos: ${error.message}`);
+      Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
     }
   };
-
-  const handleDireccionSeleccionada = (direccion) => {
-    if (direccion && direccion.lat && direccion.lon) {
-      setDireccion({
-        latitud: parseFloat(direccion.lat),
-        longitud: parseFloat(direccion.lon),
-        
-      });
-      
-    } else {
-      Alert.alert('Error', 'La dirección seleccionada no tiene coordenadas válidas.');
-    }
-  };
-
-
-  const createEvent = async () =>{
-      const formData = new FormData();
-      if (!direccion|| !direccion.latitud || !direccion.longitud) {
-        Alert.alert('Error', 'Selecciona una dirección antes de crear el evento.');
-        return;
-      }
-  
-      formData.append('nombre', titulo);
-      formData.append('descripcion', descripcion);
-      formData.append('tematica', tematica);
-      formData.append('aforo', aforo);
-      formData.append('ubicacion', localizacion);
-      formData.append('latitud', direccion.latitud);
-      formData.append('longitud', direccion.longitud);
-      formData.append('fecha', combinarFechaHora()); 
-      formData.append('userID', usuario_id);
-      formData.append('duracion', duracion);
-      console.log('Datos enviados:', {
-  latitud: direccion.latitud,
-  longitud: direccion.longitud,
-  nombre: titulo,
-});
-
-      if (image) {
-        formData.append('foto', {
-          uri: image,
-          type: 'image/jpeg',
-          name: 'usuario.jpg',
-        });
-      }
-
-      try {
-      
-        const response = await fetch('https://croacky.onrender.com/evento/crear', {
-          method: 'POST',
-          body: formData,
-        });
-    
-        const data = await response.json();
-    
-        if (response.ok) {
-          fetchEventos();
-          Alert.alert('Éxito', 'El evento se ha creado correctamente.');
-          navigation.navigate('VerEvento', { refresh: true });  
-        }else{
-          Alert.alert('Error', `No se pudo crear el evento: ${data.message}`);
-        }
-      } catch (error) {
-        Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
-      }
-  };
-
-
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -160,10 +149,6 @@ const CrearEvento = () => {
     }
   };
 
-  const mostrarTematicaPickerHandler = () => {
-    setMostrarTematicaPicker(!mostrarTematicaPicker);
-  };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -172,155 +157,156 @@ const CrearEvento = () => {
           scrollEnabled={scrollEnabled}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.imageSection}>
-            <TouchableOpacity 
-              style={styles.botonFoto} 
-              onPress={pickImage}
-            >
+          {/* Image Upload Section */}
+          <View style={styles.imageUploadSection}>
+            <TouchableOpacity onPress={pickImage} style={styles.imageUploadButton}>
               {image ? (
-                <Image source={{ uri: image }} style={styles.imagenSeleccionada} />
+                <Image source={{ uri: image }} style={styles.uploadedImage} />
               ) : (
                 <View style={styles.placeholderContainer}>
-                  <Text style={styles.placeholderText}>+ AÑADIR FOTO</Text>
+                  <View>
+                  <Ionicons name="images-outline" size={30} color="#3A39F5" />
+                  </View>
+                  
                 </View>
               )}
             </TouchableOpacity>
           </View>
 
+          {/* Form Section */}
           <View style={styles.formSection}>
+            <View style={styles.fieldContainer}>
             <TextInput
-              style={styles.input}
-              value={titulo}
-              onChangeText={setTitulo}
-              placeholder="Título del evento"
-              placeholderTextColor="#666"
-            />
+                    style={styles.titleInput}
+                    value={titulo}
+                    onChangeText={setTitulo}
+                    placeholder="Pulsa aquí para cambiar el título del evento..."
+                    placeholderTextColor="#B6FCBE"
+                    multiline={true}
+                    numberOfLines={2}
+                  />
+            </View>
+          
+        
+            {/* Aforo using new component */}
+            <AforoInput value={aforo} onChange={setAforo} />
 
-            <TouchableOpacity 
-              style={styles.pickerButton}
-              onPress={() => setMostrarDuracionPicker(true)}
-            >
-              <Text style={styles.pickerButtonText}>
-                Duración: {duracion} horas
-              </Text>
-            </TouchableOpacity>
-
-            {mostrarDuracionPicker && (
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={duracion}
-                  onValueChange={(itemValue) => setDuracion(itemValue)}
-                  style={styles.picker}
-                >
-                  {Array.from({ length: 24 }, (_, i) => i + 1).map((hour) => (
-                    <Picker.Item 
-                      key={hour} 
-                      label={`${hour} horas`} 
-                      value={hour}
-                      color="#333"
-                    />
-                  ))}
-                </Picker>
+            {/* Temática */}
+            <View style={styles.fieldContainer}>
+              <Text style={styles.label}>Temática</Text>
+              <View style={styles.tematicaContainer}>
                 <TouchableOpacity 
-                  style={styles.confirmButton}
-                  onPress={() => setMostrarDuracionPicker(false)}
+                  style={[styles.tematicaButton, tematica === 'voluntariado' && styles.tematicaButtonActive]}
+                  onPress={() => setTematica('voluntariado')}
                 >
-                  <Text style={styles.confirmButtonText}>Confirmar</Text>
+                  <Text style={[styles.tematicaText, tematica === 'voluntariado' && styles.tematicaTextActive]}>
+                    Voluntariado
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.tematicaButton, tematica === 'arte' && styles.tematicaButtonActive]}
+                  onPress={() => setTematica('arte')}
+                >
+                  <Text style={[styles.tematicaText, tematica === 'arte' && styles.tematicaTextActive]}>
+                    Arte
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.tematicaButton, tematica === 'deportes' && styles.tematicaButtonActive]}
+                  onPress={() => setTematica('deportes')}
+                >
+                  <Text style={[styles.tematicaText, tematica === 'deportes' && styles.tematicaTextActive]}>
+                    Deportes
+                  </Text>
                 </TouchableOpacity>
               </View>
-            )}
-
-            <TextInput
-              style={[styles.input, styles.descripcionInput]}
-              value={descripcion}
-              onChangeText={setDescripcion}
-              placeholder="Descripción del evento"
-              placeholderTextColor="#666"
-              multiline
-              textAlignVertical="top"
-            />
-
-            <View style={styles.dateTimeSection}>
-              <TouchableOpacity 
-                style={styles.dateTimeButton} 
-                onPress={mostrarFechaPicker}
-              >
-                <Text style={styles.dateTimeButtonText}>
-                  {fecha.toLocaleDateString()}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={styles.dateTimeButton} 
-                onPress={mostrarHoraPicker}
-              >
-                <Text style={styles.dateTimeButtonText}>
-                  {hora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
-              </TouchableOpacity>
             </View>
 
-            {mostrarPicker && (
-              <DateTimePicker
-                value={pickerMode === 'date' ? fecha : hora}
-                mode={pickerMode}
-                is24Hour={true}
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                minimumDate={pickerMode === 'date' ? new Date() : null}
-                onChange={manejarFechaHoraCambio}
+            {/* Descripción */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.label}>Descripción</Text>
+              <TextInput
+                style={styles.descripcionInput}
+                value={descripcion}
+                onChangeText={setDescripcion}
+                placeholder="Da información para que las personas interesadas acudan a tu evento. Recuerda que debes ser lo más específicx posible."
+                placeholderTextColor="#666"
+                multiline
+                numberOfLines={4}
               />
-            )}
+            </View>
 
-            <TouchableOpacity 
-              style={styles.categoryButton}
-              onPress={mostrarTematicaPickerHandler}
-            >
-              <Text style={styles.categoryButtonText}>
-                {tematica || 'Seleccionar categoría'}
-              </Text>
-            </TouchableOpacity>
+            {/* Fecha y Hora */}
+            <View style={styles.sectionContainer}>
+            <View style={styles.dateTimeSection}>
+                <View style={styles.dateTimeColumn}>
+                  <Text style={styles.label}>Fecha</Text>
+                  <TouchableOpacity 
+                    style={styles.dateTimeInput} 
+                    onPress={mostrarFechaPicker}
+                  >
+                    <Text style={styles.dateTimeValue}>
+                      {fecha.toLocaleDateString('es-ES', {
+                        weekday: 'short',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      }).toLowerCase()}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
-            {mostrarTematicaPicker && (
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={tematica}
-                  onValueChange={(itemValue) => setTematica(itemValue)}
-                  style={styles.picker}
-                >
-                  <Picker.Item label="Seleccione una temática" value="" />
-                  <Picker.Item label="Música" value="musica" />
-                  <Picker.Item label="Arte" value="arte" />
-                  <Picker.Item label="Deporte" value="deporte" />
-                </Picker>
+                <View style={styles.dateTimeColumn}>
+                  <Text style={styles.label}>Hora</Text>
+                  <TouchableOpacity 
+                    style={styles.dateTimeInput} 
+                    onPress={mostrarHoraPicker}
+                  >
+                    <Text style={styles.dateTimeValue}>
+                      {hora.toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            )}
+            </View>
 
-            <TextInput
-              style={styles.input}
-              value={aforo}
-              onChangeText={setAforo}
-              placeholder="Aforo máximo"
-              placeholderTextColor="#666"
-              keyboardType="numeric"
-            />
+           
 
-            <TextInput
-              style={styles.input}
-              value={localizacion}
-              onChangeText={setLocalizacion}
-              placeholder="Nombre del lugar"
-              placeholderTextColor="#666"
-            />
+            {/* Localización */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.label}>Ubicación</Text>
+              <TextInput
+                style={styles.input}
+                value={localizacion}
+                onChangeText={setLocalizacion}
+                placeholder="Ubicación del evento"
+                placeholderTextColor="#666"
+              />
+            </View>
 
-            <BuscarDireccion onDireccionSeleccionada={handleDireccionSeleccionada} />
-
+            {/* Submit Button */}
             <TouchableOpacity 
               style={styles.submitButton}
-              onPress={createEvent}
+              onPress={handleCrearEvento}
             >
-              <Text style={styles.submitButtonText}>Crear Evento</Text>
+              <Text style={styles.submitButtonText}>Añadir</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Date/Time Picker Modal */}
+          {mostrarPicker && (
+            <DateTimePicker
+              value={pickerMode === 'date' ? fecha : hora}
+              mode={pickerMode}
+              is24Hour={true}
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              minimumDate={pickerMode === 'date' ? new Date() : null}
+              onChange={manejarFechaHoraCambio}
+            />
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -333,92 +319,195 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
     padding: 16,
   },
-  botonFoto: {
-    backgroundColor: '#1C1C1E',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 20,
-    alignItems: 'center',
+  imageUploadSection: {
+    marginBottom: 24,
+  },
+  imageUploadButton: {
+    backgroundColor: '#FFFEF5',
     height: 200,
-    width: '100%',
-  },
-  imagenContainer: {
+    borderRadius: 12,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-    width: '100%',
+    overflow: 'hidden',
   },
-  imagenSeleccionada: {
+  uploadedImage: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
     resizeMode: 'cover',
   },
-  input: {
-    height: 50,
-    borderColor: '#2C2C2E',
-    borderWidth: 1,
-    borderRadius: 10,
+  placeholderContainer: {
+    alignItems: 'center',
+  },
+  uploadIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#333',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  uploadIconText: {
+    color: '#666',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  uploadText: {
+    color: '#666',
+    textAlign: 'center',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  fieldContainer: {
     marginBottom: 20,
-    paddingHorizontal: 15,
-    backgroundColor: '#1C1C1E',
+  },
+  label: {
     color: '#FFFFFF',
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: '500',
+  },
+  input: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 8,
+    padding: 12,
+    color: '#FFFFFF',
+    fontSize: 16,
+    borderWidth: 1,           // Añade el borde
+  borderColor: '#FFFFFF',
+  },
+  tematicaContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tematicaButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#1C1C1E',
+    marginRight: 8,
+  },
+  tematicaButtonActive: {
+    backgroundColor: '#FFFFFF',
+  },
+  tematicaText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  tematicaTextActive: {
+    color: '#000',
   },
   descripcionInput: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 8,
+    padding: 12,
+    color: '#FFFFFF',
+    fontSize: 16,
     height: 100,
     textAlignVertical: 'top',
-    paddingTop: 15,
+    borderWidth: 1,           // Añade el borde
+    borderColor: '#FFFFFF',   // Color blanco para el borde
   },
-  botonFecha: {
+  dateTimeButton: {
     backgroundColor: '#1C1C1E',
-    padding: 15,
-    borderRadius: 10,
+    borderRadius: 8,
+    padding: 12,
+  },
+  dateTimeText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  submitButton: {
+    backgroundColor: '#3A39F5',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  submitButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  titleInput: {
+    fontSize: 24, // Tamaño aumentado
+    color: "white",
+  },
+  
+  // New styles for AforoInput
+  aforoContainer: {
     marginBottom: 20,
+  },
+  aforoInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+  },
+  aforoButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#3A39F5',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  botonTexto: {
+  aforoButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 24,
+    fontWeight: '300',
   },
-  fechaTexto: {
-    marginBottom: 20,
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
-  pickerAndroid: {
-    height: 50,
-    width: '100%',
+  aforoValueContainer: {
     backgroundColor: '#1C1C1E',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    minWidth: 80,
+    marginHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  aforoValue: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  sectionContainer: {
+    marginBottom: 20,
+    backgroundColor: '#18191A',
+    borderRadius: 15,
+    padding: 15,
+  },
+  dateTimeSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    gap: 12,
+  },
+  dateTimeColumn: {
+    flex: 1,
+  },
+  dateTimeLabel: {
+    color: '#FFFEF5',
+    fontSize: 14,
+    marginBottom: 8,
+    opacity: 0.7,
+  },
+  dateTimeInput: {
+    backgroundColor: '#1C1C1E',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#2C2C2E',
-    borderRadius: 10,
+    borderColor: '#333333',
+    borderWidth: 1,           // Añade el borde
+    borderColor: '#FFFFFF',
+  },
+  dateTimeValue: {
     color: '#FFFFFF',
-  },
-  pickerIOS: {
-    height: 200,
-    width: '100%',
-    backgroundColor: '#1C1C1E',
-  },
-  botonDuracion: {
-    backgroundColor: '#1C1C1E',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  picker: {
-    backgroundColor: '#1C1C1E',
-    color: '#FFFFFF',
-  },
-  // Estilos adicionales para que coincida con la imagen
-  placeholderText: {
-    color: '#8E8E93',
-  },
-  botonCrear: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
-    alignItems: 'center',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 
