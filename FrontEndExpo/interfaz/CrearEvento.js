@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import BuscarDireccion from './BuscarDireccion';
+import { useUser } from '../context/UserProvider';
 
 const CrearEvento = () => {
   const [titulo, setTitulo] = useState('');
@@ -24,9 +25,11 @@ const CrearEvento = () => {
   const [duracion, setDuracion] = useState('1');
   const [mostrarDuracionPicker, setMostrarDuracionPicker] = useState(false);
   const navigation = useNavigation();
+  const {user} = useUser();
+
 
   useEffect(() => {
-    const idObtenido = 10; // Simulación de usuario
+    const idObtenido = user.id;
     setUsuarioId(idObtenido);
   }, []);
 

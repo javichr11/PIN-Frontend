@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, ScrollView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from '../context/TematicaIcon';
-
+import { useUser } from '../context/UserProvider';
 
 
 const formatearFechaHora = (fechaISO) => {
@@ -42,10 +42,11 @@ const getCardColor = (tematica, fecha) => {
 
 const VerEvento = ({ navigation, route }) => {
   const [eventos, setEventos] = useState([]);
+  const {user} = useUser();
 
   const fetchEventos = async () => {
     try {
-      const response = await fetch('https://croacky.onrender.com/evento/obtener');
+      const response = await fetch(`https://croacky.onrender.com/evento/obtener/${user.id}`);
       const data = await response.json();
       if (response.ok) {
 
