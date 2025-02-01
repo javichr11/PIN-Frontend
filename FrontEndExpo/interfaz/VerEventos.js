@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, ScrollView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Icon from '../context/TematicaIcon';
+import {PostAddIcon} from '../context/TematicaIcon';
 import { useUser } from '../context/UserProvider';
 
 
@@ -40,7 +40,7 @@ const getCardColor = (tematica, fecha) => {
   }
 };
 
-const VerEvento = ({ navigation, route }) => {
+const VerEventos = ({ navigation, route }) => {
   const [eventos, setEventos] = useState([]);
   const {user} = useUser();
 
@@ -168,7 +168,7 @@ const VerEvento = ({ navigation, route }) => {
           navigation.navigate('CrearEvento');
         }}
       >
-        <Icon.PostAddIcon />
+        <PostAddIcon/>
         <Text style={styles.uploadTextOrange}>
           Pulsa aquí <Text style={styles.uploadText}>para elegir</Text>
         </Text>
@@ -351,4 +351,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VerEvento;
+export default VerEventos;

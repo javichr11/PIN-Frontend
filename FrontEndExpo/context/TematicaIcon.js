@@ -17,4 +17,4 @@ const PostAddIcon = () => (
   </Svg>
 );
 
-export default {TematicaIcon, PostAddIcon};
+export { TematicaIcon, PostAddIcon };

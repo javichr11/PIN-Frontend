@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
+import { View, ActivityIndicator, StyleSheet} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import InicioSesion from "./interfaz/InicioSesion";
-import VerEvento from "./interfaz/VerEvento";
+import VerEventos from "./interfaz/VerEventos";
 import Registro from "./interfaz/Registro";
 import RegistroFoto from "./interfaz/RegistroFoto";
 import Perfil from "./interfaz/perfil";
-import MapaVisual from "./interfaz/mapita";
 import Mapa from "./interfaz/mapa";
+import ListaEventos from "./interfaz/ListaEventos";
 import Notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
 import Logros from "./interfaz/Logros";
@@ -43,7 +43,7 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
         name="VerEvento" 
         options={{ headerShown: false }}
       >
-        {props => <VerEvento {...props} eventos={eventos} fetchEventos={fetchEventos} />}
+        {props => <VerEventos {...props} eventos={eventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
       <Stack.Screen 
         name="CrearEvento"
@@ -60,11 +60,10 @@ function MapaStack({ eventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="verMapa"
-        component={Mapa}
+        name="ListaEventos"
         options={{ headerShown: false }}
       >
-        {props => <Mapa {...props} eventos={eventos} />}
+        {props => <ListaEventos {...props} eventos={eventos} />}
       </Stack.Screen>
       <Stack.Screen 
         name="DetalleEvento" 
@@ -124,7 +123,7 @@ function AppContent() {
           tabBarInactiveTintColor: 'gray',
         }}>
         <Tab.Screen 
-          name="VerEvento"
+          name="VerEventoStack"
           options={{
             title: 'Mis Eventos', 
             tabBarIcon:({color, size}) => (
@@ -135,8 +134,8 @@ function AppContent() {
           {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
         </Tab.Screen>
         <Tab.Screen 
-          name="mapita"
-          component={MapaVisual}
+          name="Mapa"
+          component={Mapa}
           options={{
             title: 'Mapa',
             tabBarIcon: ({ color, size }) => (
@@ -154,9 +153,9 @@ function AppContent() {
           initialParams={{ eventos }}
         />
         <Tab.Screen 
-          name="verMapa"
+          name="ListadoEventos"
           options={{
-            title: 'Mapa',
+            title: 'Eventos',
             tabBarIcon:({color, size}) => (
               <Ionicons name="map" color={color} size={size} />
             ),
