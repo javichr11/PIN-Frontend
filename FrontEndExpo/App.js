@@ -62,10 +62,10 @@ function MapaStack({ eventos }) {
       <Stack.Screen
         name="verMapa"
         component={Mapa}
+        eventos={eventos}
         options={{ headerShown: false }}
-      >
-        {props => <Mapa {...props} eventos={eventos} />}
-      </Stack.Screen>
+      />
+        
       <Stack.Screen 
         name="DetalleEvento" 
         component={DetalleEvento} 
