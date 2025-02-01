@@ -27,7 +27,7 @@ import * as Font from 'expo-font';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
+  
 const loadFonts = async () => {
   await Font.loadAsync({
     'Satoshi-Regular': require('./assets/font/RedHatText-Medium.ttf'),
