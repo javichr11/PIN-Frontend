@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, ScrollView } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Icon from '../context/TematicaIcon';
 
 
 
@@ -15,7 +16,16 @@ const formatearFechaHora = (fechaISO) => {
   return { hora, fechaFormateada };
 };
 
-const getCardColor = (tematica) => {
+const getCardColor = (tematica, fecha) => {
+
+  const fechaActual = new Date();
+  const fechaEvento = new Date(fecha);
+ 
+  if (fechaEvento < fechaActual) {
+    return 'rgba(180, 180, 180, 0.9)';
+  }
+
+
   switch (tematica?.toUpperCase()) {
     case 'ECO':
       return 'rgba(182, 252, 190, 0.5)';
@@ -38,7 +48,9 @@ const VerEvento = ({ navigation, route }) => {
       const response = await fetch('https://croacky.onrender.com/evento/obtener');
       const data = await response.json();
       if (response.ok) {
-        setEventos(data.data);
+
+        const eventosOrdenados = data.data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        setEventos(eventosOrdenados);
       } else {
         Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
       }
@@ -57,7 +69,7 @@ const VerEvento = ({ navigation, route }) => {
   const renderItem = ({ item }) => {
 
     const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
-    const overlayColor = getCardColor(item.tematica);
+    const overlayColor = getCardColor(item.tematica, item.fecha);
 
     return (
       <TouchableOpacity 
@@ -143,18 +155,87 @@ const VerEvento = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+
+    <ScrollView style={styles.createEvent}>
+      <Text style={styles.titleText}>
+        Crear Eventos
+      </Text>
+      <TouchableOpacity 
+        style={styles.uploadContainer}
+        onPress={(e) => {
+          e.stopPropagation();
+          navigation.navigate('CrearEvento');
+        }}
+      >
+        <Icon.PostAddIcon />
+        <Text style={styles.uploadTextOrange}>
+          Pulsa aquí <Text style={styles.uploadText}>para elegir</Text>
+        </Text>
+        <Text style={styles.uploadText}>
+          la imagen de portada
+        </Text>
+      </TouchableOpacity>
+
+      <Text style={styles.titleText}> Eventos Creados </Text>
+
       <FlatList
         data={eventos}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+
+  createEvent: {
+    width: '100%',
+    backgroundColor: '#000000',
+    padding: 16,
+  },
+
+  titleText: {
+    color: '#FFFFFF',
+    textAlign: 'left',
+    marginTop: 8,
+    marginLeft: 5,
+    marginBottom: 10,
+    fontSize: 20,
+    fontFamily: 'Satoshi-Regular',
+    fontWeight: 'bold',
+  },
+
+  uploadContainer: {
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    borderStyle: 'dashed',
+    borderRadius: 8,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 120,
+    height: 200,
+    marginBottom: 25,
+  },
+
+  uploadText: {
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginTop: 8,
+    fontSize: 14,
+    fontFamily: 'Satoshi-Regular',
+  },
+
+  uploadTextOrange: {
+    color: '#FA6A44',
+    textAlign: 'center',
+    marginTop: 8,
+    fontSize: 14,
+    fontFamily: 'Satoshi-Regular',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#000000',

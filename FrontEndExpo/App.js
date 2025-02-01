@@ -24,6 +24,8 @@ import Preguntas4 from "./interfaz/Preguntas4";
 import Preguntas5 from "./interfaz/Preguntas5";
 import RanaAsignada from "./interfaz/RanaAsignada";
 import * as Font from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

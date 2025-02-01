@@ -57,7 +57,6 @@ const CrearEvento = () => {
   const handleDireccionSeleccionada = (direccion) => {
     if (direccion && direccion.lat && direccion.lon) {
       setDireccion({
-        //nombre: direccion.display_name,
         latitud: parseFloat(direccion.lat),
         longitud: parseFloat(direccion.lon),
         
@@ -90,7 +89,6 @@ const CrearEvento = () => {
   latitud: direccion.latitud,
   longitud: direccion.longitud,
   nombre: titulo,
-  // Añade aquí más datos para depurar
 });
 
       if (image) {
