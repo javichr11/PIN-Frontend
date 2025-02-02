@@ -75,6 +75,31 @@ function MapaStack({ eventos }) {
   );
 }
 
+function PerfilStack() {
+  return (
+    <Stack.Navigator>
+
+    <Stack.Screen 
+        name="perfil"
+        component={Perfil}
+        options={{ headerShown: false }}
+        />
+      <Stack.Screen 
+        name="DetalleEvento" 
+        component={DetalleEvento} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Logros"
+        component={Logros}    
+        options={{ headerShown: false }}
+          
+        />      
+    </Stack.Navigator>
+  );
+}
+
+
 function AppContent() {
   const { isAuthenticated , setIsAuthenticated} = useUser();
   const [eventos, setEventos] = useState([]);
@@ -145,18 +170,10 @@ function AppContent() {
           }}
           initialParams={{ eventos }}
         />
-        <Tab.Screen
-          name="Logros"
-          component={Logros}
-          options={{
-            title: 'Tus logros',
-          }}
-          initialParams={{ eventos }}
-        />
         <Tab.Screen 
           name="verMapa"
           options={{
-            title: 'Mapa',
+            title: 'Buscador',
             tabBarIcon:({color, size}) => (
               <Ionicons name="map" color={color} size={size} />
             ),
@@ -176,7 +193,7 @@ function AppContent() {
         />
         <Tab.Screen 
           name="perfil"
-          component={Perfil}
+          component={PerfilStack}
           options={{
             title: 'Tu perfil',
             tabBarIcon: ({ color, size }) => (

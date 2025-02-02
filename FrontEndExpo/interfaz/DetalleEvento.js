@@ -48,7 +48,7 @@ const DetalleEvento = ({ route, navigation }) => {
         
         <View style={styles.categoryRow}>
           <View style={styles.categoryPill}>
-          <TematicaIcon />
+          {/* <TematicaIcon /> */}
             <Text style={styles.categoryText}>{evento.tematica}</Text>
           </View>
           <View style={styles.categoryPill2}>

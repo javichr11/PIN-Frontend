@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useUser } from '../context/UserProvider';
 import EventosInscritos from './EventosInscritos'; 
-import Logros from './Logros';
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+
 
 
 const Perfil = () => {
   const { user, logout } = useUser();
   const [eventos, setEventos] = useState([]);
-  const [mostrarLogros, setMostrarLogros] = useState(false); 
   const [numInsignias, setNumInsignias] = useState(0);
+
+  const navigation = useNavigation();
 
   const fetchEventosInscrito = async () => {
     try {
@@ -40,20 +42,18 @@ const Perfil = () => {
     }
   }
 
-  useEffect(() => {
-    if (user) {
-      fetchEventosInscrito();
-      cuentaInsignias();
-    }
-  }, [user]);
+  useFocusEffect(
+    useCallback(() => {
+      if (user){
+        cuentaInsignias();
+       fetchEventosInscrito();
+      }
+    }, [user]) // Se actualiza solo si el usuario cambia
+  );
 
   return (
     
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      {/* Mostrar la ventana de logros si se activa */}
-      {mostrarLogros ? (
-        <Logros userID={user.id} onClose={() => setMostrarLogros(false)} />
-      ) : (
       <View style={styles.container}>
         {user ? (
           <>
@@ -73,7 +73,7 @@ const Perfil = () => {
             {/* Opciones del perfil */}
             <View style={styles.optionsSection}>
               <View style={styles.optionsSubsection}>
-                <TouchableOpacity style={styles.optionButton} onPress={() => setMostrarLogros(true)}>
+                <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('Logros', { userID: user.id })}>
                   <View style={styles.optionRow}>
                     <Text style={styles.optionText}>⭐ Logros</Text>
                     <View style={styles.badge}>
@@ -110,7 +110,6 @@ const Perfil = () => {
           <Text style={styles.logoutText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>
-      )}
     </ScrollView>
 
   );
