@@ -4,6 +4,8 @@ import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker } from 'react-native-maps';
+import BuscarDireccion from './BuscarDireccion';
 
 // AforoInput Component
 const AforoInput = ({ value, onChange }) => {
@@ -49,6 +51,7 @@ const CrearEvento = () => {
   const [tematica, setTematica] = useState('');
   const [aforo, setAforo] = useState('');
   const [localizacion, setLocalizacion] = useState('');
+  const [direccion, setDireccion] = useState('');
   const [image, setImage] = useState(null);
   const [fecha, setFecha] = useState(new Date());
   const [hora, setHora] = useState(new Date());
@@ -57,12 +60,14 @@ const CrearEvento = () => {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [usuario_id, setUsuarioId] = useState('');
   const [duracion, setDuracion] = useState('1');
+  const [mostrarDuracionPicker, setMostrarDuracionPicker] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
     const idObtenido = 10; // Simulación de usuario
     setUsuarioId(idObtenido);
   }, []);
+
 
   const combinarFechaHora = () => {
     const nuevaFecha = new Date(fecha);
@@ -71,47 +76,92 @@ const CrearEvento = () => {
     return nuevaFecha.toISOString();
   };
 
-  const handleCrearEvento = async () => {
-    const fechaISO = combinarFechaHora();
+  
+
+  const [eventos, setEventos] = useState([]); // Estado para almacenar la lista de eventos
+
+const fetchEventos = async () => {
+  try {
+    const response = await fetch('https://croacky.onrender.com/evento/obtener'); // Cambia esto por tu endpoint real
+    const data = await response.json();
+
+    if (response.ok) {
+      setEventos(data);
+    } else {
+      Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+    }
+  } catch (error) {
+    Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+  }
+};
+
+const handleDireccionSeleccionada = (direccion) => {
+  if (direccion && direccion.lat && direccion.lon) {
+    setDireccion({
+      //nombre: direccion.display_name,
+      latitud: parseFloat(direccion.lat),
+      longitud: parseFloat(direccion.lon),
+
+    });
+
+  } else {
+    Alert.alert('Error', 'La dirección seleccionada no tiene coordenadas válidas.');
+  }
+};
+
+
+const createEvent = async () =>{
     const formData = new FormData();
-    formData.append('usuario_id', usuario_id);
+    if (!direccion|| !direccion.latitud || !direccion.longitud) {
+      Alert.alert('Error', 'Selecciona una dirección antes de crear el evento.');
+      return;
+    }
+
     formData.append('nombre', titulo);
     formData.append('descripcion', descripcion);
     formData.append('tematica', tematica);
+    formData.append('aforo', aforo);
     formData.append('ubicacion', localizacion);
-    formData.append('aforo', parseInt(aforo));
-    formData.append('fecha', fechaISO);
-    formData.append('duracion', `${duracion} hours`);
+    //formData.append('sitio', JSON.stringify(direccion));
+    formData.append('latitud', direccion.latitud);
+    formData.append('longitud', direccion.longitud);
+    formData.append('fecha', combinarFechaHora()); 
+    formData.append('userID', usuario_id);
+    formData.append('duracion', duracion);
+    console.log('Datos enviados:', {
+      latitud: direccion.latitud,
+  longitud: direccion.longitud,
+  nombre: titulo,
+  // Añade aquí más datos para depurar
+});
 
-    if (image) {
-      formData.append('foto', {
-        uri: image,
-        type: 'image/jpeg',
-        name: 'evento.jpg',
-      });
-    }
-
-    formData.append('creado_en', new Date().toISOString());
-
-    try {
-      const response = await fetch('https://croacky.onrender.com/evento/crear', {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' },
-      });
-  
-      const responseData = await response.json();
-  
-      if (response.ok) {
-        Alert.alert('¡Éxito!', 'Evento creado satisfactoriamente', [
-          {text: 'OK', onPress: () => navigation.navigate('VerEvento', {refresh: true})}
-        ]);
-      } else {
-        Alert.alert('Error', `No se pudo crear el evento: ${responseData.message}`);
+      if (image) {
+        formData.append('foto', {
+          uri: image,
+          type: 'image/jpeg',
+          name: 'usuario.jpg',
+        });
       }
-    } catch (error) {
-      Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
-    }
+
+      try {
+      
+        const response = await fetch('https://croacky.onrender.com/evento/crear', {
+          method: 'POST',
+          body: formData,
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          fetchEventos();
+          Alert.alert('Éxito', 'El evento se ha creado correctamente.');
+          navigation.navigate('VerEvento', { refresh: true });  
+        }else{
+          Alert.alert('Error', `No se pudo crear el evento: ${data.message}`);
+        }
+      } catch (error) {
+        Alert.alert('Error', `Ocurrió un error al crear el evento: ${error.message}`);
+      }
   };
 
   const pickImage = async () => {
@@ -141,9 +191,6 @@ const CrearEvento = () => {
     setMostrarPicker(false);
     if (pickerMode === 'date') {
       setFecha(selectedDate || fecha);
-      if (selectedDate && selectedDate.toDateString() !== new Date().toDateString()) {
-        setHora(new Date(0, 0, 0, 0, 0));
-      }
     } else {
       setHora(selectedDate || hora);
     }
@@ -155,7 +202,6 @@ const CrearEvento = () => {
         <ScrollView 
           contentContainerStyle={styles.container} 
           scrollEnabled={scrollEnabled}
-          showsVerticalScrollIndicator={false}
         >
           {/* Image Upload Section */}
           <View style={styles.imageUploadSection}>
@@ -196,27 +242,35 @@ const CrearEvento = () => {
               <Text style={styles.label}>Temática</Text>
               <View style={styles.tematicaContainer}>
                 <TouchableOpacity 
-                  style={[styles.tematicaButton, tematica === 'voluntariado' && styles.tematicaButtonActive]}
-                  onPress={() => setTematica('voluntariado')}
+                  style={[styles.tematicaButton, tematica === 'Voluntariado' && styles.tematicaButtonActive]}
+                  onPress={() => setTematica('Voluntariado')}
                 >
-                  <Text style={[styles.tematicaText, tematica === 'voluntariado' && styles.tematicaTextActive]}>
+                  <Text style={[styles.tematicaText, tematica === 'Voluntariado' && styles.tematicaTextActive]}>
                     Voluntariado
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  style={[styles.tematicaButton, tematica === 'arte' && styles.tematicaButtonActive]}
-                  onPress={() => setTematica('arte')}
+                  style={[styles.tematicaButton, tematica === 'Arte' && styles.tematicaButtonActive]}
+                  onPress={() => setTematica('Arte')}
                 >
-                  <Text style={[styles.tematicaText, tematica === 'arte' && styles.tematicaTextActive]}>
+                  <Text style={[styles.tematicaText, tematica === 'Arte' && styles.tematicaTextActive]}>
                     Arte
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  style={[styles.tematicaButton, tematica === 'deportes' && styles.tematicaButtonActive]}
-                  onPress={() => setTematica('deportes')}
+                  style={[styles.tematicaButton, tematica === 'Deportes' && styles.tematicaButtonActive]}
+                  onPress={() => setTematica('Deportes')}
                 >
-                  <Text style={[styles.tematicaText, tematica === 'deportes' && styles.tematicaTextActive]}>
+                  <Text style={[styles.tematicaText, tematica === 'Deportes' && styles.tematicaTextActive]}>
                     Deportes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.tematicaButton, tematica === 'Música' && styles.tematicaButtonActive]}
+                  onPress={() => setTematica('Música')}
+                >
+                  <Text style={[styles.tematicaText, tematica === 'Música' && styles.tematicaTextActive]}>
+                    Música
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -238,13 +292,10 @@ const CrearEvento = () => {
 
             {/* Fecha y Hora */}
             <View style={styles.sectionContainer}>
-            <View style={styles.dateTimeSection}>
+              <View style={styles.dateTimeSection}>
                 <View style={styles.dateTimeColumn}>
                   <Text style={styles.label}>Fecha</Text>
-                  <TouchableOpacity 
-                    style={styles.dateTimeInput} 
-                    onPress={mostrarFechaPicker}
-                  >
+                  <TouchableOpacity style={styles.dateTimeInput} onPress={mostrarFechaPicker}>
                     <Text style={styles.dateTimeValue}>
                       {fecha.toLocaleDateString('es-ES', {
                         weekday: 'short',
@@ -258,55 +309,54 @@ const CrearEvento = () => {
 
                 <View style={styles.dateTimeColumn}>
                   <Text style={styles.label}>Hora</Text>
-                  <TouchableOpacity 
-                    style={styles.dateTimeInput} 
-                    onPress={mostrarHoraPicker}
-                  >
+                  <TouchableOpacity style={styles.dateTimeInput} onPress={mostrarHoraPicker}>
                     <Text style={styles.dateTimeValue}>
-                      {hora.toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                      {hora.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
                       })}
                     </Text>
                   </TouchableOpacity>
                 </View>
               </View>
-            </View>
 
-           
+              {/* Asegurar que el DateTimePicker se muestre cuando se toca Fecha/Hora */}
+              {mostrarPicker && (
+                <DateTimePicker
+                value={pickerMode === 'date' ? fecha : hora}
+                mode={pickerMode}
+                is24Hour={true}
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                textColor="white" // Asegura que el texto sea visible en iOS
+                themeVariant="dark" // Aplica modo oscuro en Android
+                minimumDate={pickerMode === 'date' ? new Date() : null}
+                onChange={manejarFechaHoraCambio}
+                />
+              )}
+            </View>
 
             {/* Localización */}
             <View style={styles.sectionContainer}>
               <Text style={styles.label}>Ubicación</Text>
               <TextInput
-                style={styles.input}
-                value={localizacion}
-                onChangeText={setLocalizacion}
-                placeholder="Ubicación del evento"
-                placeholderTextColor="#666"
-              />
+            style={styles.input}
+            value={localizacion}
+            onChangeText={setLocalizacion}
+            placeholder="Localización"
+          />
+               <BuscarDireccion style={styles.label} onDireccionSeleccionada={handleDireccionSeleccionada} />
             </View>
 
             {/* Submit Button */}
             <TouchableOpacity 
               style={styles.submitButton}
-              onPress={handleCrearEvento}
+              onPress={createEvent}
             >
               <Text style={styles.submitButtonText}>Añadir</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Date/Time Picker Modal */}
-          {mostrarPicker && (
-            <DateTimePicker
-              value={pickerMode === 'date' ? fecha : hora}
-              mode={pickerMode}
-              is24Hour={true}
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              minimumDate={pickerMode === 'date' ? new Date() : null}
-              onChange={manejarFechaHoraCambio}
-            />
-          )}
+         
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -432,7 +482,7 @@ const styles = StyleSheet.create({
   },
   titleInput: {
     fontSize: 24, // Tamaño aumentado
-    color: "white",
+    color: "#B6FCBE",
   },
   
   // New styles for AforoInput
