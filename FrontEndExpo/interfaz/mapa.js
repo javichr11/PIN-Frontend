@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { 
-  View, Text, StyleSheet, Image, TouchableOpacity, 
-  FlatList, Alert, TextInput, ScrollView, Modal 
+import {
+  View, Text, StyleSheet, TouchableOpacity,
+  FlatList, Alert, TextInput, ScrollView, Modal
 } from "react-native";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons"; // Añadimos Ionicons para más iconos
 import EventCard from "./Components/EventCard";
 import { useUser } from "../context/UserProvider";
 import { KeyboardAvoidingView, Platform } from "react-native";
@@ -14,7 +14,9 @@ const Mapa = ({ eventos, route }) => {
   const [searchText, setSearchText] = useState("");
   const [nuevosEventos, setEventos] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [isFilterVisible, setIsFilterVisible] = useState(false); // Estado para el modal de filtros
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [selectedDuration, setSelectedDuration] = useState(null);
+  const [selectedTimeOfDay, setSelectedTimeOfDay] = useState(null);
   const { user } = useUser();
 
   useEffect(() => {
@@ -36,15 +38,38 @@ const Mapa = ({ eventos, route }) => {
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategory(category); 
-    setIsFilterVisible(false); // Cierra el modal al seleccionar una categoría
+    setSelectedCategory(category);
+    setIsFilterVisible(false);
   };
 
-  const filteredEventos = nuevosEventos.filter(
-    (evento) =>
-      evento.nombre.toLowerCase().includes(searchText.toLowerCase()) &&
-      (selectedCategory === "Todos" || evento.tematica.toLowerCase() === selectedCategory.toLowerCase())
-  );
+  const filteredEventos = nuevosEventos.filter((evento) => {
+    const matchesSearch = evento.nombre.toLowerCase().includes(searchText.toLowerCase());
+    const matchesCategory = selectedCategory === "Todos" || evento.tematica.toLowerCase() === selectedCategory.toLowerCase();
+
+    // Filtro por duración
+    const durationInMinutes = parseInt(evento.duracion.split(':')[0]) * 60 + parseInt(evento.duracion.split(':')[1]);
+    let matchesDuration = true;
+    if (selectedDuration === "0-30") {
+      matchesDuration = durationInMinutes <= 30;
+    } else if (selectedDuration === "30-60") {
+      matchesDuration = durationInMinutes > 30 && durationInMinutes <= 60;
+    } else if (selectedDuration === ">60") {
+      matchesDuration = durationInMinutes > 60;
+    }
+
+    // Filtro por momento del día
+    const eventHour = new Date(evento.fecha).getHours();
+    let matchesTimeOfDay = true;
+    if (selectedTimeOfDay === "Mañana") {
+      matchesTimeOfDay = eventHour >= 6 && eventHour < 12;
+    } else if (selectedTimeOfDay === "Tarde") {
+      matchesTimeOfDay = eventHour >= 12 && eventHour < 18;
+    } else if (selectedTimeOfDay === "Noche") {
+      matchesTimeOfDay = eventHour >= 18 || eventHour < 6;
+    }
+
+    return matchesSearch && matchesCategory && matchesDuration && matchesTimeOfDay;
+  });
 
   return (
     <View style={styles.container}>
@@ -52,10 +77,7 @@ const Mapa = ({ eventos, route }) => {
 
       {/* Search Bar */}
       <View style={styles.searchBarContainer}>
-        {/* Search Icon */}
         <FontAwesome name="search" size={18} color="white" style={styles.searchIcon} />
-        
-        {/* Search Field */}
         <TextInput
           style={styles.searchBar}
           placeholder="Hoy me apunto a..."
@@ -63,8 +85,6 @@ const Mapa = ({ eventos, route }) => {
           value={searchText}
           onChangeText={setSearchText}
         />
-
-        {/* Filter Icon - Abre el modal */}
         <TouchableOpacity style={styles.filterIcon} onPress={() => setIsFilterVisible(true)}>
           <MaterialIcons name="tune" size={20} color="white" />
         </TouchableOpacity>
@@ -84,7 +104,6 @@ const Mapa = ({ eventos, route }) => {
       </ScrollView>
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-        {/* Lista de eventos */}
         <FlatList
           data={filteredEventos}
           renderItem={({ item }) => <EventCard evento={item} />}
@@ -99,16 +118,47 @@ const Mapa = ({ eventos, route }) => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Filtrar Eventos</Text>
 
-            {/* Opciones de filtro */}
-            {categories.map((cat) => (
-              <TouchableOpacity
-                key={cat}
-                style={[styles.modalFilterChip, selectedCategory === cat && styles.modalSelectedFilterChip]}
-                onPress={() => handleCategoryChange(cat)}
-              >
-                <Text style={styles.modalFilterText}>{cat}</Text>
-              </TouchableOpacity>
-            ))}
+            {/* Filtro por duración */}
+            <Text style={styles.modalSubtitle}>Duración</Text>
+            <View style={styles.filterRow}>
+              {["0-30", "30-60", ">60"].map((duration) => (
+                <TouchableOpacity
+                  key={duration}
+                  style={[styles.modalFilterChip, selectedDuration === duration && styles.modalSelectedFilterChip]}
+                  onPress={() => setSelectedDuration(selectedDuration === duration ? null : duration)}
+                >
+                  <Ionicons
+                    name={duration === "0-30" ? "time-outline" : duration === "30-60" ? "time" : "time-sharp"}
+                    size={20}
+                    color={selectedDuration === duration ? "#FFF" : "#6F6F6F"}
+                  />
+                  <Text style={[styles.modalFilterText, selectedDuration === duration && styles.modalSelectedFilterText]}>
+                    {duration}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* Filtro por momento del día */}
+            <Text style={styles.modalSubtitle}>Momento del día</Text>
+            <View style={styles.filterRow}>
+              {["Mañana", "Tarde", "Noche"].map((time) => (
+                <TouchableOpacity
+                  key={time}
+                  style={[styles.modalFilterChip, selectedTimeOfDay === time && styles.modalSelectedFilterChip]}
+                  onPress={() => setSelectedTimeOfDay(selectedTimeOfDay === time ? null : time)}
+                >
+                  <Ionicons
+                    name={time === "Mañana" ? "sunny-outline" : time === "Tarde" ? "partly-sunny-outline" : "moon-outline"}
+                    size={20}
+                    color={selectedTimeOfDay === time ? "#FFF" : "#6F6F6F"}
+                  />
+                  <Text style={[styles.modalFilterText, selectedTimeOfDay === time && styles.modalSelectedFilterText]}>
+                    {time}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
             {/* Botón para cerrar el modal */}
             <TouchableOpacity style={styles.closeButton} onPress={() => setIsFilterVisible(false)}>
@@ -117,17 +167,14 @@ const Mapa = ({ eventos, route }) => {
           </View>
         </View>
       </Modal>
-
     </View>
   );
 };
 
-/* 📌 ESTILOS */
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0E0E0E", padding: 20 },
   greeting: { fontSize: 26, fontWeight: "bold", color: "white" },
   username: { color: "#63FF63" },
-
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -143,42 +190,79 @@ const styles = StyleSheet.create({
   searchIcon: { marginRight: 10 },
   searchBar: { flex: 1, color: "white", fontSize: 16 },
   filterIcon: { marginLeft: 10 },
-
   filterContainer: { flexDirection: "row", paddingBottom: 20, marginBottom: 15, maxHeight: 55 },
   filterChip: { padding: 10, borderColor: "white", borderWidth: 0.6, borderRadius: 20, minHeight: 37, marginRight: 10, paddingHorizontal: 20 },
   selectedFilterChip: { backgroundColor: "#6F6F6F" },
   filterText: { color: "white", fontSize: 14, fontWeight: "300" },
-
   flatList: { flex: 1 },
-
-  /* MODAL DE FILTROS */
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.7)",
   },
   modalContent: {
-    width: "80%",
+    width: "90%",
     backgroundColor: "#1E1E1E",
     padding: 20,
-    borderRadius: 15,
+    borderRadius: 20,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
   },
-  modalTitle: { fontSize: 20, fontWeight: "bold", color: "#FFF", marginBottom: 15 },
+  modalTitle: { fontSize: 22, fontWeight: "bold", color: "#FFF", marginBottom: 20 },
+  modalSubtitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFF",
+    marginTop: 10,
+    marginBottom: 10,
+    alignSelf: "flex-start",
+  },
+  filterRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 15,
+  },
   modalFilterChip: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
-    borderColor: "#FFF",
+    borderColor: "#6F6F6F",
     borderWidth: 1,
     borderRadius: 15,
-    marginVertical: 5,
+    width: "30%",
+    justifyContent: "center",
+  },
+  modalSelectedFilterChip: {
+    backgroundColor: "#3A39F5",
+    borderColor: "#3A39F5",
+  },
+  modalFilterText: {
+    color: "#6F6F6F",
+    fontSize: 14,
+    marginLeft: 5,
+  },
+  modalSelectedFilterText: {
+    color: "#FFF",
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: "#3A39F5",
+    padding: 12,
+    borderRadius: 15,
     width: "100%",
     alignItems: "center",
   },
-  modalSelectedFilterChip: { backgroundColor: "#6F6F6F" },
-  modalFilterText: { color: "#FFF", fontSize: 16 },
-  closeButton: { marginTop: 15, backgroundColor: "#3A39F5", padding: 10, borderRadius: 10, width: "100%", alignItems: "center" },
-  closeButtonText: { color: "#FFF", fontSize: 16, fontWeight: "bold" },
+  closeButtonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
 
 export default Mapa;

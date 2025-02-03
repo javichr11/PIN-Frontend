@@ -22,7 +22,8 @@ const EventosInscritos = ({ eventos }) => {
         data={eventos}
         renderItem={({ item }) => (
           <EventCard 
-          evento={item}           
+          evento={item}
+          showJoinButton={false}       
         />
         )}
         keyExtractor={(item, index) => index.toString()}

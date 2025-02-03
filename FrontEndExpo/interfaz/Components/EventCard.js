@@ -33,12 +33,11 @@ const getGradientColors = (categoria) => {
 };
 
 
-const EventCard = ({ evento }) => {
+const EventCard = ({ evento, showJoinButton=true }) => {
   const { nombre, ubicacion, tematica, fecha, inscritos, aforo, foto } = evento;
   const gradientColors = getGradientColors(tematica.toLowerCase());
   const navigation = useNavigation();
-
-  const onPress = () => navigation.navigate("DetalleEvento", { evento, showJoinButton: true })
+  const onPress = () => navigation.navigate("DetalleEvento", { evento, showJoinButton })
   return (
     <TouchableOpacity onPress={onPress} >
       <View style={styles.cardContainer}>
