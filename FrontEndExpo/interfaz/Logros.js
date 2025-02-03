@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
 import Insignia from './Insignia';
+import { useNavigation } from '@react-navigation/native';
 
-const Logros = ({ userID, onClose }) => {
+
+const Logros = ({ route }) => {
   const [insignias, setInsignias] = useState([]);
-
+  const { userID } = route.params || {};
+  const navigation = useNavigation();
   // Llamada a la API para obtener las insignias
   const fetchInsignias = async () => {
     try {
@@ -24,27 +27,6 @@ const Logros = ({ userID, onClose }) => {
   useEffect(() => {
     fetchInsignias();
   }, []);
-
-  const renderItem = ({ item }) => (
-    <View style={styles.insigniaContainer}>
-      {/* Icono de la insignia */}
-      <View style={[styles.insigniaIcon, item.lograda && styles.insigniaLograda]}>
-        <Image
-          source={require('../assets/white-ticket.png')} // Icono genérico
-          style={styles.iconImage}
-        />
-      </View>
-
-      {/* Nombre y descripción */}
-      <Text style={styles.insigniaTitle}>{item.nombre}</Text>
-      <Text style={styles.insigniaDescription}>{item.descripcion}</Text>
-
-      {/* Progreso */}
-      <View style={[styles.progress, item.lograda && styles.progressCompleted]}>
-        <Text style={styles.progressText}>{item.progreso}/{item.meta}</Text>
-      </View>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -66,7 +48,7 @@ const Logros = ({ userID, onClose }) => {
       columnWrapperStyle={styles.row} 
       
     />
-      <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+      <TouchableOpacity style={styles.closeButton} onPress={() => navigation.navigate('perfil')}>
         <Text style={styles.closeButtonText}>Cerrar</Text>
       </TouchableOpacity>
     </View>
