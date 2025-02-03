@@ -70,6 +70,11 @@ function MapaStack({ eventos }) {
         component={DetalleEvento} 
         options={{ title: 'Detalle del Evento' }} 
       />
+      <Stack.Screen 
+        name="Mapa" 
+        component={Mapa} 
+        options={{ title: 'Eventos' }} 
+      />
     </Stack.Navigator>
   );
 }
@@ -92,8 +97,12 @@ function PerfilStack() {
         name="Logros"
         component={Logros}    
         options={{ headerShown: false }}
-          
-        />      
+      />    
+      <Stack.Screen
+        name="VerEventos"
+        component={VerEventos}
+        options={{ headerShown: false }}
+      />  
     </Stack.Navigator>
   );
 }
@@ -148,39 +157,21 @@ function AppContent() {
           tabBarInactiveTintColor: 'gray',
         }}>
         <Tab.Screen 
-          name="VerEventoStack"
-          options={{
-            title: 'Mis Eventos', 
-            tabBarIcon:({color, size}) => (
-              <Ionicons name="list" color={color} size={size} />
-            ),
-          }}
-        >
-          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
-        </Tab.Screen>
-        <Tab.Screen 
           name="Mapa"
           component={Mapa}
           options={{
-            title: 'Mapa',
+            title: 'Eventos',
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="folder" color={color} size={size} />
             ),
           }}
           initialParams={{ eventos }}
         />
-        <Tab.Screen
-          name="Logros"
-          component={Logros}
-          options={{
-            title: 'Tus logros',
-          }}
-          initialParams={{ eventos }}
-        />
         <Tab.Screen 
           name="ListadoEventos"
           options={{
-            title: 'Eventos',
+            title: 'Mapa',
             tabBarIcon:({color, size}) => (
               <Ionicons name="map" color={color} size={size} />
             ),
