@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Platform, ScrollView, Alert, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+
 
 // AforoInput Component
 const AforoInput = ({ value, onChange }) => {
@@ -48,7 +49,35 @@ const CrearEvento = () => {
   const [descripcion, setDescripcion] = useState('');
   const [tematica, setTematica] = useState('');
   const [aforo, setAforo] = useState('');
-  const [localizacion, setLocalizacion] = useState('');
+  const [ubicacion, setUbicacion] = useState('');
+  const [sugerencias, setSugerencias] = useState([]);
+  const [localizacion, setLocalizacion] = useState({
+    latitud: null,
+    longitud: null
+  });
+  const buscarUbicacion = async (texto) => {
+    setUbicacion(texto);
+    if (texto.length < 3) return; // Espera a que haya más de 3 caracteres antes de buscar
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(texto)}&limit=5`
+
+
+      );
+      const data = await response.json();
+      setSugerencias(data);
+    } catch (error) {
+      console.error('Error buscando ubicación:', error);
+    }
+  };
+   // Manejar la selección de una ubicación
+   const seleccionarUbicacion = (item) => {
+    setUbicacion(item.display_name);
+    setLocalizacion({ latitud: item.lat, longitud: item.lon });
+    setSugerencias([]); // Oculta las sugerencias después de seleccionar
+  };
+
   const [image, setImage] = useState(null);
   const [fecha, setFecha] = useState(new Date());
   const [hora, setHora] = useState(new Date());
@@ -280,11 +309,30 @@ const CrearEvento = () => {
               <Text style={styles.label}>Ubicación</Text>
               <TextInput
                 style={styles.input}
-                value={localizacion}
-                onChangeText={setLocalizacion}
+                value={ubicacion}
+                onChangeText={buscarUbicacion}
                 placeholder="Ubicación del evento"
                 placeholderTextColor="#666"
               />
+              {/* Mostrar lista de sugerencias */}
+              {sugerencias.length > 0 && (
+                <FlatList
+                  data={sugerencias}
+                  keyExtractor={(item) => item.place_id.toString()}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.suggestionItem} onPress={() => seleccionarUbicacion(item)}>
+                      <Text style={styles.suggestionText}>{item.display_name}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              )}
+              {/* Mostrar coordenadas seleccionadas */}
+              {localizacion.latitud && (
+                <Text style={styles.coords}>
+                  Latitud: {localizacion.latitud} | Longitud: {localizacion.longitud}
+                </Text>
+              )}
+              
             </View>
 
             {/* Submit Button */}
@@ -321,6 +369,16 @@ const styles = StyleSheet.create({
   },
   imageUploadSection: {
     marginBottom: 24,
+  },
+  suggestionItem: {
+    padding: 12,
+    backgroundColor: '#333333', // Fondo oscuro para contraste
+    borderBottomWidth: 1,
+    borderBottomColor: '#555555',
+  },
+  suggestionText: {
+    color: '#FFFFFF', // Blanco para mejor visibilidad
+    fontSize: 16,
   },
   imageUploadButton: {
     backgroundColor: '#FFFEF5',

@@ -79,6 +79,8 @@ const EventosInscritos = ({ eventos }) => {
         onScroll={handleScroll}
         showsHorizontalScrollIndicator={false}
         style={styles.flatList}
+        nestedScrollEnabled={true}  // ✅ Agregar esto
+
       />
       {/* Indicador de paginación */}
       <View style={styles.pagination}>

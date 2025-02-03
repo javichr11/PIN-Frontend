@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView} from 'react-native';
 import { useUser } from '../context/UserProvider';
 import EventosInscritos from './EventosInscritos'; 
 import Logros from './Logros';

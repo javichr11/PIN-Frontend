@@ -26,6 +26,16 @@ import RanaAsignada from "./interfaz/RanaAsignada";
 import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { LogBox } from 'react-native';
+
+// Ignorar el warning específico
+LogBox.ignoreLogs([
+  'VirtualizedLists should never be nested inside plain ScrollViews',
+]);
+
+// Resto de tu código
+
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

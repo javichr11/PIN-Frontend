@@ -89,7 +89,9 @@ const Mapa = ({ eventos, route }) => {
           data={filteredEventos}
           renderItem={({ item }) => (
           <EventCard 
-          evento={item}           
+            evento={item}     
+            onPress={() => navigation.navigate('DetalleEvento', { evento: item })} 
+                  
         />
         )}
           keyExtractor={(item) => item.id.toString()}

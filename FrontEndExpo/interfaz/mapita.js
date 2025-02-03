@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import MapView, { PROVIDER_DEFAULT, Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 const Mapita = () => {
   const [eventos, setEventos] = useState([]);
@@ -15,10 +16,33 @@ const Mapita = () => {
   };
 
   useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permiso denegado', 'Se necesita permiso para acceder a la ubicación');
+        return;
+      }
+
+      // Intentar obtener la ubicación actual para centrar el mapa
+      try {
+        let location = await Location.getCurrentPositionAsync({});
+        setLocalizacion({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        });
+      } catch (error) {
+        console.log('Error obteniendo ubicación', error);
+      }
+    })();
+    
     const obtenerEventos = async () => {
       try {
         const response = await axios.get('https://croacky.onrender.com/evento/obtener');
+        
         console.log('Datos completos:', response.data);
+        
         if (response.data && response.data.data) {
           console.log('Eventos recibidos:', response.data.data);
           // Verifica el formato de las coordenadas
@@ -74,8 +98,8 @@ const Mapita = () => {
         console.log(`Procesando evento ${index}:`, {
           id: evento.id,
           nombre: evento.nombre,
-          latitud: evento.latitud,
-          longitud: evento.longitud
+          latitud: parseFloat(evento.latitud),
+          longitud: parseFloat(evento.longitud)
         });
 
         if (evento.latitud && evento.longitud) {
