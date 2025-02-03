@@ -74,6 +74,31 @@ function MapaStack({ eventos }) {
   );
 }
 
+function PerfilStack() {
+  return (
+    <Stack.Navigator>
+
+    <Stack.Screen 
+        name="perfil"
+        component={Perfil}
+        options={{ headerShown: false }}
+        />
+      <Stack.Screen 
+        name="DetalleEvento" 
+        component={DetalleEvento} 
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Logros"
+        component={Logros}    
+        options={{ headerShown: false }}
+          
+        />      
+    </Stack.Navigator>
+  );
+}
+
+
 function AppContent() {
   const { isAuthenticated , setIsAuthenticated} = useUser();
   const [eventos, setEventos] = useState([]);
@@ -175,7 +200,7 @@ function AppContent() {
         />
         <Tab.Screen 
           name="perfil"
-          component={Perfil}
+          component={PerfilStack}
           options={{
             title: 'Tu perfil',
             tabBarIcon: ({ color, size }) => (
