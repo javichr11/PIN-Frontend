@@ -175,7 +175,7 @@ function AppContent() {
           {() => <MapaStack eventos={eventos} />}
         </Tab.Screen>
         <Tab.Screen 
-          name="ListaEventos"
+          name="Mapa"
           options={{
             title: 'Mapa',
             tabBarIcon: ({ color, size }) => (
