@@ -51,6 +51,23 @@ const Perfil = () => {
     }, [user]) // Se actualiza solo si el usuario cambia
   );
 
+
+  const confirmarLogout = async () => {
+    Alert.alert(
+      '¿Estás seguro?',
+      '¿Estás seguro de que quieres cerrar la sesión?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Cerrar Sesión',
+          onPress: () =>  logout(),
+          style: 'destructive'
+        },
+      ],
+      { cancelable: true }
+    );
+  
+};
   return (
     
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -106,7 +123,7 @@ const Perfil = () => {
         ) : (
           <Text style={styles.noUserText}>No hay usuario autenticado</Text>
         )}
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+        <TouchableOpacity style={styles.logoutButton} onPress={confirmarLogout}>
           <Text style={styles.logoutText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>

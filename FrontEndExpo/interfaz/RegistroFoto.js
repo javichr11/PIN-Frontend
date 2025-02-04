@@ -64,10 +64,7 @@ export default function RegistroFoto({ route, navigation }) {
         await saveUser(data.user);
         setIsNewUser(true);
 
-        navigation.reset({
-          index: 0,
-          routes: [{name:PreguntasInicial}]
-        });
+        handleSendToPreferencias();
       }catch(error){
         console.error('Error:', error);
       }

@@ -6,7 +6,7 @@ import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import InicioSesion from "./interfaz/InicioSesion";
-import VerEvento from "./interfaz/VerEvento";
+import VerEventos from "./interfaz/VerEvento";
 import Registro from "./interfaz/Registro";
 import RegistroFoto from "./interfaz/RegistroFoto";
 import Perfil from "./interfaz/perfil";
@@ -50,10 +50,10 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen 
-        name="VerEvento" 
+        name="VerEventos" 
         options={{ headerShown: false }}
       >
-        {props => <VerEvento {...props} eventos={eventos} fetchEventos={fetchEventos} />}
+        {props => <VerEventos {...props} eventos={eventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
       <Stack.Screen 
         name="CrearEvento"
