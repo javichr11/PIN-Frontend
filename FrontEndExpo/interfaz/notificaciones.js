@@ -38,6 +38,10 @@ const NotificationsComponent = () => {
   };
 
   return (
+
+    <View style={styles.titleContainer}>
+      {/* Título de la sección */}
+      <Text style={styles.title}>Notificaciones</Text>
     <View style={styles.container}>
       {loading ? (
         <ActivityIndicator size="large" color="#6C63FF" style={styles.loader} />
@@ -64,6 +68,7 @@ const NotificationsComponent = () => {
         </ScrollView>
       )}
     </View>
+    </View>
   );
 };
 
@@ -73,8 +78,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     padding: 16,
   },
+  titleContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    padding: 16,
+    alignItems: 'center',
+  },
   title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: 'bold',
     color: '#FFF',
     marginBottom: 16,

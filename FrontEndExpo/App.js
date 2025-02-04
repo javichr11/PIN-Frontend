@@ -10,7 +10,7 @@ import VerEvento from "./interfaz/VerEvento";
 import Registro from "./interfaz/Registro";
 import RegistroFoto from "./interfaz/RegistroFoto";
 import Perfil from "./interfaz/perfil";
-import MapaVisual from "./interfaz/mapita";
+import MapaVisual from "./interfaz/ListaEventos";
 import Mapa from "./interfaz/mapa";
 import Notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
@@ -176,55 +176,55 @@ function AppContent() {
           },
         }}>
         <Tab.Screen 
-          name="VerEvento"
-          options={{
-            title: '', 
-            tabBarIcon:({color, size}) => (
-              <Ionicons name="ticket" color={color} size={30} />
-            ),
-          }}
-        >
-          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
-        </Tab.Screen>
-        <Tab.Screen 
-          name="mapita"
-          component={MapaVisual}
-          options={{
-            title: '',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="location-sharp" color={color} size={30} />
-            ),
-          }}
-          initialParams={{ eventos }}
-        />
-        <Tab.Screen 
           name="verMapa"
           options={{
             title: '',
             tabBarIcon:({color, size}) => (
-              <Ionicons name="home" color={color} size={30} />
+              <Ionicons name="home" color={color} size={30}  marginTop={5}/>
             ),
           }}
         >
           {() => <MapaStack eventos={eventos} />}
         </Tab.Screen>
         <Tab.Screen 
+          name="ListaEventos"
+          component={MapaVisual}
+          options={{
+            title: '',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="location-sharp" color={color} size={30}  marginTop={5}/>
+            ),
+          }}
+          initialParams={{ eventos }}
+        />
+         <Tab.Screen 
           name="notificaciones"
           component={Notificaciones}
           options={{
             title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="notifications" color={color} size={30} />
+              <Ionicons name="notifications" color={color} size={30}  marginTop={5}/>
             ),
           }}
         />
+        <Tab.Screen 
+          name="VerEvento"
+          options={{
+            title: '', 
+            tabBarIcon:({color, size}) => (
+              <Ionicons name="ticket" color={color} size={30} marginTop={5} />
+            ),
+          }}
+        >
+          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
+        </Tab.Screen>
         <Tab.Screen 
           name="perfil"
           component={PerfilStack}
           options={{
             title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" color={color} size={30} />
+              <Ionicons name="person" color={color} size={30} marginTop={5}/>
             ),
           }}
         />
