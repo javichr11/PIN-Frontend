@@ -57,7 +57,7 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
       </Stack.Screen>
       <Stack.Screen 
         name="CrearEvento"
-        options={{ title: 'Modificar Evento' }}
+        options={{ title: 'Crear Evento' }}
       >
         {props => <CrearEvento {...props} setEventos={setEventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>

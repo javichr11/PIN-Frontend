@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import { formatearFecha, formatearHora } from '../context/dateFormatter';
+import Icon from '../context/TematicaIcon';
 
 const DetalleEvento = ({ route, navigation }) => {
   const { evento, showJoinButton } = route.params;
@@ -48,6 +49,7 @@ const DetalleEvento = ({ route, navigation }) => {
         
         <View style={styles.categoryRow}>
           <View style={styles.categoryPill}>
+            <Icon.TematicaIcon/>
             <Text style={styles.categoryText}>{evento.tematica}</Text>
           </View>
           <View style={styles.categoryPill2}>
