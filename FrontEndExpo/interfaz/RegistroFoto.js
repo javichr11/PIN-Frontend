@@ -4,13 +4,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { useUser } from "../context/UserProvider";
 import PreguntasInicial from './PreguntasInicial';
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from '@react-navigation/native';
 
-export default function RegistroFoto({ route, navigation }) {
+export default function RegistroFoto({ route }) {
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [edad, setEdad] = useState(' ');
   const [foto, setFoto] = useState(null);
   const { nombre, movil, password } = route.params;
   const { saveUser, setIsNewUser } = useUser();
+  const navigation = useNavigation();
+
   
   const seleccionarFoto = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -61,9 +64,7 @@ export default function RegistroFoto({ route, navigation }) {
       Alert.alert('Éxito!', data.message);
       
       try{
-        await saveUser(data.user);
-        setIsNewUser(true);
-
+        console.log("LLEGA ANTES");
         handleSendToPreferencias();
       }catch(error){
         console.error('Error:', error);
@@ -83,12 +84,15 @@ export default function RegistroFoto({ route, navigation }) {
   }
 
   handleSendToPreferencias = () => {
+
+    console.log("Navegando al cuestionario");
+
     try {
       navigation.navigate('PreguntasInicial');
     } catch (error) {
       console.error("Navigation error:", error);
-    }
-  }
+    }
+  };
 
 
   return (
