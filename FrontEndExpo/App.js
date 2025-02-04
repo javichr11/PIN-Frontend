@@ -75,6 +75,7 @@ function MapaStack({ eventos }) {
         component={Mapa} 
         options={{ title: 'Eventos' }} 
       />
+      
     </Stack.Navigator>
   );
 }

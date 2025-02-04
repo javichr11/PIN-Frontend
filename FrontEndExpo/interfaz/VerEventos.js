@@ -4,6 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {PostAddIcon} from '../context/TematicaIcon';
 import { useUser } from '../context/UserProvider';
 import { KeyboardAvoidingView, Platform } from "react-native";
+import CreatedEventsCard from './Components/CreatedEventsCard';
 
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
