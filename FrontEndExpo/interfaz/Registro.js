@@ -1,16 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
 import { useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "react-native-vector-icons";
+import { useUser } from "../context/UserProvider";
 
 export default function Registro({ route, navigation }) {
   const [nombre, setNombre] = useState('');
   const [movil, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -49,53 +53,106 @@ export default function Registro({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Imagen en la parte superior */}
-      <Image
-        source={require('../assets/frog.png')} 
-        style={styles.image}
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <LinearGradient
+          colors={["#000", "#3A39F5"]}
+          style={styles.gradient}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        >
+          <Text style={styles.title}>¡Bienvenid@,{'\n'}regístrate!</Text>
+        </LinearGradient>
 
-    <View style={styles.inputContainer}>
-      <Text style={styles.title}>Bienvenido a Croacky</Text>
+        <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Nombre Completo</Text>
+            <TextInput
+              placeholder="Ingresa tu nombre completo"
+              value={nombre}
+              onChangeText={setNombre}
+              style={styles.input}
+              placeholderTextColor="#666"
+            />
+          </View>
 
-      <Text style={styles.label}>Nombre Completo</Text>
-      <TextInput
-        style={styles.input}
-        value={nombre}
-        onChangeText={setNombre}
-      />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Número de Móvil</Text>
+            <TextInput
+              placeholder="Ingresa tu número de móvil"
+              value={movil}
+              onChangeText={setPhone}
+              keyboardType="numeric"
+              style={styles.input}
+              placeholderTextColor="#666"
+            />
+          </View>
 
-      <Text style={styles.label}>Número de Móvil</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Contraseña</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                placeholder="Ingresa tu contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!isPasswordVisible}
+                style={styles.passwordInput}
+                placeholderTextColor="#666"
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              >
+                <Ionicons
+                  name={isPasswordVisible ? "eye-off" : "eye"}
+                  size={28}
+                  color="#666"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        value={movil}
-        onChangeText={setPhone}
-      />    
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Confirmar Contraseña</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                placeholder="Confirma tu contraseña"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={!isConfirmPasswordVisible}
+                style={styles.passwordInput}
+                placeholderTextColor="#666"
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+              >
+                <Ionicons
+                  name={isConfirmPasswordVisible ? "eye-off" : "eye"}
+                  size={28}
+                  color="#666"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
 
-      <Text style={styles.label}>Contraseña</Text>
-      <TextInput
-        style={styles.input}
-        secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
-      />   
+          <TouchableOpacity 
+            style={styles.nextButton}
+            onPress={handleNext}
+          >
+            <Text style={styles.nextButtonText}>Siguiente</Text>
+          </TouchableOpacity>
 
-    <Text style={styles.label}>Confirma Contraseña</Text>
-      <TextInput
-        style={styles.input}
-        secureTextEntry={true}
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      /> 
-
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Siguiente</Text>
-      </TouchableOpacity>
-      </View>
-
-      
+          <Text style={styles.loginText}>
+            ¿Ya tienes una cuenta?{" "}
+            <Text 
+              style={styles.loginLink}
+              onPress={() => navigation.navigate('InicioSesion')}
+            >
+              Inicia Sesión
+            </Text>
+          </Text>
+        </View>
+      </ScrollView>
       <StatusBar style="auto" />
     </View>
   );
@@ -104,66 +161,85 @@ export default function Registro({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D3E0D5',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: 0,
+    backgroundColor: "#f5f5f5",
+  },
+  gradient: {
+    width: "100%",
+    height: 300,
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#FFF',
+    fontFamily: 'Satoshi-Regular',
+    fontSize: 50,
+    fontWeight: "bold",
+    color: "#fff",
   },
-  label: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 16,
-    color: '#FFF',
-    marginTop: 5,
-    marginLeft: 20,
-    marginBottom: 10,
-  },
-  image: {
-    width: 175, 
-    height: 175, 
-    marginTop: 5,
-    borderRadius: 75,
+  formContainer: {
+    backgroundColor: "#ffffff",
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   inputContainer: {
-    width: '100%',
-    backgroundColor: '#61ba12', // Color más oscuro
-    flexDirection:'column',
-    alignItems: 'center',
-    padding: 20,
-    borderTopRightRadius: 40,
-    borderTopLeftRadius: 40,
-    marginBottom: 0,
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 8,
+    fontWeight: "500",
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 0,
-    borderRadius: 50,
-    marginBottom: 5,
+    height: 50,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: "#333",
+  },
+  passwordInput: {
+    height: 60, // Aumentado la altura
+    backgroundColor: "#f5f5f5",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 18, // Aumentado el tamaño de la fuente
+    color: "#333",
     width: '100%',
-    paddingHorizontal: 10,
-    backgroundColor: '#bed881',
-    elevation: 2,
   },
-  button: {
-    width: '70%',
-    borderRadius: 50,
-    borderColor: '#FFFFFF',
-    borderWidth: 4,
-    paddingVertical: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+  passwordContainer: {
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: 15,
+    height: "100%",
+    justifyContent: "center",
+  },
+  nextButton: {
+    backgroundColor: "#3A39F5",
+    paddingVertical: 15,
+    borderRadius: 10,
     marginTop: 20,
+    alignItems: 'center',
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
+  nextButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  loginText: {
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 14,
+    color: "#333",
+  },
+  loginLink: {
+    color: "#3A39F5",
+    fontWeight: "bold",
   },
 });
