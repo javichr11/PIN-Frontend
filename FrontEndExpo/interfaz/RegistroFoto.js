@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useUser } from "../context/UserProvider";
 import PreguntasInicial from './PreguntasInicial';
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from '@react-navigation/native';
@@ -11,7 +10,7 @@ export default function RegistroFoto({ route }) {
   const [edad, setEdad] = useState(' ');
   const [foto, setFoto] = useState(null);
   const { nombre, movil, password } = route.params;
-  const { saveUser, setIsNewUser } = useUser();
+  
   const navigation = useNavigation();
 
   
@@ -65,7 +64,7 @@ export default function RegistroFoto({ route }) {
       
       try{
         console.log("LLEGA ANTES");
-        handleSendToPreferencias();
+        navigation.navigate('PreguntasInicial', {user: data.user});
       }catch(error){
         console.error('Error:', error);
       }

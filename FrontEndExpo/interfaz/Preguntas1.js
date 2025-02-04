@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Preguntas1 = ({ navigation }) => {
+const Preguntas1 = ({ navigation, route }) => {
   const [selectedOption, setSelectedOption] = useState(null);
+  const { user } = route.params;
 
   const options = [
     {text: "Aprender algo nuevo", puntos: { WISE: 3, ACTIVE: 2, PARTY: 0, HELPER: 1 }},
@@ -20,7 +21,9 @@ const Preguntas1 = ({ navigation }) => {
     if (selectedOption) {
       console.log("Navegando a Preguntas2 con opción:", selectedOption.puntos);
       const puntuacionAcumulada = selectedOption.puntos;
-      navigation.navigate('Preguntas2',  { puntuacionAcumulada });
+      const usuario = user;
+      console.log(usuario);
+      navigation.navigate('Preguntas2',  { puntuacionAcumulada : puntuacionAcumulada, user: usuario });
     }
   };
   

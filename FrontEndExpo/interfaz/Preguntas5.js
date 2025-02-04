@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useUser } from "../context/UserProvider";
 
 const Preguntas5 = ({ navigation , route}) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const puntuacionAcumulada = route.params;
+  const { saveUser, setIsAuthenticated } = useUser();
+  const { user } = route.params;
 
   const options = [
     {text: "Aprender algo nuevo o reflexionar", puntos: { WISE: 3, ACTIVE: 2, PARTY: 0, HELPER: 1 }},
@@ -14,6 +17,14 @@ const Preguntas5 = ({ navigation , route}) => {
 
   const handleSelect = (option) => {
     setSelectedOption(option);
+  };
+
+  const finalizarRegistro = async () => {
+    const usuario = user;
+    console.log(usuario);
+    await saveUser(usuario); // Guarda el usuario en el contexto
+    setIsAuthenticated(true); // Lo marca como autenticado
+    navigation.reset({ index: 0, routes: [{ name: 'verMapa' }] }); // Redirige a la app
   };
 
   const handleNext = () => {
@@ -28,8 +39,12 @@ const Preguntas5 = ({ navigation , route}) => {
         HELPER: puntuacionAcumulada.puntuacionAcumulada.HELPER + parseInt(selectedOption.puntos.HELPER),
       };
       console.log("Navegando a RanaAsignada con opción:", nuevaPuntuacion);
-        navigation.navigate('RanaAsignada',  { puntuacionAcumulada: nuevaPuntuacion });
+      const usuario = user;
+      console.log(usuario);
+        navigation.navigate('RanaAsignada',  { puntuacionAcumulada: nuevaPuntuacion, user: usuario });
       }
+
+      finalizarRegistro();
   };
 
   return (
