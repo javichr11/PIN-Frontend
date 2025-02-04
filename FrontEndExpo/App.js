@@ -27,11 +27,11 @@ import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { LogBox } from 'react-native';
-
+LogBox.ignoreAllLogs();
 // Ignorar el warning específico
-LogBox.ignoreLogs([
-  'VirtualizedLists should never be nested inside plain ScrollViews',
-]);
+//LogBox.ignoreLogs([
+ // 'VirtualizedLists should never be nested inside plain ScrollViews',
+//]);
 
 // Resto de tu código
 
@@ -155,15 +155,32 @@ function AppContent() {
     {isAuthenticated ? (
       <Tab.Navigator
         screenOptions={{
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: 'blue',
+          tabBarInactiveTintColor: 'white',
+          tabBarStyle: {
+            backgroundColor: 'black', // Dark background color
+            borderTopWidth: 0,
+            borderRadius: 20,
+            paddingBottom: -1,
+            position: 'absolute', 
+            bottom: 30,
+            left: 0,
+            right: 0,
+            height: 60,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12, // Smaller font size for labels
+          },
+          tabBarItemStyle: {
+            paddingVertical: 5, // Increase vertical padding for tabs
+          },
         }}>
         <Tab.Screen 
           name="VerEvento"
           options={{
-            title: 'Mis Eventos', 
+            title: '', 
             tabBarIcon:({color, size}) => (
-              <Ionicons name="list" color={color} size={size} />
+              <Ionicons name="ticket" color={color} size={30} />
             ),
           }}
         >
@@ -173,9 +190,9 @@ function AppContent() {
           name="mapita"
           component={MapaVisual}
           options={{
-            title: 'Mapa',
+            title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="folder" color={color} size={size} />
+              <Ionicons name="location-sharp" color={color} size={30} />
             ),
           }}
           initialParams={{ eventos }}
@@ -183,9 +200,9 @@ function AppContent() {
         <Tab.Screen 
           name="verMapa"
           options={{
-            title: 'Buscador',
+            title: '',
             tabBarIcon:({color, size}) => (
-              <Ionicons name="map" color={color} size={size} />
+              <Ionicons name="home" color={color} size={30} />
             ),
           }}
         >
@@ -195,9 +212,9 @@ function AppContent() {
           name="notificaciones"
           component={Notificaciones}
           options={{
-            title: 'Notificaciones',
+            title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="notifications" color={color} size={size} />
+              <Ionicons name="notifications" color={color} size={30} />
             ),
           }}
         />
@@ -205,9 +222,9 @@ function AppContent() {
           name="perfil"
           component={PerfilStack}
           options={{
-            title: 'Tu perfil',
+            title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" color={color} size={size} />
+              <Ionicons name="person" color={color} size={30} />
             ),
           }}
         />

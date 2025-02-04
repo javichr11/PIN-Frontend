@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Animated } from 'react-native';
 import MapView, { PROVIDER_DEFAULT, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { Image } from 'react-native';
 
 const Mapita = () => {
   const [eventos, setEventos] = useState([]);
-
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  
   // Región inicial (Valencia, España)
   const region = {
     latitude: 39.4699,
@@ -65,6 +67,12 @@ const Mapita = () => {
     obtenerEventos();
   }, []);
 
+  const darkMapStyle = [
+    { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+    { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+    { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+  ];
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Mapa de tus eventos</Text>
@@ -75,12 +83,14 @@ const Mapita = () => {
         initialRegion={region}
         showsUserLocation={true}
         showsMyLocationButton={true}
+        customMapStyle={darkMapStyle}
         onLayout={() => console.log('Mapa renderizado')}
         onMapLoaded={() => {
           console.log('Mapa cargado completamente');
           console.log('Eventos disponibles:', eventos.length);
         }}
       >
+        
         
           <Marker
             coordinate={{
@@ -103,19 +113,30 @@ const Mapita = () => {
         });
 
         if (evento.latitud && evento.longitud) {
-          return (
-            <Marker
-            key={evento.id}
-              coordinate={{
-                latitude: evento.latitud,
-                longitude: evento.longitud
-              }}
-              title={evento.nombre}
-              description={evento.ubicacion}
-              pinColor="pink"  // Color diferente para mayor visibilidad
-              onPress={() => console.log(`Marcador ${evento.nombre} presionado`)}
-            />
-          );
+          const isSelected = selectedMarker === evento.id;
+            return (
+              <Marker
+                key={evento.id}
+                coordinate={{
+                  latitude: evento.latitud,
+                  longitude: evento.longitud
+                }}
+                title={evento.nombre}
+                description={evento.ubicacion}
+                anchor={{ x: 0.5, y: 1 }} // Evita que el marcador "salte"
+                pinColor={evento.foto ? undefined : "pink"}  // Usa el color rosa solo si no hay imagen
+                onPress={() => setSelectedMarker(isSelected ? null : evento.id)}
+              >
+                {evento.foto ? (
+                    <View style={[styles.markerContainer, selectedMarker === evento.id && styles.markerSelected]}>
+                    <View style={styles.markerBackground}>
+                      <Image source={{ uri: evento.foto }} style={styles.markerImage} />
+                    </View>
+                    <View style={styles.triangle} />
+                  </View>
+                  ) : null}
+              </Marker>
+            );
         }
         return null;
       })}
@@ -129,6 +150,7 @@ const Mapita = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -144,6 +166,50 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
     height: '80%',
+  },
+  markerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 50,
+    height: 65,
+    position: 'relative',
+    marginBottom: 10,
+    pointerEvents: 'none', // Permite que el Marker reciba el clic sin interferencias
+  },
+  markerBackground: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'white',
+    borderRadius: 25,
+    borderWidth: 3,
+    borderColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'none', // Evita conflictos al tocar la imagen
+  },
+  markerImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  markerSelected: {
+    width: 60,  // Aumenta todo el marcador
+    height: 75, 
+    marginBottom: 15,
+  },
+  triangle: {
+    position: 'absolute',
+    bottom: -10,
+    left: '50%',
+    marginLeft: -10,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderTopWidth: 15,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: '#007AFF',
   },
 });
 
