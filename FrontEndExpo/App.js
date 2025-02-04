@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, ActivityIndicator, StyleSheet} from "react-native";
+import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import InicioSesion from "./interfaz/InicioSesion";
-import VerEventos from "./interfaz/VerEventos";
+import VerEvento from "./interfaz/VerEventos";
 import Registro from "./interfaz/Registro";
 import RegistroFoto from "./interfaz/RegistroFoto";
 import Perfil from "./interfaz/perfil";
-import Mapa from "./interfaz/mapa";
 import ListaEventos from "./interfaz/ListaEventos";
+import Mapa from "./interfaz/mapa";
 import Notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
 import Logros from "./interfaz/Logros";
@@ -40,14 +40,20 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen 
+        name="ListaEventos"
+        options={{ title: 'Lista de Eventos', headerShown: false }}
+      >
+        {props => <ListaEventos {...props} eventos={eventos} fetchEventos={fetchEventos} />}
+      </Stack.Screen>
+      <Stack.Screen 
         name="VerEvento" 
         options={{ headerShown: false }}
       >
-        {props => <VerEventos {...props} eventos={eventos} fetchEventos={fetchEventos} />}
+        {props => <VerEvento {...props} eventos={eventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
       <Stack.Screen 
         name="CrearEvento"
-        options={{ title: 'Modificar Evento' }}
+        options={{ title: 'Nuevo Evento' }}
       >
         {props => <CrearEvento {...props} setEventos={setEventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
@@ -60,22 +66,17 @@ function MapaStack({ eventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="ListaEventos"
+        name="verMapa"
+        component={Mapa}
+        eventos={eventos}
         options={{ headerShown: false }}
-      >
-        {props => <ListaEventos {...props} eventos={eventos} />}
-      </Stack.Screen>
+      />
+        
       <Stack.Screen 
         name="DetalleEvento" 
         component={DetalleEvento} 
         options={{ title: 'Detalle del Evento' }} 
       />
-      <Stack.Screen 
-        name="Mapa" 
-        component={Mapa} 
-        options={{ title: 'Eventos' }} 
-      />
-      
     </Stack.Navigator>
   );
 }
@@ -97,13 +98,18 @@ function PerfilStack() {
       <Stack.Screen
         name="Logros"
         component={Logros}    
-        options={{ headerShown: false }}
-      />    
+        options={{ headerShown: false }}   
+      />      
       <Stack.Screen
         name="VerEventos"
-        component={VerEventos}
-        options={{ headerShown: false }}
-      />  
+        component={VerEvento}
+        options={{headerShown: false}}
+      /> 
+      <Stack.Screen
+        name="CrearEventos"
+        component={CrearEvento}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 }
@@ -158,27 +164,26 @@ function AppContent() {
           tabBarInactiveTintColor: 'gray',
         }}>
         <Tab.Screen 
-          name="Mapa"
-          component={Mapa}
+          name="verMapa"
           options={{
             title: 'Eventos',
-            headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="folder" color={color} size={size} />
-            ),
-          }}
-          initialParams={{ eventos }}
-        />
-        <Tab.Screen 
-          name="ListadoEventos"
-          options={{
-            title: 'Mapa',
             tabBarIcon:({color, size}) => (
-              <Ionicons name="map" color={color} size={size} />
+              <Ionicons name="list" color={color} size={size} />
             ),
           }}
         >
           {() => <MapaStack eventos={eventos} />}
+        </Tab.Screen>
+        <Tab.Screen 
+          name="ListaEventos"
+          options={{
+            title: 'Mapa',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="map" color={color} size={size} />
+            ),
+          }}
+        >
+          {props => <VerEventosStack {...props} eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
         </Tab.Screen>
         <Tab.Screen 
           name="notificaciones"
