@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useUser } from "../context/UserProvider";
 import PreguntasInicial from './PreguntasInicial';
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function RegistroFoto({ route, navigation }) {
   const [nombreUsuario, setNombreUsuario] = useState('');
@@ -95,50 +96,71 @@ export default function RegistroFoto({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Imagen en la parte superior */}
-      <Image
-        source={require('../assets/frog.png')} // Cambia la URL por la de tu imagen
-        style={styles.image}
-      />
-      <View style={styles.inputContainer}>
-        <Text style={styles.title}>Registro de Usuario</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <LinearGradient
+          colors={["#000", "#3A39F5"]}
+          style={styles.gradient}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        >
+          <Text style={styles.title}>¡Completa tu{'\n'}perfil!</Text>
+        </LinearGradient>
 
-        <Text style={styles.label}>Nombre de usuario</Text>
-        <TextInput
-          style={styles.input}
-          value={nombreUsuario}
-          onChangeText={setNombreUsuario}
-        />
+        <View style={styles.formContainer}>
+          <View style={styles.photoSection}>
+            <TouchableOpacity style={styles.fotoContainer} onPress={seleccionarFoto}>
+              {foto ? (
+                <Image source={{ uri: foto }} style={styles.foto} />
+              ) : (
+                <Image
+                  source={require('../assets/default-user.png')}
+                  style={styles.foto}
+                />
+              )}
+            </TouchableOpacity>
+            <Text style={styles.photoText}>Toca para seleccionar foto</Text>
+          </View>
 
-      <Text style={styles.label}>Edad</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={edad}
-          onChangeText={setEdad}
-        />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Nombre de usuario</Text>
+            <TextInput
+              placeholder="Ingresa tu nombre de usuario"
+              value={nombreUsuario}
+              onChangeText={setNombreUsuario}
+              style={styles.input}
+              placeholderTextColor="#666"
+            />
+          </View>
 
-        <Text style={styles.label}>Foto de Perfil</Text>
-        <TouchableOpacity style={styles.fotoContainer} onPress={seleccionarFoto}>
-          {foto ? (
-            <Image source={{ uri: foto }} style={styles.foto} />
-          ) : (
-            <Image
-            source={require('../assets/default-user.png')} // Cambia la URL por la de tu imagen
-            style={styles.foto}
-          />
-          )}
-          </TouchableOpacity>
-        <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.button,{backgroundColor:'orange'}]} onPress={handleReturn}>
-            <Text style={styles.buttonText}>Volver</Text>
-          </TouchableOpacity>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Edad</Text>
+            <TextInput
+              placeholder="Ingresa tu edad"
+              keyboardType="numeric"
+              value={edad}
+              onChangeText={setEdad}
+              style={styles.input}
+              placeholderTextColor="#666"
+            />
+          </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Completar</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={[styles.button, styles.returnButton]} 
+              onPress={handleReturn}
+            >
+              <Text style={styles.buttonText}>Volver</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.button, styles.nextButton]} 
+              onPress={handleSubmit}
+            >
+              <Text style={styles.buttonText}>Completar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -146,90 +168,90 @@ export default function RegistroFoto({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D3E0D5',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: 0,
+    backgroundColor: "#f5f5f5",
   },
-  image: {
-    width: 175, 
-    height: 175, 
-    marginTop: 5,
-    borderRadius: 75,
+  gradient: {
+    width: "100%",
+    height: 300,
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#FFF',
+    fontFamily: 'Satoshi-Regular',
+    fontSize: 50,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
   },
-  label: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 16,
-    color: '#FFF',
-    marginTop: 5,
-    marginLeft: 20,
-    marginBottom: 10,
+  formContainer: {
+    backgroundColor: "#ffffff",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 0,
-    borderRadius: 50,
-    marginBottom: 5,
-    width: '100%',
-    paddingHorizontal: 10,
-    backgroundColor: '#bed881',
-    elevation: 2,
+  photoSection: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  photoText: {
+    color: "#666",
+    marginTop: 10,
+    fontSize: 14,
   },
   inputContainer: {
-    width: '100%',
-    backgroundColor: '#61ba12', // Color más oscuro
-    flexDirection:'column',
-    alignItems: 'center',
-    padding: 20,
-    borderTopRightRadius: 40,
-    borderTopLeftRadius: 40,
-    marginBottom: 0,
+    marginBottom: 20,
   },
-  buttonContainer: {
-    width: '100%',
-    flexDirection:'row',
-    justifyContent:'space-around',
-    padding: 0,
-    margin: 0,
+  label: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 8,
+    fontWeight: "500",
+  },
+  input: {
+    height: 50,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    fontSize: 16,
+    color: "#333",
   },
   fotoContainer: {
-    width: 130,
-    height: 130,
-    backgroundColor: '#EAF2E6',
-    borderRadius: 75,
+    width: 120,
+    height: 120,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 5,
     overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: "#3A39F5",
   },
   foto: {
     width: '100%',
     height: '100%',
   },
-  seleccionarFotoTexto: {
-    color: 'gray',
-  },
-  button: {
-    width: '40%',
-    borderRadius: 50,
-    borderColor: '#FFFFFF',
-    borderWidth: 4,
-    paddingVertical: 5,
+  buttonContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     marginTop: 20,
   },
+  button: {
+    width: '45%',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  returnButton: {
+    backgroundColor: "#FFA500",
+  },
+  nextButton: {
+    backgroundColor: "#3A39F5",
+  },
   buttonText: {
-    color: '#fff',
-    fontSize: 18,
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
