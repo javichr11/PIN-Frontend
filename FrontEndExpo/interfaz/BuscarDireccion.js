@@ -2,6 +2,54 @@ import React, { useState } from 'react';
 import { TextInput, FlatList, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
+const darkNominatimMapStyle = [
+  {
+    featureType: 'all',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#242f3e'
+      }
+    ]
+  },
+  {
+    featureType: 'all',
+    elementType: 'labels.text.fill',
+    stylers: [
+      {
+        color: '#757575'
+      }
+    ]
+  },
+  {
+    featureType: 'landscape',
+    elementType: 'geometry.fill',
+    stylers: [
+      {
+        color: '#1f2937'
+      }
+    ]
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#1e3a8a'
+      }
+    ]
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry',
+    stylers: [
+      {
+        color: '#38404c'
+      }
+    ]
+  }
+];
+
 const BuscarDireccion = ({ onDireccionSeleccionada }) => {
   const [query, setQuery] = useState('');
   const [resultados, setResultados] = useState([]);
@@ -80,6 +128,8 @@ const BuscarDireccion = ({ onDireccionSeleccionada }) => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+
+          customMapStyle={darkNominatimMapStyle}
         >
           <Marker coordinate={selectedLocation} />
         </MapView>

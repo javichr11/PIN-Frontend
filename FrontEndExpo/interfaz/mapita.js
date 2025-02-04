@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { View, Text, StyleSheet, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Animated, TouchableOpacity } from 'react-native';
 import MapView, { PROVIDER_DEFAULT, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Image } from 'react-native';
+import EventCard from "./Components/EventCard";
+
 
 const Mapita = () => {
   const [eventos, setEventos] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
+  
   
   // Región inicial (Valencia, España)
   const region = {
@@ -67,15 +70,10 @@ const Mapita = () => {
     obtenerEventos();
   }, []);
 
-  const darkMapStyle = [
-    { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-    { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-    { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-  ];
-
+ 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mapa de tus eventos</Text>
+     
 
       <MapView
         provider={PROVIDER_DEFAULT}
@@ -83,7 +81,7 @@ const Mapita = () => {
         initialRegion={region}
         showsUserLocation={true}
         showsMyLocationButton={true}
-        customMapStyle={darkMapStyle}
+        urlTemplate="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         onLayout={() => console.log('Mapa renderizado')}
         onMapLoaded={() => {
           console.log('Mapa cargado completamente');
@@ -113,7 +111,8 @@ const Mapita = () => {
         });
 
         if (evento.latitud && evento.longitud) {
-          const isSelected = selectedMarker === evento.id;
+          const isSelected = selectedMarker === evento
+          ;
             return (
               <Marker
                 key={evento.id}
@@ -125,7 +124,7 @@ const Mapita = () => {
                 description={evento.ubicacion}
                 anchor={{ x: 0.5, y: 1 }} // Evita que el marcador "salte"
                 pinColor={evento.foto ? undefined : "pink"}  // Usa el color rosa solo si no hay imagen
-                onPress={() => setSelectedMarker(isSelected ? null : evento.id)}
+                onPress={() => setSelectedMarker(isSelected ? null : evento)}
               >
                 {evento.foto ? (
                     <View style={[styles.markerContainer, selectedMarker === evento.id && styles.markerSelected]}>
@@ -141,6 +140,17 @@ const Mapita = () => {
         return null;
       })}
       </MapView>
+      {selectedMarker && (
+        <TouchableOpacity 
+          style={styles.cardOverlay} 
+          activeOpacity={1} 
+          onPress={() => setSelectedMarker(null)}
+        >
+          <EventCard evento={selectedMarker} showJoinButton={true} />
+        </TouchableOpacity>
+      )}
+
+
 
       {eventos.length === 0 ? (
         <Text>No hay eventos disponibles para mostrar en el mapa.</Text>
@@ -165,7 +175,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: Dimensions.get('window').width,
-    height: '80%',
+    height: '98%',
   },
   markerContainer: {
     alignItems: 'center',
@@ -211,6 +221,20 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     borderTopColor: '#007AFF',
   },
+  cardOverlay: {
+    position: 'absolute',
+    bottom: 80,  // Ajusta según necesidad
+    left: 20,
+    right: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  
 });
 
 export default Mapita;
