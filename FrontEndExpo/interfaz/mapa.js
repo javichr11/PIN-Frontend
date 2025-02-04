@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity,
   FlatList, Alert, TextInput, ScrollView, Modal
 } from "react-native";
-import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons"; // Añadimos Ionicons para más iconos
+import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import EventCard from "./Components/EventCard";
 import { useUser } from "../context/UserProvider";
 import { KeyboardAvoidingView, Platform } from "react-native";
@@ -25,8 +25,9 @@ const Mapa = ({ eventos, route }) => {
 
   const fetchEventos = async () => {
     try {
-      const response = await fetch("https://croacky.onrender.com/evento/obtener");
+      const response = await fetch("https://croacky.onrender.com/evento/obtenerPosteriores");
       const data = await response.json();
+      console.log(data)
       if (response.ok) {
         setEventos(data.data);
       } else {
@@ -179,8 +180,12 @@ const Mapa = ({ eventos, route }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0E0E0E", padding: 20 },
-  greeting: { fontSize: 26, fontWeight: "bold", color: "white" },
-  username: { color: "#63FF63" },
+  greeting: { fontSize: 26,
+     fontWeight: "bold",
+      color: "white",
+      marginTop: 30 
+  },
+  username: { color: "#B6FCBE" },
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",

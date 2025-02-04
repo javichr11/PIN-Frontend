@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import MapView, { PROVIDER_DEFAULT, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 
-const Mapita = () => {
+const ListaEventos = () => {
   const [eventos, setEventos] = useState([]);
 
   // Región inicial (Valencia, España)
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Mapita;
+export default ListaEventos;

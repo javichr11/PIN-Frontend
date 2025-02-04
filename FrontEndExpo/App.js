@@ -6,11 +6,11 @@ import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import InicioSesion from "./interfaz/InicioSesion";
-import VerEvento from "./interfaz/VerEvento";
+import VerEvento from "./interfaz/VerEventos";
 import Registro from "./interfaz/Registro";
 import RegistroFoto from "./interfaz/RegistroFoto";
 import Perfil from "./interfaz/perfil";
-import MapaVisual from "./interfaz/mapita";
+import ListaEventos from "./interfaz/ListaEventos";
 import Mapa from "./interfaz/mapa";
 import Notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
@@ -50,6 +50,12 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen 
+        name="ListaEventos"
+        options={{ title: 'Lista de Eventos', headerShown: false }}
+      >
+        {props => <ListaEventos {...props} eventos={eventos} fetchEventos={fetchEventos} />}
+      </Stack.Screen>
+      <Stack.Screen 
         name="VerEvento" 
         options={{ headerShown: false }}
       >
@@ -57,7 +63,7 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
       </Stack.Screen>
       <Stack.Screen 
         name="CrearEvento"
-        options={{ title: 'Modificar Evento' }}
+        options={{ title: 'Nuevo Evento' }}
       >
         {props => <CrearEvento {...props} setEventos={setEventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
@@ -102,9 +108,18 @@ function PerfilStack() {
       <Stack.Screen
         name="Logros"
         component={Logros}    
-        options={{ headerShown: false }}
-          
-        />      
+        options={{ headerShown: false }}   
+      />      
+      <Stack.Screen
+        name="VerEventos"
+        component={VerEvento}
+        options={{headerShown: false}}
+      /> 
+      <Stack.Screen
+        name="CrearEventos"
+        component={CrearEvento}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 }
@@ -159,37 +174,26 @@ function AppContent() {
           tabBarInactiveTintColor: 'gray',
         }}>
         <Tab.Screen 
-          name="VerEvento"
+          name="verMapa"
           options={{
-            title: 'Mis Eventos', 
+            title: 'Eventos',
             tabBarIcon:({color, size}) => (
               <Ionicons name="list" color={color} size={size} />
             ),
           }}
         >
-          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
+          {() => <MapaStack eventos={eventos} />}
         </Tab.Screen>
         <Tab.Screen 
-          name="mapita"
-          component={MapaVisual}
+          name="Mapa"
           options={{
             title: 'Mapa',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="folder" color={color} size={size} />
-            ),
-          }}
-          initialParams={{ eventos }}
-        />
-        <Tab.Screen 
-          name="verMapa"
-          options={{
-            title: 'Buscador',
-            tabBarIcon:({color, size}) => (
               <Ionicons name="map" color={color} size={size} />
             ),
           }}
         >
-          {() => <MapaStack eventos={eventos} />}
+          {props => <VerEventosStack {...props} eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
         </Tab.Screen>
         <Tab.Screen 
           name="notificaciones"

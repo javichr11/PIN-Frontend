@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Icon from '../context/TematicaIcon';
+import {PostAddIcon} from '../context/TematicaIcon';
 import { useUser } from '../context/UserProvider';
-
+import { KeyboardAvoidingView, Platform } from "react-native";
+import CreatedEventsCard from './Components/CreatedEventsCard';
 
 const formatearFechaHora = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -40,7 +41,7 @@ const getCardColor = (tematica, fecha) => {
   }
 };
 
-const VerEvento = ({ navigation, route }) => {
+const VerEventos = ({ navigation, route }) => {
   const [eventos, setEventos] = useState([]);
   const {user} = useUser();
 
@@ -157,35 +158,43 @@ const VerEvento = ({ navigation, route }) => {
 
   return (
 
-    <ScrollView style={styles.createEvent}>
-      <Text style={styles.titleText}>
-        Crear Eventos
-      </Text>
-      <TouchableOpacity 
-        style={styles.uploadContainer}
-        onPress={(e) => {
-          e.stopPropagation();
-          navigation.navigate('CrearEvento');
-        }}
-      >
-        <Icon.PostAddIcon />
-        <Text style={styles.uploadTextOrange}>
-          Pulsa aquí <Text style={styles.uploadText}>para elegir</Text>
+    <KeyboardAvoidingView 
+  behavior={Platform.OS === "ios" ? "padding" : "height"} 
+  style={styles.container}
+>
+  <FlatList
+    ListHeaderComponent={
+      <>
+        <Text style={styles.titleText}>
+          Crear Eventos
         </Text>
-        <Text style={styles.uploadText}>
-          la imagen de portada
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.uploadContainer}
+          onPress={(e) => {
+            e.stopPropagation();
+            navigation.navigate('CrearEvento');
+          }}
+        >
+          <PostAddIcon width={30} height={30} fill="#FA6A44" />
+          <Text style={styles.uploadTextOrange}>
+            Pulsa aquí <Text style={styles.uploadText}>para elegir</Text>
+          </Text>
+          <Text style={styles.uploadText}>
+            la imagen de portada
+          </Text>
+        </TouchableOpacity>
 
-      <Text style={styles.titleText}> Eventos Creados </Text>
+        <Text style={styles.titleText}> Eventos Creados </Text>
+      </>
+    }
+    data={eventos}
+    renderItem={({ item }) => <CreatedEventsCard evento={item} />}
+    keyExtractor={(item) => item.id.toString()}
+    showsVerticalScrollIndicator={false}
+    contentContainerStyle={{ paddingBottom: 20 }}
+  />
+</KeyboardAvoidingView>
 
-      <FlatList
-        data={eventos}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-      />
-    </ScrollView>
   );
 };
 
@@ -351,4 +360,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VerEvento;
+export default VerEventos;

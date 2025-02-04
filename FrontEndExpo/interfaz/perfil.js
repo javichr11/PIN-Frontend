@@ -86,7 +86,7 @@ const Perfil = () => {
                   />
                 </TouchableOpacity>
                 <View style={styles.separator} />
-                <TouchableOpacity style={styles.optionButton}>
+                <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('VerEventos')}>
                   <Text style={styles.optionText}>📅 Mis eventos</Text>
                   <Image
                     source={require('../assets/flecha_Derecha.png')}
