@@ -199,7 +199,7 @@ function AppContent() {
           name="perfil"
           component={PerfilStack}
           options={{
-            title: 'Tu perfil',
+            title: 'Perfil',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="person" color={color} size={size} />
             ),

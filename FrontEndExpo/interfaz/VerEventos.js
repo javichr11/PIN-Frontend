@@ -68,94 +68,6 @@ const VerEventos = ({ navigation, route }) => {
     }
   }, [route.params]);
 
-  const renderItem = ({ item }) => {
-
-    const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
-    const overlayColor = getCardColor(item.tematica, item.fecha);
-
-    return (
-      <TouchableOpacity 
-        style={styles.cardContainer}
-        onPress={() => navigation.navigate('DetalleEvento', {evento: item})}
-      >
-        <View style={styles.eventCard}>
-          <Image
-            source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
-            style={styles.eventImage}
-          />
-          <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
-            <View style={styles.dateTimeContainer}>
-            <Text style={styles.eventDate}>{`${fechaFormateada} • ${hora}`}</Text>
-            </View>
-            <Text style={styles.eventTitle}>{item.nombre}</Text>
-          </View>
-
-          <View style={styles.inscritosAforoContainer}>
-            <MaterialIcons name="group" size={14} color="#FFFFFF" style={styles.icon} />
-            <Text style={styles.inscritosAforoText}>
-              {item.inscritos}/{item.aforo}
-            </Text>
-          </View>
-          
-          <View style={styles.actions}>
-          <TouchableOpacity 
-              style={[styles.actionButton, styles.editButton]} 
-              onPress={(e) => {
-                e.stopPropagation();
-                navigation.navigate('CrearEvento', { evento: item });
-              }}
-            >
-              <Text style={styles.actionText}>Editar</Text>
-          </TouchableOpacity>    
-          <TouchableOpacity 
-              style={[styles.actionButton, styles.deleteButton]} 
-              onPress={(e) => {
-                e.stopPropagation();
-                confirmarEliminar(item.id);
-              }}
-            >
-              <Text style={styles.actionText}>Eliminar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const confirmarEliminar = (id) => {
-    Alert.alert(
-      '¿Estás seguro?',
-      '¿Estás seguro de que deseas eliminar el evento?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar evento',
-          onPress: () => eliminarEvento(id),
-          style: 'destructive'
-        },
-      ],
-      { cancelable: true }
-    );
-  };
-
-  const eliminarEvento = async (id) => {
-    try {
-      const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
-        await fetchEventos();
-      } else {
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.message);
-      }
-    } catch (error) {
-      Alert.alert('Error', `Ocurrió un error: ${error.message}`);
-    }
-  };
-
   return (
 
     <KeyboardAvoidingView 
@@ -316,6 +228,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     borderRadius: 25,
     marginHorizontal: 5,
+    backgroundColor: '#FFF',
   },
 
   editButton: {

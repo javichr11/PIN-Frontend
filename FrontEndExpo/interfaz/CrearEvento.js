@@ -78,7 +78,7 @@ const CrearEvento = () => {
 
   
 
-  const [eventos, setEventos] = useState([]); // Estado para almacenar la lista de eventos
+  const [eventos, setEventos] = useState([]); 
 
 const fetchEventos = async () => {
   try {
@@ -355,8 +355,6 @@ const createEvent = async () =>{
               <Text style={styles.submitButtonText}>Añadir</Text>
             </TouchableOpacity>
           </View>
-
-         
         </ScrollView>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>

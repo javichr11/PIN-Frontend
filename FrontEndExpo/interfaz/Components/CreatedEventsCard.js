@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground } from "react-native";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Alert } from "react-native";
+import { FontAwesome} from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
@@ -21,6 +21,40 @@ const formatearFecha = (fechaISO) => {
 
   return fecha.toLocaleDateString('es-ES', opciones).replace(',', ' ·');
 };
+
+const confirmarEliminar = (id) => {
+    Alert.alert(
+      '¿Estás seguro?',
+      '¿Estás seguro de que deseas eliminar el evento?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar evento',
+          onPress: () => eliminarEvento(id),
+          style: 'destructive'
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const eliminarEvento = async (id) => {
+    try {
+      const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
+        await fetchEventos();
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message);
+      }
+    } catch (error) {
+      Alert.alert('Error', `Ocurrió un error: ${error.message}`);
+    }
+  };
 
 const getGradientColors = (categoria) => {
   switch (categoria) {
@@ -55,7 +89,7 @@ const CreatedEventsCard = ({ evento, showJoinButton=true }) => {
             <View style={styles.header}>
               <Text style={styles.dateText}>{formatearFecha(fecha)}</Text>
               <View style={styles.aforoContainer}>
-                <FontAwesome name="users" size={16} color="black" />
+                <FontAwesome name="users" size={16} color="white" />
                 <Text style={styles.aforoText}>{`${inscritos}/${aforo}`}</Text>
               </View>
             </View>
@@ -68,6 +102,28 @@ const CreatedEventsCard = ({ evento, showJoinButton=true }) => {
             </View>
           </View>
         </ImageBackground>
+        {/* Botones de Editar y Eliminar */}
+        <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.editarButton}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  onEdit(evento);
+                }}
+              >
+                <Text style={styles.editarText}>Editar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.eliminarButton}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  confirmarEliminar(evento.id);
+                }}
+              >
+                <Text style={styles.eliminarText}>Eliminar</Text>
+              </TouchableOpacity>
+            </View>
       </View>
     </TouchableOpacity>
   );
@@ -78,21 +134,21 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: "hidden",
     marginBottom: 15,
-    shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 3,
     height: 250,
     width: 350,
+    backgroundColor: '#18191A',
   },
   eventImage: {
     width: "100%",
-    height: 180, // Asegura espacio suficiente
-    justifyContent: "flex-end", // Para que el contenido quede alineado abajo
+    height: 180, 
+    justifyContent: "flex-end", 
   },
   gradientOverlay: {
     ...StyleSheet.absoluteFillObject,
-    height: "70%", // Cubre solo la parte inferior
+    height: "70%", 
     top: "30%",
   },
   content: {
@@ -101,14 +157,11 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     justifyContent: "space-between",
-
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-  },
-  body: {
   },
   dateText: {
     color: "white",
@@ -122,10 +175,11 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 15,
     borderWidth: 0.7,
+    borderColor: '#FFF'
   },
   aforoText: {
     marginLeft: 5,
-    color: "black",
+    color: "white",
     fontWeight: "300",
   },
   eventTitle: {
@@ -137,32 +191,41 @@ const styles = StyleSheet.create({
     flexWrap: "wrap", 
     lineHeight: 22,
   },
-  container: {
-    flexDirection: 'row',
-    gap: 10, // Espaciado entre los botones
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 15,
+    gap: 10,
   },
   editarButton: {
-    backgroundColor: '#0D0C44', // Azul oscuro
+    backgroundColor: '#3A39F5', 
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 25, // Bordes redondeados
+    borderRadius: 25, 
+    height: 40,
+    width: 120,
+    alignItems: 'center',
   },
   editarText: {
-    color: '#4A448C', // Azul oscuro más claro para simular opacidad
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
   eliminarButton: {
     borderWidth: 1,
-    borderColor: '#4A448C', // Borde grisáceo oscuro
+    borderColor: '#FFFFFF', 
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
+    height: 40,
+    width: 120,
+    alignItems: 'center',
   },
   eliminarText: {
-    color: '#4A448C', // Color del texto en eliminar
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Satoshi-Regular',
   },
 });
 

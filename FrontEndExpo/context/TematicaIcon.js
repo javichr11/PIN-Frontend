@@ -9,13 +9,7 @@ const TematicaIcon = () => (
 );
 
 const PostAddIcon = () => (
-  <Svg width={30} height={30} viewBox="0 0 24 24" fill="none" stroke={'#FA6A44'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      {/* Rectángulo sin la esquina superior derecha */}
-      <Path d="M4 6h10v10H6a2 2 0 0 1-2-2V6z" />
-      {/* Signo "+" en la parte superior derecha */}
-      <Line x1="18" y1="8" x2="22" y2="8" />
-      <Line x1="20" y1="6" x2="20" y2="10" />
-    </Svg>
+  <Svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FA6A44"><Path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h240v80H200v560h560v-240h80v240q0 33-23.5 56.5T760-120H200Zm440-400v-120H520v-80h120v-120h80v120h120v80H720v120h-80Z"/></Svg>
 );
 
 export { TematicaIcon, PostAddIcon };

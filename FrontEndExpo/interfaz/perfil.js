@@ -13,6 +13,22 @@ const Perfil = () => {
 
   const navigation = useNavigation();
 
+  const confirmarCerrarSesion = () => {
+    Alert.alert(
+          '¿Estás seguro?',
+          '¿Seguro que quieres cerrar sesión?',
+          [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+              text: 'Cerrar Sesión',
+              onPress: () => logout(),
+              style: 'destructive'
+            },
+          ],
+          { cancelable: true }
+        );
+  }
+
   const fetchEventosInscrito = async () => {
     try {
       const response = await fetch(`https://croacky.onrender.com/evento/obtener/inscrito/${user.id}`);
@@ -106,7 +122,7 @@ const Perfil = () => {
         ) : (
           <Text style={styles.noUserText}>No hay usuario autenticado</Text>
         )}
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+        <TouchableOpacity style={styles.logoutButton} onPress={confirmarCerrarSesion}>
           <Text style={styles.logoutText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>
