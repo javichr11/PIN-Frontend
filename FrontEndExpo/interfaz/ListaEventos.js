@@ -7,6 +7,7 @@ import { Image } from 'react-native';
 import EventCard from "./Components/EventCard";
 
 
+
 const ListaEventos = () => {
   const [eventos, setEventos] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
