@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Alert, ScrollView } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import CreatedEventsCard from './Components/CreatedEventsCard';
 import Icon from '../context/TematicaIcon';
 import { useUser } from '../context/UserProvider';
 
@@ -68,56 +68,11 @@ const VerEvento = ({ navigation, route }) => {
   }, [route.params]);
 
   const renderItem = ({ item }) => {
-
-    const { hora, fechaFormateada } = formatearFechaHora(item.fecha);
-    const overlayColor = getCardColor(item.tematica, item.fecha);
-
     return (
-      <TouchableOpacity 
-        style={styles.cardContainer}
-        onPress={() => navigation.navigate('DetalleEvento', {evento: item})}
-      >
-        <View style={styles.eventCard}>
-          <Image
-            source={{ uri: item.foto || 'https://via.placeholder.com/150' }}
-            style={styles.eventImage}
-          />
-          <View style={[styles.overlay, { backgroundColor: overlayColor }]}>
-            <View style={styles.dateTimeContainer}>
-            <Text style={styles.eventDate}>{`${fechaFormateada} • ${hora}`}</Text>
-            </View>
-            <Text style={styles.eventTitle}>{item.nombre}</Text>
-          </View>
-
-          <View style={styles.inscritosAforoContainer}>
-            <MaterialIcons name="group" size={14} color="#FFFFFF" style={styles.icon} />
-            <Text style={styles.inscritosAforoText}>
-              {item.inscritos}/{item.aforo}
-            </Text>
-          </View>
-          
-          <View style={styles.actions}>
-          <TouchableOpacity 
-              style={[styles.actionButton, styles.editButton]} 
-              onPress={(e) => {
-                e.stopPropagation();
-                navigation.navigate('CrearEvento', { evento: item });
-              }}
-            >
-              <Text style={styles.actionText}>Editar</Text>
-          </TouchableOpacity>    
-          <TouchableOpacity 
-              style={[styles.actionButton, styles.deleteButton]} 
-              onPress={(e) => {
-                e.stopPropagation();
-                confirmarEliminar(item.id);
-              }}
-            >
-              <Text style={styles.actionText}>Eliminar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </TouchableOpacity>
+      <CreatedEventsCard 
+        evento={item} 
+        showJoinButton={false} 
+      />
     );
   };
 

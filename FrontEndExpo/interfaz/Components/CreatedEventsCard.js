@@ -3,8 +3,25 @@ import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Alert } from
 import { FontAwesome} from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import { useUser } from '../../context/UserProvider';
+import { useEffect } from "react";
 
+const fetchEventos = async () => {
+  
+  try {
+    const response = await fetch(`https://croacky.onrender.com/evento/obtener/${user.id}`);
+    const data = await response.json();
+    if (response.ok) {
 
+      const eventosOrdenados = data.data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      setEventos(eventosOrdenados);
+    } else {
+      Alert.alert('Error', `No se pudieron obtener los eventos: ${data.message}`);
+    }
+  } catch (error) {
+    Alert.alert('Error', `Ocurrió un error al obtener eventos: ${error.message}`);
+  }
+}; 
 
 const formatearFecha = (fechaISO) => {
   const fecha = new Date(fechaISO);
@@ -22,7 +39,7 @@ const formatearFecha = (fechaISO) => {
   return fecha.toLocaleDateString('es-ES', opciones).replace(',', ' ·');
 };
 
-const confirmarEliminar = (id) => {
+const confirmarEliminar = (id, userID) => {
     Alert.alert(
       '¿Estás seguro?',
       '¿Estás seguro de que deseas eliminar el evento?',
@@ -30,7 +47,7 @@ const confirmarEliminar = (id) => {
         { text: 'Cancelar', style: 'cancel' },
         {
           text: 'Eliminar evento',
-          onPress: () => eliminarEvento(id),
+          onPress: () => eliminarEvento(id, userID),
           style: 'destructive'
         },
       ],
@@ -38,7 +55,7 @@ const confirmarEliminar = (id) => {
     );
   };
 
-  const eliminarEvento = async (id) => {
+  const eliminarEvento = async (id, userID) => {
     try {
       const response = await fetch(`https://croacky.onrender.com/evento/eliminar/${id}`, {
         method: 'DELETE',
@@ -46,7 +63,7 @@ const confirmarEliminar = (id) => {
 
       if (response.ok) {
         Alert.alert('Éxito', 'El evento ha sido eliminado correctamente');
-        await fetchEventos();
+        //await fetchEventos(userID);
       } else {
         const errorData = await response.json();
         Alert.alert('Error', errorData.message);
@@ -71,8 +88,10 @@ const CreatedEventsCard = ({ evento, showJoinButton=true }) => {
   const { nombre, ubicacion, tematica, fecha, inscritos, aforo, foto } = evento;
   const gradientColors = getGradientColors(tematica.toLowerCase());
   const navigation = useNavigation();
+  const { user } = useUser();
+
   const onPress = () => navigation.navigate("DetalleEvento", { evento, showJoinButton })
-  return (
+   return (
     <TouchableOpacity onPress={onPress} >
       <View style={styles.cardContainer}>
         {/* Imagen con superposición de degradado */}
@@ -118,7 +137,7 @@ const CreatedEventsCard = ({ evento, showJoinButton=true }) => {
                 style={styles.eliminarButton}
                 onPress={(e) => {
                   e.stopPropagation();
-                  confirmarEliminar(evento.id);
+                  confirmarEliminar(evento.id, user.id);
                 }}
               >
                 <Text style={styles.eliminarText}>Eliminar</Text>

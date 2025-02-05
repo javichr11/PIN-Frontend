@@ -38,15 +38,10 @@ const NotificationsComponent = () => {
   };
 
   return (
-
-    <View style={styles.titleContainer}>
-      {/* Título de la sección */}
-      
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Notificaciones</Text>
-        <Text style={styles.emoji}>⋮</Text>
-        </View>
+      {/* Título centrado */}
+      <Text style={styles.title}>Notificaciones</Text>
+
       {loading ? (
         <ActivityIndicator size="large" color="#6C63FF" style={styles.loader} />
       ) : (
@@ -72,7 +67,6 @@ const NotificationsComponent = () => {
         </ScrollView>
       )}
     </View>
-    </View>
   );
 };
 
@@ -80,27 +74,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    padding: -5,
-  },
-  titleContainer: {
-    flex: 1,
-    backgroundColor: '#000',
     padding: 16,
-    alignItems: 'center',
   },
   title: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: "white",
-    fontFamily: 'Satoshi-Regular',
-    textAlign: 'center', // Alineación centrada
-  },
-  emoji: {
-    fontSize: 30,
-    color: 'white',
-    marginLeft: 10, // Espacio entre el título y el emoji
-    position: 'absolute', // Posiciona el emoji a la derecha
-    right: 0,  // Alineado a la derecha
+    fontSize: 25, // Tamaño de fuente más grande para el título
+    color: '#FFF',
+    textAlign: 'center', // Centrado del texto
+    marginBottom: 16, // Espaciado debajo del título
+    fontFamily: 'Sathosi-Regular'
   },
   loader: {
     marginTop: 20,

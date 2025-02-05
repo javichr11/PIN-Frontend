@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import BuscarDireccion from './BuscarDireccion';
+import { useUser } from '../context/UserProvider';
 
 // AforoInput Component
 const AforoInput = ({ value, onChange }) => {
@@ -62,10 +63,10 @@ const CrearEvento = () => {
   const [duracion, setDuracion] = useState('1');
   const [mostrarDuracionPicker, setMostrarDuracionPicker] = useState(false);
   const navigation = useNavigation();
+  const { user } = useUser();
 
   useEffect(() => {
-    const idObtenido = 10; // Simulación de usuario
-    setUsuarioId(idObtenido);
+    setUsuarioId(user.id);
   }, []);
 
 
