@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import Insignia from './Insignia';
 import { useNavigation } from '@react-navigation/native';
 
@@ -29,6 +29,7 @@ const Logros = ({ route }) => {
   }, []);
 
   return (
+  <ScrollView contentContainerStyle={styles.scrollContainer }>
     <View style={styles.container}>
       <Text style={styles.title}>Logros</Text>
       <FlatList
@@ -52,10 +53,16 @@ const Logros = ({ route }) => {
         <Text style={styles.closeButtonText}>Cerrar</Text>
       </TouchableOpacity>
     </View>
+  </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 80,
+    backgroundColor: '#000',
+  },
   container: {
     flex: 1,
     backgroundColor: '#000',

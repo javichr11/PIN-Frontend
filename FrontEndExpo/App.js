@@ -4,6 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
+import { SafeAreaView } from "react-native-safe-area-context"; // Importado para manejar la pantalla completa
+
 import CrearEvento from "./interfaz/CrearEvento";
 import InicioSesion from "./interfaz/InicioSesion";
 import VerEventos from "./interfaz/VerEvento";
@@ -24,6 +26,9 @@ import Preguntas4 from "./interfaz/Preguntas4";
 import Preguntas5 from "./interfaz/Preguntas5";
 import RanaAsignada from "./interfaz/RanaAsignada";
 import * as Font from 'expo-font';
+
+
+
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -53,6 +58,7 @@ const loadFonts = async () => {
 function VerEventosStack({ eventos, setEventos, fetchEventos }) {
   return (
     <Stack.Navigator>
+      
       <Stack.Screen 
         name="VerEventos" 
         options={{ headerShown: false }}
@@ -155,119 +161,121 @@ function AppContent() {
   }
 
   return (
-  <NavigationContainer>
-    {isAuthenticated ? (
-      <Tab.Navigator
-        screenOptions={{
-          tabBarActiveTintColor: 'blue',
-          tabBarInactiveTintColor: 'white',
-          tabBarStyle: {
-            backgroundColor: 'black', // Dark background color
-            borderTopWidth: 0,
-            borderRadius: 20,
-            paddingBottom: -1,
-            position: 'absolute', 
-            bottom: 30,
-            left: 0,
-            right: 0,
-            height: 60,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12, // Smaller font size for labels
-          },
-          tabBarItemStyle: {
-            paddingVertical: 5, // Increase vertical padding for tabs
-          },
-        }}>
-        <Tab.Screen 
-          name="verMapa"
-          options={{
-            title: '',
-            tabBarIcon:({color, size}) => (
-              <Ionicons name="home" color={color} size={30}  marginTop={5}/>
-            ),
-          }}
-        >
-          {() => <MapaStack eventos={eventos} />}
-        </Tab.Screen>
+  <SafeAreaView style={styles.safeContainer}>
+    <NavigationContainer>
+      {isAuthenticated ? (
+        <Tab.Navigator
+          screenOptions={{
+            tabBarActiveTintColor: 'blue',
+            tabBarInactiveTintColor: 'white',
+            tabBarStyle: {
+              backgroundColor: 'black', // Dark background color
+              borderTopWidth: 0,
+              borderRadius: 20,
+              paddingBottom: -1,
+              position: 'absolute', 
+              bottom: 30,
+              left: 0,
+              right: 0,
+              height: 60,
+            },
+            tabBarLabelStyle: {
+              fontSize: 12, // Smaller font size for labels
+            },
+            tabBarItemStyle: {
+              paddingVertical: 5, // Increase vertical padding for tabs
+            },
+          }}>
+          <Tab.Screen 
+            name="verMapa"
+            options={{
+              title: '',
+              tabBarIcon:({color, size}) => (
+                <Ionicons name="home" color={color} size={30}  marginTop={5}/>
+              ),
+            }}
+          >
+            {() => <MapaStack eventos={eventos} />}
+          </Tab.Screen>
 
-        
-        <Tab.Screen 
-          name="ListaEventos"
-          component={MapaVisual}
-          options={{
-            title: '',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="location-sharp" color={color} size={30}  marginTop={5}/>
-            ),
-          }}
-          initialParams={{ eventos }}
-        />
-         <Tab.Screen 
-          name="notificaciones"
-          component={Notificaciones}
-          options={{
-            title: '',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="notifications" color={color} size={30}  marginTop={5}/>
-            ),
-          }}
-        />
-        <Tab.Screen 
-          name="VerEvento"
-          options={{
-            title: '', 
-            tabBarIcon:({color, size}) => (
-              <Ionicons name="ticket" color={color} size={30} marginTop={5} />
-            ),
-          }}
-        >
-          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
-        </Tab.Screen>
-        <Tab.Screen 
-          name="perfil"
-          component={PerfilStack}
-          options={{
-            title: '',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" color={color} size={30} marginTop={5}/>
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    ) :(
-      <Stack.Navigator>
-        <Stack.Screen name="InicioSesion" options={{ headerShown: false }}>
-          {props => <InicioSesion {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="Registro" component={Registro} options={{ title: 'Registro de usuario' }} />
-        <Stack.Screen name="RegistroFoto" options={{ title: 'Registro de usuario' }}>
-          {props => <RegistroFoto {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="PreguntasInicial" options={{ headerShown: false }}>
-          {props => <PreguntasInicial {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="Preguntas1" options={{ headerShown: false }}>
-          {props => <Preguntas1 {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="Preguntas2" options={{ headerShown: false }}>
-          {props => <Preguntas2 {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="Preguntas3" options={{ headerShown: false }}>
-          {props => <Preguntas3 {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="Preguntas4" options={{ headerShown: false }}>
-          {props => <Preguntas4 {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="Preguntas5" options={{ headerShown: false }}>
-          {props => <Preguntas5 {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-        <Stack.Screen name="RanaAsignada" options={{ headerShown: false }}>
-          {props => <RanaAsignada {...props} setIsAuthenticated={setIsAuthenticated} />}
-        </Stack.Screen>
-      </Stack.Navigator>
-    )}
-  </NavigationContainer>
+          
+          <Tab.Screen 
+            name="ListaEventos"
+            component={MapaVisual}
+            options={{
+              title: '',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="location-sharp" color={color} size={30}  marginTop={5}/>
+              ),
+            }}
+            initialParams={{ eventos }}
+          />
+          <Tab.Screen 
+            name="notificaciones"
+            component={Notificaciones}
+            options={{
+              title: '',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="notifications" color={color} size={30}  marginTop={5}/>
+              ),
+            }}
+          />
+          <Tab.Screen 
+            name="VerEvento"
+            options={{
+              title: '', 
+              tabBarIcon:({color, size}) => (
+                <Ionicons name="ticket" color={color} size={30} marginTop={5} />
+              ),
+            }}
+          >
+            {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
+          </Tab.Screen>
+          <Tab.Screen 
+            name="perfil"
+            component={PerfilStack}
+            options={{
+              title: '',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="person" color={color} size={30} marginTop={5}/>
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      ) :(
+        <Stack.Navigator>
+          <Stack.Screen name="InicioSesion" options={{ headerShown: false }}>
+            {props => <InicioSesion {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="Registro" component={Registro} options={{ title: 'Registro de usuario' }} />
+          <Stack.Screen name="RegistroFoto" options={{ title: 'Registro de usuario' }}>
+            {props => <RegistroFoto {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="PreguntasInicial" options={{ headerShown: false }}>
+            {props => <PreguntasInicial {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="Preguntas1" options={{ headerShown: false }}>
+            {props => <Preguntas1 {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="Preguntas2" options={{ headerShown: false }}>
+            {props => <Preguntas2 {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="Preguntas3" options={{ headerShown: false }}>
+            {props => <Preguntas3 {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="Preguntas4" options={{ headerShown: false }}>
+            {props => <Preguntas4 {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="Preguntas5" options={{ headerShown: false }}>
+            {props => <Preguntas5 {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+          <Stack.Screen name="RanaAsignada" options={{ headerShown: false }}>
+            {props => <RanaAsignada {...props} setIsAuthenticated={setIsAuthenticated} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
+  </SafeAreaView>
 );
 
 }
@@ -290,9 +298,20 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    flex: 1,
+    backgroundColor: '#000', // Fondo negro en toda la app
+    marginTop: -40,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#000',
   },
 });
