@@ -226,11 +226,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     alignItems: 'center',
+    fontFamily: "Satoshi-Regular",
   },
   nextButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    
   },
   loginText: {
     textAlign: "center",
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   loginLink: {
-    color: "#3A39F5",
-    fontWeight: "bold",
+    color: "#1630BE",
+    fontFamily: "Satoshi-Regular",
   },
 });

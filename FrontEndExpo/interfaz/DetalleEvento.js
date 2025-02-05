@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
   calendarIcon: {marginTop: 24},
 
   locationContainer: { backgroundColor: '#18191A', borderRadius: 15, padding: 20, marginBottom: 20 },
-  locationTitle: { fontSize: 16, fontWeight: '600', color: '#D3B6FF', marginBottom: 15 },
+  locationTitle: { fontSize: 16, fontWeight: '600', color: '#D3B6FF', marginBottom: 15, fontFamily: 'Satoshi-Regular' },
   locationContent: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 15 },
-  locationAddress: { color: '#fff', fontSize: 16, marginLeft: 15, flex: 1 },
+  locationAddress: { color: '#fff', fontSize: 16, marginLeft: 15, flex: 1, fontFamily: 'Satoshi-Regular' },
   mapWrapper: { height: 200, borderRadius: 12, overflow: 'hidden', marginTop: 5 },
   map: { width: '100%', height: '100%' },
   joinButton: { backgroundColor: '#3A39F5', margin: 20, padding: 15, borderRadius: 10, alignItems: 'center' },
-  joinButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  joinButtonText: { color: '#fff', fontSize: 16, fontWeight: '600',fontFamily: 'Satoshi-Regular' },
   backButton: { marginLeft: 10 },
 });
 

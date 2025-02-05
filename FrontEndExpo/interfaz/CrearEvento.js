@@ -429,6 +429,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     fontWeight: '500',
+    fontFamily: 'Satoshi-Regular'
   },
   input: {
     backgroundColor: '#1C1C1E',
@@ -457,6 +458,7 @@ const styles = StyleSheet.create({
   tematicaText: {
     color: '#666',
     fontSize: 14,
+    fontFamily: 'Satoshi-Regular'
   },
   tematicaTextActive: {
     color: '#000',
@@ -471,6 +473,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     borderWidth: 1,           // Añade el borde
     borderColor: '#FFFFFF',   // Color blanco para el borde
+    fontFamily: 'Satoshi-Regular'
   },
   dateTimeButton: {
     backgroundColor: '#1C1C1E',
@@ -535,6 +538,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '500',
+    fontFamily: 'Satoshi-Regular'
   },
   sectionContainer: {
     marginBottom: 20,
@@ -566,6 +570,8 @@ const styles = StyleSheet.create({
     borderColor: '#333333',
     borderWidth: 1,           // Añade el borde
     borderColor: '#FFFFFF',
+    fontFamily: 'Satoshi-Regular',
+    fontWeight: '400',
   },
   dateTimeValue: {
     color: '#FFFFFF',

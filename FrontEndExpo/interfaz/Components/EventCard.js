@@ -24,9 +24,9 @@ const formatearFecha = (fechaISO) => {
 
 const getGradientColors = (categoria) => {
   switch (categoria) {
-    case "deporte": return ["transparent", "rgba(0, 255, 127, 0.9)", "rgba(0, 255, 127, 1)"]; // Verde
-    case "musica": return ["transparent", "rgba(255, 165, 0, 0.9)", "rgba(255, 165, 0, 1)"]; // Naranja
-    case "arte": return ["transparent", "rgba(138, 43, 226, 0.9)", "rgba(138, 43, 226, 1)"]; // Morado
+    case "deporte": return ["#D9D9D900", "#B6FCBE", "#B6FCBE"]; //Verde
+    case "musica": return ["#D9D9D900", "#FA6A44", "#FA6A44"]; // Naranja
+    case "arte": return ["#D9D9D900", "#D199FA", "#D199FA"]; // Morado
     case "voluntariado": return ["transparent", "rgba(30, 144, 255, 0.9)", "rgba(30, 144, 255, 1)"]; // Azul
     default: return ["transparent", "rgba(192, 192, 192, 0.9)", "rgba(192, 192, 192, 1)"]; // Gris por defecto
   }
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   aforoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 15,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   tag: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#3B82F6",
+    backgroundColor: "#3A39F5",
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 12,

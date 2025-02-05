@@ -180,7 +180,7 @@ const Mapa = ({ eventos, route }) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0E0E0E", padding: 20 },
   greeting: { fontSize: 26, fontWeight: "bold", color: "white" , fontFamily: 'Satoshi-Regular',},
-  username: { color: "#63FF63" },
+  username: { color: "#B6FCBE" },
   searchBarContainer: {
     flexDirection: "row",
     alignItems: "center",
