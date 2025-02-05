@@ -53,7 +53,7 @@ const Perfil = () => {
 
   return (
     
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollView contentContainerStyle={styles.scrollContainer }>
       <View style={styles.container}>
         {user ? (
           <>
@@ -106,9 +106,31 @@ const Perfil = () => {
         ) : (
           <Text style={styles.noUserText}>No hay usuario autenticado</Text>
         )}
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-          <Text style={styles.logoutText}>Cerrar Sesión</Text>
+        <View style={styles.optionsSubsection}>
+        <TouchableOpacity 
+          style={styles.optionButton} 
+          onPress={() => navigation.navigate('Ajustes')}
+        >
+          <Text style={styles.optionText}>⚙️ Ajustes</Text>
+          <Image
+            source={require('../assets/flecha_Derecha.png')}
+            style={{ width: 20, height: 20 }}
+          />
         </TouchableOpacity>
+
+        <View style={styles.separator} />
+
+        <TouchableOpacity 
+          style={styles.optionButton} 
+          onPress={logout}
+        >
+          <Text style={[styles.optionText, { color: 'red' }]}>🚪 Cerrar Sesión</Text>
+          <Image
+            source={require('../assets/flecha_Derecha.png')}
+            style={{ width: 20, height: 20, tintColor: 'red' }}
+          />
+        </TouchableOpacity>
+      </View>
       </View>
     </ScrollView>
 
@@ -118,6 +140,7 @@ const Perfil = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
+    paddingBottom: 80,
   },
   container: {
     flex: 1,
@@ -141,6 +164,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFF',
     marginBottom: 5,
+    fontFamily: 'Satoshi-Regular',
+
+    
   },
   userHandle: {
     fontSize: 16,

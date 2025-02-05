@@ -179,7 +179,7 @@ const Mapa = ({ eventos, route }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0E0E0E", padding: 20 },
-  greeting: { fontSize: 26, fontWeight: "bold", color: "white" },
+  greeting: { fontSize: 26, fontWeight: "bold", color: "white" , fontFamily: 'Satoshi-Regular',},
   username: { color: "#63FF63" },
   searchBarContainer: {
     flexDirection: "row",
@@ -194,12 +194,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   searchIcon: { marginRight: 10 },
-  searchBar: { flex: 1, color: "white", fontSize: 16 },
+  searchBar: { flex: 1, color: "white", fontSize: 16, fontFamily: 'Satoshi-Regular', },
   filterIcon: { marginLeft: 10 },
   filterContainer: { flexDirection: "row", paddingBottom: 20, marginBottom: 15, maxHeight: 55 },
   filterChip: { padding: 10, borderColor: "white", borderWidth: 0.6, borderRadius: 20, minHeight: 37, marginRight: 10, paddingHorizontal: 20 },
   selectedFilterChip: { backgroundColor: "#6F6F6F" },
-  filterText: { color: "white", fontSize: 14, fontWeight: "300" },
+  filterText: { color: "white", fontSize: 14, fontWeight: "300", fontFamily: 'Satoshi-Regular', },
   flatList: { flex: 1 },
   modalContainer: {
     flex: 1,
@@ -219,10 +219,11 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 10,
   },
-  modalTitle: { fontSize: 22, fontWeight: "bold", color: "#FFF", marginBottom: 20 },
+  modalTitle: { fontSize: 22, fontWeight: "bold", color: "#FFF", marginBottom: 20},
   modalSubtitle: {
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: 'Satoshi-Regular',
     color: "#FFF",
     marginTop: 10,
     marginBottom: 10,
@@ -252,6 +253,7 @@ const styles = StyleSheet.create({
     color: "#6F6F6F",
     fontSize: 14,
     marginLeft: 5,
+    fontFamily: 'Satoshi-Regular',
   },
   modalSelectedFilterText: {
     color: "#FFF",
@@ -263,11 +265,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: "100%",
     alignItems: "center",
+    
   },
   closeButtonText: {
     color: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
+    
   },
 });
 

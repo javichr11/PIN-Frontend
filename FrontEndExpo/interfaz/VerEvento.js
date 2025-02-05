@@ -195,6 +195,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#000000',
     padding: 16,
+    
   },
 
   titleText: {

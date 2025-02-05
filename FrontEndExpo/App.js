@@ -24,6 +24,7 @@ import Preguntas4 from "./interfaz/Preguntas4";
 import Preguntas5 from "./interfaz/Preguntas5";
 import RanaAsignada from "./interfaz/RanaAsignada";
 import * as Font from 'expo-font';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { LogBox } from 'react-native';
@@ -43,6 +44,9 @@ const Tab = createBottomTabNavigator();
 const loadFonts = async () => {
   await Font.loadAsync({
     'Satoshi-Regular': require('./assets/font/RedHatText-Medium.ttf'),
+    
+    "Satoshi-Regula": require("./assets/font/Satoshi-Variable.ttf"),
+    "Satoshi-Italic": require("./assets/font/Satoshi-VariableItalic.ttf"),
   });
 };
 
@@ -175,17 +179,19 @@ function AppContent() {
             paddingVertical: 5, // Increase vertical padding for tabs
           },
         }}>
-        <Tab.Screen 
-          name="VerEvento"
+          <Tab.Screen 
+          name="verMapa"
           options={{
-            title: '', 
+            title: '',
             tabBarIcon:({color, size}) => (
-              <Ionicons name="ticket" color={color} size={30} />
+              <Ionicons name="home" color={color} size={30} />
             ),
           }}
         >
-          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
+          {() => <MapaStack eventos={eventos} />}
         </Tab.Screen>
+
+        
         <Tab.Screen 
           name="mapita"
           component={MapaVisual}
@@ -197,17 +203,8 @@ function AppContent() {
           }}
           initialParams={{ eventos }}
         />
-        <Tab.Screen 
-          name="verMapa"
-          options={{
-            title: '',
-            tabBarIcon:({color, size}) => (
-              <Ionicons name="home" color={color} size={30} />
-            ),
-          }}
-        >
-          {() => <MapaStack eventos={eventos} />}
-        </Tab.Screen>
+
+        
         <Tab.Screen 
           name="notificaciones"
           component={Notificaciones}
@@ -218,6 +215,17 @@ function AppContent() {
             ),
           }}
         />
+        <Tab.Screen 
+          name="VerEvento"
+          options={{
+            title: '', 
+            tabBarIcon:({color, size}) => (
+              <Ionicons name="ticket" color={color} size={30} />
+            ),
+          }}
+        >
+          {() => <VerEventosStack eventos={eventos} setEventos={setEventos} fetchEventos={fetchEventos} />}
+        </Tab.Screen>
         <Tab.Screen 
           name="perfil"
           component={PerfilStack}

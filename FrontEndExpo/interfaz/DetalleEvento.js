@@ -32,7 +32,7 @@ const DetalleEvento = ({ route, navigation }) => {
   }, [navigation]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
       <Image 
         source={{ uri: evento.foto || 'https://via.placeholder.com/400x200' }} 
         style={styles.headerImage} 
@@ -68,7 +68,7 @@ const DetalleEvento = ({ route, navigation }) => {
         </View>
 
         <View style={styles.infoSection}>
-          <Ionicons name="calendar-outline" size={20} color="#666" />
+          <Ionicons name="calendar-outline" size={20} color="#666" style={styles.calendarIcon} />
           <View style={styles.infoContent}>
             <Text style={styles.infoLabel}>Fecha</Text>
             <Text style={styles.infoValue}>{formatearFecha(evento.fecha)}</Text>
@@ -124,6 +124,7 @@ const darkMapStyle = [
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
+  scrollContainer: {paddingBottom: 100},
   headerImage: { width: '100%', height: 250, resizeMode: 'cover' },
   contentContainer: { padding: 20, marginTop: -20, backgroundColor: '#000', borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   categoryRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 15, gap: 8 },
@@ -132,19 +133,21 @@ const styles = StyleSheet.create({
   categoryPill2: { backgroundColor: '#1A1A1A', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.55)' },
   userCount: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   categoryText: { color: '#fff', fontSize: 14, fontWeight: '500' },
-  title: { fontSize: 24, fontWeight: '600', color: '#B6FCBE', marginBottom: 10 },
+  title: { fontSize: 24, fontWeight: '600', color: '#B6FCBE', marginBottom: 10, fontFamily: 'Satoshi-Regular'},
   availabilityContainer: { backgroundColor: 'rgba(58, 57, 245, 0.1)', padding: 10, borderRadius: 8, marginBottom: 20 },
   availabilityText: { color: '#3A39F5', fontSize: 14, textAlign: 'center' },
   sectionContainer: { marginBottom: 20, backgroundColor: '#18191A', borderRadius: 15, padding: 15 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#D3B6FF', marginBottom: 10 },
-  description: { color: '#fff', lineHeight: 22 },
+  sectionTitle: { fontSize: 16, fontWeight: '600', color: '#D3B6FF', marginBottom: 10, fontFamily: 'Satoshi-Regular'},
+  description: { color: '#fff', lineHeight: 22, fontFamily: 'Satoshi-Regular'},
   infoSection: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 20, padding: 15, backgroundColor: '#18191A', borderRadius: 15 },
-  infoContent: { marginLeft: 15, flex: 1 },
-  infoTime: { color: '#666', fontSize: 14, marginTop: 5 },
-  infoLabel: { color: '#D3B6FF', fontSize: 14, marginBottom: 5 },
+  infoContent: { marginLeft: 15, flex: 1, marginLeft: 15},
+  infoTime: { color: '#666', fontSize: 14, marginTop: 5, fontFamily: 'Satoshi-Regular'},
+  infoLabel: { color: '#D3B6FF', fontSize: 16, marginBottom: 5, fontFamily: 'Satoshi-Regular',  marginLeft: -35},
   infoValue: { color: '#fff', fontSize: 16, fontWeight: '500' },
+  calendarIcon: {marginTop: 24},
+
   locationContainer: { backgroundColor: '#18191A', borderRadius: 15, padding: 20, marginBottom: 20 },
-  locationTitle: { fontSize: 20, fontWeight: '600', color: '#D3B6FF', marginBottom: 15 },
+  locationTitle: { fontSize: 16, fontWeight: '600', color: '#D3B6FF', marginBottom: 15 },
   locationContent: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 15 },
   locationAddress: { color: '#fff', fontSize: 16, marginLeft: 15, flex: 1 },
   mapWrapper: { height: 200, borderRadius: 12, overflow: 'hidden', marginTop: 5 },

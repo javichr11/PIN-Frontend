@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color: "white",
-    fontSize: 14,
+    fontSize: 15,
+    fontFamily: 'Satoshi-Regular',
   },
   aforoContainer: {
     flexDirection: "row",
@@ -137,6 +138,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     color: "black",
     fontWeight: "300",
+    fontFamily: 'Satoshi-Regular',
   },
   eventTitle: {
     fontSize: 21,
@@ -146,6 +148,7 @@ const styles = StyleSheet.create({
     maxWidth: "50%", 
     flexWrap: "wrap", 
     lineHeight: 22,
+    fontFamily: 'Satoshi-Regular',
   },
   tagContainer: {
     flexDirection: "row",
@@ -164,6 +167,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 14,
     marginLeft: 5,
+    fontFamily: 'Satoshi-Regular',
   },
 
 });

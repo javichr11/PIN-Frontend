@@ -18,6 +18,7 @@ const EventosInscritos = ({ eventos }) => {
   return (
     <View style={styles.eventsSection}>
       <Text style={styles.sectionTitle}>Eventos inscritos</Text>
+      <View style={{ marginBottom: 10 }} />
       <FlatList
         data={eventos}
         renderItem={({ item }) => (
@@ -59,10 +60,11 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#FFF',
     marginBottom: 10,
+    fontFamily: 'Satoshi-Regular',
   },
 
   flatList: {

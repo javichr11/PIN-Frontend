@@ -39,6 +39,10 @@ const NotificationsComponent = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Notificaciones</Text>
+        <Text style={styles.emoji}>⋮</Text>
+        </View>
       {loading ? (
         <ActivityIndicator size="large" color="#6C63FF" style={styles.loader} />
       ) : (
@@ -73,11 +77,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     padding: 16,
   },
+  titleContainer: {
+    alignItems: 'center', // Centra el contenido horizontalmente
+    marginTop: 3, // Margen superior para que no quede pegado al borde superior
+    marginBottom: 16, // Margen debajo del título
+  },
   title: {
-    fontSize: 20,
+    fontSize: 27,
     fontWeight: 'bold',
-    color: '#FFF',
-    marginBottom: 16,
+    color: "white",
+    fontFamily: 'Satoshi-Regular',
+    textAlign: 'center', // Alineación centrada
+  },
+  emoji: {
+    fontSize: 30,
+    color: 'white',
+    marginLeft: 10, // Espacio entre el título y el emoji
+    position: 'absolute', // Posiciona el emoji a la derecha
+    right: 0,  // Alineado a la derecha
   },
   loader: {
     marginTop: 20,

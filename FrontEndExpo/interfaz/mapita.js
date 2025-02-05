@@ -223,17 +223,19 @@ const styles = StyleSheet.create({
   },
   cardOverlay: {
     position: 'absolute',
-    bottom: 80,  // Ajusta según necesidad
-    left: 20,
-    right: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    shadowColor: "#000",
+    bottom: 90,  // Ajusta según necesidad
+    left: 10,
+    right: 10,
+    
+    borderRadius: 15,   // Bordes redondeados
+        
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    elevation: 5,
+    elevation: 9,
+    padding: 3,  // Espacio para que el borde rodee bien el contenido
   },
+  
   
 });
 
