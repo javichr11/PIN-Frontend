@@ -5,7 +5,9 @@ import MapView, { PROVIDER_DEFAULT, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Image } from 'react-native';
 import EventCard from "./Components/EventCard";
+import { StatusBar } from 'react-native';
 
+<StatusBar hidden={true}></StatusBar>
 
 
 const ListaEventos = () => {
@@ -70,6 +72,7 @@ const ListaEventos = () => {
     };
     obtenerEventos();
   }, []);
+  
 
  
   return (
@@ -141,6 +144,7 @@ const ListaEventos = () => {
         return null;
       })}
       </MapView>
+      
       {selectedMarker && (
         <TouchableOpacity 
           style={styles.cardOverlay} 
@@ -185,28 +189,34 @@ const styles = StyleSheet.create({
     height: 65,
     position: 'relative',
     marginBottom: 10,
+    
     pointerEvents: 'none', // Permite que el Marker reciba el clic sin interferencias
   },
   markerBackground: {
     width: 50,
     height: 50,
-    backgroundColor: 'white',
+    backgroundColor: 'blue',
     borderRadius: 25,
     borderWidth: 3,
     borderColor: '#007AFF',
     alignItems: 'center',
     justifyContent: 'center',
     pointerEvents: 'none', // Evita conflictos al tocar la imagen
+    
   },
   markerImage: {
     width: 40,
     height: 40,
     borderRadius: 20,
+    
+    
   },
   markerSelected: {
-    width: 60,  // Aumenta todo el marcador
+    width: 90,  // Aumenta todo el marcador
     height: 75, 
     marginBottom: 15,
+    
+    
   },
   triangle: {
     position: 'absolute',
@@ -220,7 +230,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 15,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: '#007AFF',
+    borderTopColor: 'blue',
+    
   },
   cardOverlay: {
     position: 'absolute',
