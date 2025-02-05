@@ -44,7 +44,7 @@ const ListaEventos = () => {
     
     const obtenerEventos = async () => {
       try {
-        const response = await axios.get('https://croacky.onrender.com/evento/obtener');
+        const response = await axios.get('https://croacky.onrender.com/evento/obtenerPosteriores');
         
         console.log('Datos completos:', response.data);
         
