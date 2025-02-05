@@ -356,6 +356,9 @@ const createEvent = async () =>{
             </TouchableOpacity>
           </View>
 
+          <View>
+            
+          </View>
          
         </ScrollView>
       </KeyboardAvoidingView>

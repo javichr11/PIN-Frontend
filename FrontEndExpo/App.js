@@ -6,11 +6,11 @@ import { Ionicons } from 'react-native-vector-icons';
 import { createStackNavigator } from "@react-navigation/stack";
 import CrearEvento from "./interfaz/CrearEvento";
 import InicioSesion from "./interfaz/InicioSesion";
-import VerEvento from "./interfaz/VerEvento";
+import VerEventos from "./interfaz/VerEvento";
 import Registro from "./interfaz/Registro";
 import RegistroFoto from "./interfaz/RegistroFoto";
 import Perfil from "./interfaz/perfil";
-import MapaVisual from "./interfaz/mapita";
+import MapaVisual from "./interfaz/ListaEventos";
 import Mapa from "./interfaz/mapa";
 import Notificaciones from "./interfaz/notificaciones";
 import DetalleEvento from "./interfaz/DetalleEvento";
@@ -54,14 +54,14 @@ function VerEventosStack({ eventos, setEventos, fetchEventos }) {
   return (
     <Stack.Navigator>
       <Stack.Screen 
-        name="VerEvento" 
+        name="VerEventos" 
         options={{ headerShown: false }}
       >
-        {props => <VerEvento {...props} eventos={eventos} fetchEventos={fetchEventos} />}
+        {props => <VerEventos {...props} eventos={eventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
       <Stack.Screen 
         name="CrearEvento"
-        options={{ title: 'Modificar Evento' }}
+        options={{ title: 'Crear Evento' }}
       >
         {props => <CrearEvento {...props} setEventos={setEventos} fetchEventos={fetchEventos} />}
       </Stack.Screen>
@@ -179,12 +179,12 @@ function AppContent() {
             paddingVertical: 5, // Increase vertical padding for tabs
           },
         }}>
-          <Tab.Screen 
+        <Tab.Screen 
           name="verMapa"
           options={{
             title: '',
             tabBarIcon:({color, size}) => (
-              <Ionicons name="home" color={color} size={30} />
+              <Ionicons name="home" color={color} size={30}  marginTop={5}/>
             ),
           }}
         >
@@ -193,25 +193,23 @@ function AppContent() {
 
         
         <Tab.Screen 
-          name="mapita"
+          name="ListaEventos"
           component={MapaVisual}
           options={{
             title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="location-sharp" color={color} size={30} />
+              <Ionicons name="location-sharp" color={color} size={30}  marginTop={5}/>
             ),
           }}
           initialParams={{ eventos }}
         />
-
-        
-        <Tab.Screen 
+         <Tab.Screen 
           name="notificaciones"
           component={Notificaciones}
           options={{
             title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="notifications" color={color} size={30} />
+              <Ionicons name="notifications" color={color} size={30}  marginTop={5}/>
             ),
           }}
         />
@@ -220,7 +218,7 @@ function AppContent() {
           options={{
             title: '', 
             tabBarIcon:({color, size}) => (
-              <Ionicons name="ticket" color={color} size={30} />
+              <Ionicons name="ticket" color={color} size={30} marginTop={5} />
             ),
           }}
         >
@@ -232,7 +230,7 @@ function AppContent() {
           options={{
             title: '',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" color={color} size={30} />
+              <Ionicons name="person" color={color} size={30} marginTop={5}/>
             ),
           }}
         />

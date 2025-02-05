@@ -51,6 +51,23 @@ const Perfil = () => {
     }, [user]) // Se actualiza solo si el usuario cambia
   );
 
+
+  const confirmarLogout = async () => {
+    Alert.alert(
+      '¿Estás seguro?',
+      '¿Estás seguro de que quieres cerrar la sesión?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Cerrar Sesión',
+          onPress: () =>  logout(),
+          style: 'destructive'
+        },
+      ],
+      { cancelable: true }
+    );
+  
+};
   return (
     
     <ScrollView contentContainerStyle={styles.scrollContainer }>
@@ -86,7 +103,7 @@ const Perfil = () => {
                   />
                 </TouchableOpacity>
                 <View style={styles.separator} />
-                <TouchableOpacity style={styles.optionButton}>
+                <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('VerEventos')}>
                   <Text style={styles.optionText}>📅 Mis eventos</Text>
                   <Image
                     source={require('../assets/flecha_Derecha.png')}

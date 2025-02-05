@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 const Preguntas4 = ({ navigation , route}) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const puntuacionAcumulada = route.params;
+  const user = route.params;
 
   const options = [
     {text: "Tranquilo, con naturaleza y cultura",puntos: { WISE: 3, ACTIVE: 2, PARTY: 0, HELPER: 1 }},
@@ -25,8 +26,10 @@ const Preguntas4 = ({ navigation , route}) => {
         PARTY: puntuacionAcumulada.puntuacionAcumulada.PARTY + parseInt(selectedOption.puntos.PARTY),
         HELPER: puntuacionAcumulada.puntuacionAcumulada.HELPER + parseInt(selectedOption.puntos.HELPER),
       };
+      const usuario = user;
       console.log("Navegando a Preguntas5 con opción:", nuevaPuntuacion);
-        navigation.navigate('Preguntas5',  { puntuacionAcumulada: nuevaPuntuacion });
+      console.log(usuario);
+        navigation.navigate('Preguntas5',  { puntuacionAcumulada: nuevaPuntuacion, user: usuario.user });
       }
   };
 

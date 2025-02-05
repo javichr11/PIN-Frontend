@@ -3,22 +3,30 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from "../context/UserProvider";
 import React, { useEffect } from 'react';
 
-const PreguntasInicial = ({ navigation }) => {
-  const {user, setIsAuthenticated} = useUser();
+const PreguntasInicial = ({ navigation, route }) => {
+  const {user} = route.params;
+  const { saveUser, setIsAuthenticated } = useUser();
 
   const startQuiz = () => {
-    navigation.navigate('Preguntas1');
+    navigation.navigate('Preguntas1', { user });
   };
 
   const skipQuiz = async () => {
     try {
-      if (!user) {
-        console.error('No se encontró información del usuario');
-        return;
-      }
+      // Guarda el usuario en el contexto
+      await saveUser(user);
       setIsAuthenticated(true);
+  
+      console.log("Usuario guardado correctamente. Redirigiendo...");
+  
+      // Limpia el historial de navegación y redirige a la pantalla principal
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'VerEvento' }],
+      });
+  
     } catch (error) {
-      console.error('Error in skipQuizz:', error);
+      console.error("Error al guardar el usuario:", error);
     }
   };
 

@@ -7,7 +7,7 @@ import { Image } from 'react-native';
 import EventCard from "./Components/EventCard";
 
 
-const Mapita = () => {
+const ListaEventos = () => {
   const [eventos, setEventos] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   
@@ -239,4 +239,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default Mapita;
+export default ListaEventos;

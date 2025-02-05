@@ -38,6 +38,10 @@ const NotificationsComponent = () => {
   };
 
   return (
+
+    <View style={styles.titleContainer}>
+      {/* Título de la sección */}
+      
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Notificaciones</Text>
@@ -68,6 +72,7 @@ const NotificationsComponent = () => {
         </ScrollView>
       )}
     </View>
+    </View>
   );
 };
 
@@ -75,15 +80,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    padding: 16,
+    padding: -5,
   },
   titleContainer: {
-    alignItems: 'center', // Centra el contenido horizontalmente
-    marginTop: 3, // Margen superior para que no quede pegado al borde superior
-    marginBottom: 16, // Margen debajo del título
+    flex: 1,
+    backgroundColor: '#000',
+    padding: 16,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 27,
+    fontSize: 25,
     fontWeight: 'bold',
     color: "white",
     fontFamily: 'Satoshi-Regular',
