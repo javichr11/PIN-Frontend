@@ -6,7 +6,7 @@ const Preguntas5 = ({ navigation , route}) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const puntuacionAcumulada = route.params;
   const { saveUser, setIsAuthenticated } = useUser();
-  const { user } = route.params;
+  const  user  = route.params;
 
   const options = [
     {text: "Aprender algo nuevo o reflexionar", puntos: { WISE: 3, ACTIVE: 2, PARTY: 0, HELPER: 1 }},
@@ -44,7 +44,7 @@ const Preguntas5 = ({ navigation , route}) => {
         navigation.navigate('RanaAsignada',  { puntuacionAcumulada: nuevaPuntuacion, user: usuario });
       }
 
-      finalizarRegistro();
+      //finalizarRegistro();
   };
 
   return (

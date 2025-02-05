@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Image, ActivityIndicator } from 'react-native';
 import { useFonts } from 'expo-font';
 import { useUser } from '../context/UserProvider';
+import { CommonActions } from '@react-navigation/native';
+
 
 const RANA_TYPES = {
   PARTY: {
@@ -31,10 +33,13 @@ const RANA_TYPES = {
 }; 
 
 const RanaAsignada = ({ route, navigation }) => {
+  console.log("Ha llegado a Rana Asignada");
   const [ranaConfig, setRanaConfig] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const puntuacionAcumulada = route.params.puntuacionAcumulada;
-  const { setIsAuthenticated } = useUser();
+  const { setIsAuthenticated, saveUser } = useUser();
+  const {user} = route.params.user;
+  console.log(user);
 
   const assignFrog = () => {
     let mayorPuntuacion = -1; 
@@ -61,19 +66,30 @@ const RanaAsignada = ({ route, navigation }) => {
     'System': require('expo-font')
   });
 
-  const handleFinish = () => {
-    setIsAuthenticated(true);
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'VerEventos'
-          }
-        ],
-      })
-    );
+  const handleFinish = async () => {
+    console.log("Autenticando usuario y navegando a VerEventos");
+    
+    try {
+      // Guardamos el usuario en el contexto
+      await saveUser(user);
+  
+      // Marcamos al usuario como autenticado
+      setIsAuthenticated(true);
+  
+      // Reiniciamos la navegación para ir a 'VerEventos'
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'VerEventos' }],
+        })
+      );
+  
+      console.log("Navegación a VerEventos completada");
+    } catch (error) {
+      console.error("Error en handleFinish:", error);
+    }
   };
+  
 
   const dotOpacity = React.useRef(new Animated.Value(0)).current;
 
@@ -129,7 +145,7 @@ const RanaAsignada = ({ route, navigation }) => {
 
       <TouchableOpacity 
         style={[styles.button, { backgroundColor: ranaConfig.color }]}
-        onPress={() => handleFinish()}
+        onPress={handleFinish}
       >
         <Text style={styles.buttonText}>Finalizar</Text>
       </TouchableOpacity>
